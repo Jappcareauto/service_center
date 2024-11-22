@@ -5,6 +5,9 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+   env: {
+    apiUrl: process.env.API_URL,
+  },
 }
 
-module.exports = nextConfig
+export default nextConfig;
