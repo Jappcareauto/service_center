@@ -29,13 +29,14 @@ export default function Page() {
     // const params = useParams<{ callbackUrl: string }>();
     const [message, setMessage] = useState<string>("");
     const router = useRouter();
+
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault()
         setIsLoading(true)
         try {
             // Handle successful login (redirect, update state, etc.)
             // console.log(data)
-            const signInData = await signIn('credentials', {
+            const signInData = await signIn("credentials", {
                 username: email,
                 password: password,
                 redirect: false
@@ -44,15 +45,15 @@ export default function Page() {
             setTimeout(() => {
                 if (signInData?.error) {
                     // setIsLogging(false)
-                    setMessage("Password or username is incorrect or user does not exist!")
+                    setMessage("Password or email is incorrect")
                     console.log(signInData.error);
+                    setIsLoading(false)
                 } else {
                     // router.refresh(
-                    // console.log(signInData)
-                    router.push("/manager")
+                    router.push("/admin")
                 }
             }, 2000);
-            setIsLoading(false)
+           
             // .then((e) => {
             //     console.log(e) a
             //     // router.push('/admin');
@@ -60,7 +61,6 @@ export default function Page() {
             // router.push('/admin');
             // const res = fetch('/api/users/login', { method: "POST", body: JSON.stringify({ email: email, password: password }) })
         } catch (err) {
-            console.log(err)
             // if ((err.response.data.details as string).search(email) != -1 && err.response.data.message) {
             //     localStorage.setItem('email', JSON.stringify(email));
             //     router.push('/verify-email');

@@ -7,7 +7,7 @@ import FilterBy from "@/components/UI/FilterBy"
 import OrderDetailsModal from "@/components/UI/OrderDetailsModal"
 import OrderItem from "@/components/UI/OrderItem"
 import { OrderInterface } from "@/interfaces/OrderInterface"
-import { UserInterface } from "@/interfaces/UserInterface"
+// import { UserInterface } from "@/interfaces/UserInterface"
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 
@@ -18,7 +18,7 @@ export default function Page() {
         { label: "In Progress", actived: false },
         { label: "Delivered", actived: false },
     ])
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    // const [isLoading, setIsLoading] = useState<boolean>(false)
     const [openOrderDetailsModal, setOpenOrderDetailsModal] = useState<boolean>(false)
     const session = useSession();
     const [dataRequest, setDataRequest] = useState<OrderInterface[] | null>(null);
