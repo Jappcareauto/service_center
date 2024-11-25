@@ -1,41 +1,24 @@
 "use client"
 
 import { TITLE_WEBSITE } from "@/app/lib/constantes"
-import OrderIcon from "@/components/Icones/OrderIcon"
-import CardStat from "@/components/UI/CardStat"
-import FilterBy from "@/components/UI/FilterBy"
-import OrderDetailsModal from "@/components/UI/OrderDetailsModal"
-import OrderItem from "@/components/UI/OrderItem"
-import { OrderInterface } from "@/interfaces/OrderInterface"
-import { UserInterface } from "@/interfaces/UserInterface"
+// import OrderDetailsModal from "@/components/UI/OrderDetailsModal"
+// import { OrderInterface } from "@/interfaces/OrderInterface"
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 
 export default function Page() {
-    const [TabStateOrder, setTabStateOrder] = useState<{ actived: boolean, label: string }[]>([
-        { label: "Pending", actived: true },
-        { label: "In Progress", actived: false },
-        { label: "Delivered", actived: false },
-    ])
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [openOrderDetailsModal, setOpenOrderDetailsModal] = useState<boolean>(false)
+    // const [TabStateOrder, setTabStateOrder] = useState<{ actived: boolean, label: string }[]>([
+    //     { label: "Pending", actived: true },
+    //     { label: "In Progress", actived: false },
+    //     { label: "Delivered", actived: false },
+    // ])
+    
+    // const [openOrderDetailsModal, setOpenOrderDetailsModal] = useState<boolean>(false)
     const session = useSession();
-    const [dataRequest, setDataRequest] = useState<OrderInterface[] | null>(null);
-    const [itemData, setItemData] = useState<OrderInterface | undefined>()
-    const onStateChange = (e: number) => {
-        setTabStateOrder([]);
-        let tab: { actived: boolean, label: string }[] = [];
-        TabStateOrder.map((item: { actived: boolean; label: string; }, index: number) => {
-            if (e == index) {
-                item.actived = true;
-            } else {
-                item.actived = false;
-            }
-            tab.push(item)
-        })
-        setTabStateOrder(tab)
-    }
+    // const [dataRequest, setDataRequest] = useState<OrderInterface[] | null>(null);
+    // const [itemData, setItemData] = useState<OrderInterface | undefined>()
+   
     useEffect(() => {
         const getDataAndStat = async () => {
             try {
@@ -44,7 +27,7 @@ export default function Page() {
                         const resAppointment = await fetch('/api/orders?token=' + session.data?.user?.accessToken);
                         if (resAppointment.ok) {
                             const data = await resAppointment.json();
-                            setDataRequest(data);
+                            // setDataRequest(data);
                             // setNoAppointment(true)
                         }
 
@@ -133,7 +116,7 @@ export default function Page() {
                                     <div className="flex items-center font-bold gap-4">
                                         <img src="./../../assets/images/e251d71c3423db0397a03934f2d1c3ee.png"
                                             className="rounded-full" width="48" height="48" />
-                                        Dave's Garage
+                                        Dave&apos;s Garage
                                     </div>
                                     <div className="text-sm">
                                         <p>Tradex Makepe, Douala Cameroon</p>
@@ -241,7 +224,7 @@ export default function Page() {
                                 <div className="flex  mt-4 gap-5 flex-col">
                                     <div className="flex justify-between ">
                                         <span>Include Tax</span>
-                                        <svg width="51" height="31" viewBox="0 0 51 31" fill="none"
+                                        {/* <svg width="51" height="31" viewBox="0 0 51 31" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <g clip-path="url(#clip0_2102_16763)">
                                                 <rect width="51" height="31" rx="15.5" fill="#FB7C37" />
@@ -291,7 +274,7 @@ export default function Page() {
                                                     <rect width="51" height="31" rx="15.5" fill="white" />
                                                 </clipPath>
                                             </defs>
-                                        </svg>
+                                        </svg> */}
                                     </div>
                                     <div className="flex items-center justify-between">
                                         <span>Subtotal</span>
@@ -329,9 +312,9 @@ export default function Page() {
                     </div>
                 </section>
             </div>
-            {
+            {/* {
                 (openOrderDetailsModal && itemData) ? <OrderDetailsModal item={itemData} onClose={setOpenOrderDetailsModal} /> : null
-            }
+            } */}
         </section>
 
     )

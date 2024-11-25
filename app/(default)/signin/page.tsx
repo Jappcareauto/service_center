@@ -45,7 +45,7 @@ export default function Page() {
             setTimeout(() => {
                 if (signInData?.error) {
                     // setIsLogging(false)
-                    setMessage("Password or username is incorrect or user does not exist!")
+                    setMessage("Le Mot de passe ou le nom d'utilisateur est incorrect ou utilisateur inexistant!")
                     console.log(signInData.error);
                 } else {
                     // router.refresh(

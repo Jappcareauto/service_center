@@ -1,19 +1,11 @@
 "use client"
-import { TITLE_WEBSITE } from "@/app/lib/constantes";
-import CalendarIcon from "@/components/Icones/calendarIcon";
+
 import GridIcon from "@/components/Icones/GridIcon";
 import InvoiceIcon from "@/components/Icones/InvoiceIcon";
 import ListIcon from "@/components/Icones/ListIcon";
 import InvoiceForm from "@/components/manager/invoice/invoice-form";
 import InvoiceItem from "@/components/manager/invoice/invoice-item";
 
-import { Button } from "@/components/UI/Button";
-// import { Button } from "@/components/UI/Button";
-// import CardinvoiceAdmin  from "@/components/UI/CardinvoiceAdmin";
-import CardBasic from "@/components/UI/CardBasic";
-import CardChartBar from "@/components/UI/CardChartBar";
-// import CardChartLine from "@/components/UI/CardChartLine";
-import CardListItem from "@/components/UI/CardListItem";
 import CardStat from "@/components/UI/CardStat";
 import FilterBy from "@/components/UI/FilterBy";
 import { InvoiceInterface } from "@/interfaces/InvoiceInterface";
@@ -21,23 +13,15 @@ import { InvoiceInterface } from "@/interfaces/InvoiceInterface";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-enum StateEnum {
-    PENDING = "Pending",
-    CONFIRMED = "Confirmed",
-    CANCELLED = "Cancelled",
-    COMPLETED = "Completed",
-    NO_SHOW = "No show",
-    COUNT = 4
-}
+
 export default function Page() {
     // const [state, setState] = useState<string>("")
     const session = useSession();
     const [isList, setIsList] = useState(true)
     const [noinvoice, setNoinvoice] = useState<boolean>(false)
-    const [itemData, setItemData] = useState<InvoiceInterface | undefined>()
+
     const [invoices, setinvoices] = useState<InvoiceInterface[] | null>(null);
-    const [openDetailinvoice, setOpenDetailinvoice] = useState<boolean>(false);
-    const [openCalendar, setOpenCalendar] = useState<boolean>(false);
+
     const [TabStateAppointement, setTabStateinvoice] = useState<{ actived: boolean, label: string }[]>([
         { label: "Pending", actived: false },
         { label: "Paid", actived: false },
@@ -112,9 +96,13 @@ export default function Page() {
                                             {
                                                 invoices ?
                                                     invoices.map((item, index) => (
-                                                        <InvoiceItem key={index} />
+                                                        <>
+                                                        {item.id}
+                                                        <InvoiceItem  key={index} />
+                                                        </>
                                                     )) : (
                                                         <div>
+                                                           
                                                             <div className=" animate-pulse min-h-10  bg-gray-200 h-full rounded-2xl dark:bg-gray-700 w-full mb-4"></div>
                                                             {/* <div className=" animate-pulse  min-h-52  bg-gray-200 h-full rounded-2xl dark:bg-gray-700 w-full mb-4"></div> */}
                                                         </div>
