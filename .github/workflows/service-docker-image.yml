@@ -24,13 +24,9 @@ jobs:
           if [ -f "${{ github.workspace }}/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
           elif [ -f "${{ github.workspace }}/package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
           else
             echo "Unable to determine package manager"
             exit 1
@@ -42,11 +38,10 @@ jobs:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
 
-      - name: Restore cache
+      - name: Restore Next.js cache
         uses: actions/cache@v4
         with:
-          path: |
-            .next/cache
+          path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
@@ -61,6 +56,7 @@ jobs:
           else
             npm run build
           fi
+
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/service-center:dev .
 
@@ -70,19 +66,34 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push Docker Image
+      - name: Push Docker Image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/service-center:dev
+
   deploy:
+    needs: build
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy to EC2
+      - name: Authorize EC2 Security Group for SSH
+        uses: mnavarrocarter/authorize-aws-security-group-ingress-action@v1.0.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'us-east-2'
+          aws-security-group-id: ${{ secrets.AWS_SSH_SECURITY_GROUP_ID }}
+          protocol: 'tcp'
+          port: 22
+
+      - name: Deploy Docker Image to EC2
         uses: appleboy/ssh-action@v0.1.2
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
+          port: 22
           debug: true
           script: |
-            docker pull jappcareautotech/service-center:dev
-            docker rm -f service-center
-            docker run -d --name service-center -p 3002:3000 jappcareautotech/service-center:dev
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker pull ${{ secrets.DOCKER_USERNAME }}/service-center:dev
+            docker rm -f service-center || true
+            docker run -d --name service-center -p 3002:3000 ${{ secrets.DOCKER_USERNAME }}/service-center:dev
