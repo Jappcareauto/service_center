@@ -81,6 +81,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
+          debug: true
           script: |
             docker pull jappcareautotech/service-center:dev
             docker rm -f service-center
