@@ -1,4 +1,4 @@
-name: Build and Deploy Service Center Docker Image
+name: Build and Deploy Service Center Docker Image to AWS EC2
 
 on:
   pull_request:
@@ -71,29 +71,14 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Authorize EC2 Security Group for SSH
-        uses: mnavarrocarter/authorize-aws-security-group-ingress-action@v1.0.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-2'
-          aws-security-group-id: ${{ secrets.AWS_SSH_SECURITY_GROUP_ID }}
-          protocol: 'tcp'
-          port: 22
+      - name: Pull Docker Image
+        run: sudo docker pull ${{ secrets.DOCKER_USERNAME }}/service-center:dev
 
-      - name: Deploy Docker Image to EC2
-        uses: appleboy/ssh-action@v0.1.2
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          port: 22
-          debug: true
-          script: |
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker pull ${{ secrets.DOCKER_USERNAME }}/service-center:dev
-            docker rm -f service-center || true
-            docker run -d --name service-center -p 3002:3000 ${{ secrets.DOCKER_USERNAME }}/service-center:dev
+      - name: Delete Old Docker Container
+        run: sudo docker rm -f service-center || true
+
+      - name: Run Docker Container
+        run: sudo docker run -d -p 3002:3000 --name service-center ${{ secrets.DOCKER_USERNAME }}/service-center:dev
