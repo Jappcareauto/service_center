@@ -26,8 +26,15 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source files and static assets
 COPY . .
 
-# Copy the renamed `dev.env` file to the container
-COPY dev.env dev.env
+# Accept environment variables as build arguments
+ARG API_URL
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+
+# Write environment variables to .env.production
+RUN echo "API_URL=$API_URL" >> .env.production
+RUN echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET" >> .env.production
+RUN echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> .env.production
 
 # Disable telemetry during the build process
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -58,7 +65,6 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/dev.env ./dev.env  # Copy the `dev.env` file
 
 # Use non-root user for security
 USER nextjs
