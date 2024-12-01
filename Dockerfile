@@ -26,8 +26,8 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy source files and static assets
 COPY . .
 
-# Copy the .env file to the container
-COPY .env .env
+# Copy the renamed `dev.env` file to the container
+COPY dev.env dev.env
 
 # Disable telemetry during the build process
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -58,7 +58,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/.env ./.env  # Ensure .env file is copied
+COPY --from=builder /app/dev.env ./dev.env  # Copy the `dev.env` file
 
 # Use non-root user for security
 USER nextjs
