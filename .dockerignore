@@ -2,11 +2,6 @@
 node_modules/
 npm-debug.log
 
-# Ignore local environment variable files (only keep those needed for production)
-#.env.local
-#.env.test
-#.env.production
-
 # Ignore build artifacts
 .next/
 out/
