@@ -6,7 +6,7 @@ export const POST = async (req: NextRequest) => {
     const { ownerId, latitude, name, longitude, description, category  } = body;
     const { searchParams } = new URL(req.url);
     const token = searchParams.get("token");
-    var data = JSON.stringify({
+    const data = JSON.stringify({
         "name": `${name}`,
         "ownerId": `${ownerId}`,
         "location": {
@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
     });
     console.log()
     try {   
-        var config = {
+        const config = {
             method: 'POST',
             url: process.env.API_URL + 'service-center',
             headers: {
@@ -42,44 +42,20 @@ export const POST = async (req: NextRequest) => {
 }
 
 export const GET = async (req: NextRequest) => {
-    // const body = await req.json();
-    // const { email, password } = body;
-
-    // var data = JSON.stringify({
-    //     "email": `${email}`,
-    //     "password": `${password}`
-    // });
+   
     const { searchParams } = new URL(req.url);
     const token = searchParams.get("token");
-    // const name = searchParams.get("name");
-    // const category = searchParams.get("category");
-    // const ownerId = searchParams.get("ownerId");
-    // const serviceCenterId = searchParams.get("serviceCenterId");
-    // const page = searchParams.get("page");
-    // const size = searchParams.get("size");
-    
+  
     try {
-        var config = {
+        const config = {
             method: 'get',
             url: process.env.API_URL + 'service-center',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
             },
-            // data: data
         };
 
-        // if (name ) {
-        //     config = {
-        //         method: 'get',
-        //         url: process.env.API_URL + 'service/list?pagination[page]=' + page + '&pagination[size]=' + size + '&name=' + name,
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Authorization': `Bearer ${token}`,
-        //         },
-        //         // data: data
-        //     };
-        // }
 
         const sender = await axios(config);
         console.log(sender.data)
