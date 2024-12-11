@@ -80,7 +80,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
     try {
         const config = {
             method: 'get',
-            url: process.env.API_URL + 'appointment/' + id,
+            url: 'https://api.jappcare.com/api/v1/' + 'appointment/' + id,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,

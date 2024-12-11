@@ -5,6 +5,7 @@ import { StateEnum } from "@/enums/statusEnum"
 import { AppointmentInterface } from "@/interfaces/AppointmentInterface"
 import Link from "next/link"
 import CalendarIcon from "../Icones/calendarIcon"
+import Image from "next/image"
 
 
 
@@ -27,39 +28,64 @@ const CardAppointmentAdmin = (props: { item: AppointmentInterface, onShow: (valu
                 cls = " border-stone-100 bg-stone-50 text-stone-500 border";
                 break;
             case StateEnum.PENDING:
-                cls = " border-yellow-100 bg-yellow-50 text-yellow-500 border";
+                cls = "  bg-primary-light text-primary";
                 break;
             default:
-                cls = " border-stone-100 bg-stone-50 text-stone-500 border";
+                cls = " bg-primary-light text-primary";
                 break;
         }
         return cls;
     }
+    const EnumtoString = (type: string) => {
+        switch (type) {
+            case "PENDING":
+                return "In Progress"
+            case "CONFIRMED":
+                return "Completed"
+            case "NO_SHOW":
+                return "Not Started"
+            default:
+                return "Not Started"
+                break;
+        }
+    }
+    const LocationToString = (type: string) => {
+
+        switch (type) {
+            case "HOME":
+                return "At Home";
+            default:
+                return type
+        }
+    }
     return (
-        <div className="p-4 px-6   border rounded-xl"
+        <div className="p-4 px-6  my-4 border rounded-xl"
         >
             <div className="flex items-center justify-between">
                 <div className="flex justify-start gap-2">
                     <div className="flex items-center gap-4 py-3 pr-3 rounded-2xl">
-                      
-                        <span className="text-xs"></span>
+                        <div className="flex gap-4 items-center">
+                            <Image width={48} height={48} alt="Default image" src={"/images/default-image-manager.png"} />
+                            <span className="text-[14px] text-normal" >James Mann</span>
+                        </div>
+
                     </div>
                 </div>
                 <div className="appointement-statut ">
                     <div
-                        className={"p-2  text-xs text-center rounded-full  px-4 " + selectState(props.item.status)}>{props.item.status}</div>
+                        className={"text-sm rounded-3xl px-4 h-[40px] w-fit flex gap-2 items-center justify-center  " + selectState(props.item.status)}>{EnumtoString(props.item.status)}</div>
                 </div>
             </div>
             <div className="flex items-end justify-between">
                 <div className="">
                     <Link href={"/service_center/appointments" + props.item.id}
-                        className="text-lg font-medium text-orange-500 hover:text-orange-400 cursor-pointer">
+                        className="text-lg font-medium text-primary ">
                         {props.item.service?.title} appointement</Link>
-                    <h4 className=" font-medium text-sm">{props.item.vehicle?.name}</h4>
+                    <h4 className=" font-medium text-sm">{"Porsche Taycan Turbo S"}</h4>
                     <div className="flex gap-2 mt-2 items-center lg:gap-6 ">
                         <div className="flex gap-1 items-center showCalendar">
-                            <CalendarIcon fill="#797676" stroke="#797676"></CalendarIcon>
-                            <span className="text-xs">{props.item.date}</span>
+                            <CalendarIcon fill="#fff" stroke="#797676"></CalendarIcon>
+                            <span className="text-[14px] text-placeholder">{new Date(props.item.date).toDateString()}</span>
                         </div>
                         <div className="flex items-center gap-1">
                             <svg width="20" className="hidden md:block" height="20"
@@ -72,12 +98,12 @@ const CardAppointmentAdmin = (props: { item: AppointmentInterface, onShow: (valu
                                     d="M15.4999 11C15.4999 12.933 13.9329 14.5 11.9999 14.5C10.0669 14.5 8.49991 12.933 8.49991 11C8.49991 9.067 10.0669 7.5 11.9999 7.5C13.9329 7.5 15.4999 9.067 15.4999 11Z"
                                     stroke="#797676" strokeWidth="1.5" />
                             </svg>
-                            <span className="text-xs">{props.item.locationType}</span>
+                            <span className="text-[14px] text-placeholder">{LocationToString(props.item.locationType)}</span>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <Button typeButton={"outline"} onClick={() => props.onShow(true)} className="rounded-full px-4" label={"See Details"}></Button>
+                    <Button typeButton={"outline"} onClick={() => props.onShow(true)} className="rounded-full h-[40px] px-4" label={"See Details"}></Button>
                 </div>
             </div>
         </div>

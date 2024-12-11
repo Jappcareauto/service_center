@@ -12,31 +12,23 @@ import CardListItem from "@/components/UI/CardListItem";
 import CardStat from "@/components/UI/CardStat";
 import FilterBy from "@/components/UI/FilterBy";
 import { AppointmentInterface } from "@/interfaces/AppointmentInterface";
+import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-enum StateEnum {
-    PENDING = "Pending",
-    CONFIRMED = "Confirmed",
-    CANCELLED = "Cancelled",
-    COMPLETED = "Completed",
-    NO_SHOW = "No show",
-    COUNT = 4
-}
+
 export default function Page() {
     const session = useSession();
     const [isList, setIsList] = useState(false)
     const [noAppointment, setNoAppointment] = useState<boolean>(false)
     const [itemData, setItemData] = useState<AppointmentInterface | undefined>()
-    const [appointments, setAppointments] = useState<AppointmentInterface[] | null>(null);
+    const [appointments, setAppointments] = useState<AppointmentInterface[]>([]);
     const [openDetailAppointment, setOpenDetailAppointment] = useState<boolean>(false);
     const [openCalendar, setOpenCalendar] = useState<boolean>(false);
     const [TabStateAppointement, setTabStateAppointment] = useState<{ actived: boolean, label: string }[]>([
-        { label: StateEnum.PENDING.toString(), actived: false },
-        { label: StateEnum.CONFIRMED.toString(), actived: false },
-        { label: StateEnum.CANCELLED.toString(), actived: false },
-        { label: StateEnum.COMPLETED.toString(), actived: false },
-        { label: StateEnum.NO_SHOW.toString(), actived: false }
+        { label: "Not Started", actived: false },
+        { label: "In Progress", actived: false },
+        { label: "Completed", actived: false },
     ])
     useEffect(() => {
         const getDataAndStat = async () => {
@@ -62,6 +54,28 @@ export default function Page() {
         }
         getDataAndStat();
     }, [session, noAppointment])
+    const getDataAndStat = async () => {
+        try {
+            if (session.data) {
+                if (session.data?.user) {
+                    const resAppointment = await fetch('/api/appointments/list?token=' + session.data?.user?.accessToken);
+                    if (resAppointment.ok) {
+                        const data = await resAppointment.json();
+                        setAppointments(data.data);
+                        setNoAppointment(true)
+                    } else {
+                        setNoAppointment(false)
+                    }
+                    if (noAppointment) {
+                        console.log(1)
+                    }
+                }
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    getDataAndStat();
     const onStateChange = (e: number) => {
         setTabStateAppointment([]);
         const tab: { actived: boolean, label: string }[] = [];
@@ -75,13 +89,29 @@ export default function Page() {
         })
         setTabStateAppointment(tab)
     }
+    const handleMarkTask = async (id: string) => {
+        try {
+            const config = {
+                method: 'get',
+                url: process.env.apiUrl + 'appointment/' + id + '/status',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session.data?.user?.accessToken}`,
+                },
+            };
+            const sender = await axios(config);
+            console.log(sender.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <section className="w-full relative container px-4 flex flex-row bg-white">
             <div className="w-full" >
                 {
                     !isList ? (
                         <div className="grid grid-cols-4 gap-4">
-                            <CardBasic color={"secondary"} icon={CalendarIcon({ stroke: "orange", fill: "orange" })} subTitle={"In progress"} title={"Appointments"} stat={"0"} pourcentage={0} sup={false} ></CardBasic>
+                            <CardBasic color={"secondary"} icon={CalendarIcon({ stroke: "#FB7C37", fill: "#FB7C37" })} subTitle={"In progress"} title={"Appointments"} stat={"0"}  ></CardBasic>
                             <CardChartBar subTitle={"This week"} maxWidth={"max-w-96"} data={[0, 0, 0, 0, 0, 0, 0]} height={""}></CardChartBar>
                         </div>)
                         : null
@@ -134,39 +164,14 @@ export default function Page() {
                                             <h2 className="my-4 text-lg font-bold">Up Next</h2>
                                             <div className="flex flex-col gap-2">
                                                 <div className='mt-4'>
-                                                    {
-                                                        appointments ?
-                                                            appointments.map((item) => (
-                                                                <CardAppointmentAdmin key={item.id}
-                                                                    item={item} onShow={(e) => { setOpenDetailAppointment(e); setItemData(item) }}></CardAppointmentAdmin>
-                                                            )) : (
-                                                                <div>
-                                                                    <div className=" animate-pulse min-h-52  bg-gray-200 h-full rounded-2xl dark:bg-gray-700 w-full mb-4"></div>
-                                                                    {/* <div className=" animate-pulse  min-h-52  bg-gray-200 h-full rounded-2xl dark:bg-gray-700 w-full mb-4"></div> */}
-
-                                                                </div>
-                                                            )
-                                                    }
+                                                    {appointments.map((item) => (
+                                                        <CardAppointmentAdmin key={item.id}
+                                                            item={item} onShow={(e) => { setOpenDetailAppointment(e); setItemData(item) }}></CardAppointmentAdmin>
+                                                    ))}
                                                 </div>
                                             </div>
                                             <h2 className="my-4 text-lg font-bold">Later</h2>
-                                            <div className="flex flex-col gap-2">
-                                                <div className='mt-4'>
-                                                    {
-                                                        appointments ?
-                                                            appointments.map((item) => (
-                                                                <CardAppointmentAdmin key={item.id}
-                                                                    item={item} onShow={setOpenDetailAppointment}></CardAppointmentAdmin>
-                                                            )) : (
-                                                                <div>
-                                                                    <div className=" animate-pulse min-h-52  bg-gray-200 h-full rounded-2xl dark:bg-gray-700 w-full mb-4"></div>
-                                                                    <div className=" animate-pulse  min-h-52  bg-gray-200 h-full rounded-2xl dark:bg-gray-700 w-full mb-4"></div>
 
-                                                                </div>
-                                                            )
-                                                    }
-                                                </div>
-                                            </div>
                                         </div>
                                     </>
                                 )
@@ -178,11 +183,13 @@ export default function Page() {
                 </div>
             </div>
             {
-                (openDetailAppointment && itemData) ? <AppointmentDetailModal onClose={setOpenDetailAppointment} item={itemData} /> : null
+                (openDetailAppointment && itemData) ? <AppointmentDetailModal markTask={handleMarkTask} onClose={setOpenDetailAppointment} item={itemData} /> : null
             }
             {
                 (openCalendar) ? <AppointmentCalendarModal appointmentList={appointments} onClose={setOpenCalendar} /> : null
             }
+           
+            
         </section>
     )
 }

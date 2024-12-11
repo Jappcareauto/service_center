@@ -4,7 +4,7 @@ const HeaderManager = () => {
     const [openNotificationModal, setOpenNotificationModal] = useState<boolean>(false)
     return (
         <>
-            <div className="flex justify-end z-30 absolute items-center w-full h-20  container">
+            <div className="flex justify-end z-30 container absolute top-[20px] right-[88px] items-center   ">
                 <button onClick={() => setOpenNotificationModal(true)} type="button" className="text-gray-400 relative bg-transparent hover:bg-orange-200/50 hover:text-gray-900 rounded-lg text-sm p-2 inline-flex justify-center items-center " id="notificationButton">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                         xmlns="http://www.w3.org/2000/svg">

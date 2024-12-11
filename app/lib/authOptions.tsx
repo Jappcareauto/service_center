@@ -21,11 +21,12 @@ export const authOptions: NextAuthOptions = {
         const data = {
           email: credentials?.username,
           password: credentials?.password,
+          extend: true
         }
   
         const config = {
           method: 'post',
-          url: process.env.API_URL + 'auth/login',
+          url: 'https://api.jappcare.com/api/v1/' + 'auth/login',
           headers: {
             'Content-Type': 'application/json'
           },
