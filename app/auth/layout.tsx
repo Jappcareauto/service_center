@@ -1,7 +1,7 @@
-import AuthentificationImage from "@/public/images/authentification.svg"
 import { metadata } from "@/app/layout";
 import Image from 'next/image'
-metadata.title = "Authentification"
+metadata.title = "Jappcare autocare - Auth"
+import AuthentificationImage from "@/public/images/Group633106.png"
 
 export default function AdminLayout({
     children,
@@ -9,13 +9,13 @@ export default function AdminLayout({
     children: React.ReactNode
 }) {
     return (
-            <div className="grid text-stone-900 min-h-screen md:grid-cols-2 bg-orange-50" style={{ backgroundColor: '#FFEDE6' }}>
-                <div className="flex items-center justify-center " style={{ backgroundColor: "#FB7C37" }}>
-                    <Image width={500} height={500} src={AuthentificationImage.src} alt="" />
-                </div>
-                <div className="fixed top-0 flex items-center justify-center w-full h-full p-3 md:p-0 md:relative">
-                    {children}
-                </div>
-            </div>  
+        <div className="grid  min-h-screen lg:grid-cols-2 bg-primary-light" >
+        <div className="bg-primary flex justify-center items-center lg:block">
+            <Image priority width={402.87} height={573.76} className='lg:absolute xl:left-[177px] lg:top-[214.37px] lg:left-[90px]' src={AuthentificationImage.src} alt="" />
+        </div>
+        <div className="fixed top-0 xl:px-[75px]   2xl:px-[150px] py-[180px] w-full h-full p-3  lg:relative">
+                {children}
+            </div>
+        </div>
     )
 }

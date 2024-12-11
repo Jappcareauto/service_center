@@ -1,80 +1,62 @@
 "use client";
 
 import { FormEvent, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import React from 'react';
 import { Input } from '@/components/UI/Input';
-import { Select } from '@/components/UI/Select';
 import { Button } from '@/components/UI/Button';
-import Link from 'next/link';
+import Image from 'next/image'
+import EyeOpenImage from "@/public/images/eye.svg"
+import EyeCloseImage from "@/public/images/eye-close.svg"
 
 export default function Page() {
 
-    const [email, setEmail] = useState<string>("");
-    const [code, setCode] = useState<string>("");
-    const [phone, setPhone] = useState<string>("");
-    const [loginWithEmail, setLoginWithEmail] = useState(true);
+    const [currentPassword, setCurrentPassword] = useState<string>("");
+    const [newPassword, setNewPassword] = useState<string>("");
+    const [openEye, setOpenEye] = useState<boolean>(false);
+    const [openEyeNewPassword, setOpenEyeNewPassword] = useState<boolean>(false);
     const [message, setMessage] = useState<string>("");
-    const router = useRouter();
 
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault()
-        if (loginWithEmail) {
-            if (email != "") {
-                router.push("/auth/code-forgot-password?email=" + email)
-            } else {
-                setMessage("Field email is empty")
-            }
-        } else {
-            if (phone != "") {
-                router.push("/auth/code-forgot-password?phone=" + phone)
-            } else {
-                setMessage("Field phone is empty")
-            }
-        }
+       
     }
 
     return (
 
-        <form className="w-full p-10 m-auto bg-white rounded-md shadow-xl " onSubmit={onSubmit} style={{ maxWidth: "456px" }}>
+        <form className="w-full p-10 m-auto bg-white px-[48px] py-[64px] rounded-3xl flex justify-between flex-col" onSubmit={onSubmit} style={{ maxWidth: "456px", height: "533px" }}>
             <div className="space-y-12">
                 <div className="pb-12 ">
-                    <h2 className="text-2xl leading-7 text-gray-900">Forgot Password</h2>
-                    <p className="mt-2 text-xs sm:text-sm sm:mt-0">Please enter your <span id="resetText"></span> to request a password
-                        reset.</p>
+                    <h2 className="text-[28px] leading-7 text-gray-900 mb-8">Change Password</h2>
                     <h6 className='text-xs my-2 italic text-red-400 mb-4 font-medium text-left'>{message}</h6>
-                    <div className="grid grid-cols-1 gap-4 py-4 mt-4">
-                        {
-                            loginWithEmail ? (
-                                <div className="block" id="email-to-phone">
-                                    <label htmlFor="email" className="text-xs sm:text-sm">Email</label>
-                                    <div className="mt-1">
-                                        <Input type="   " value={email} onChange={e => { setEmail(e.target.value); setMessage("") }} placeholder="Email" name="email" id="email"></Input>
-
-                                    </div>
-                                </div>
-                            ) : (
-                                <div >
-                                    <label htmlFor="phone" className="text-xs sm:text-sm">Phone</label>
-                                    <div className="flex gap-2 mt-1">
-                                        <div className="basis-1/4">
-                                            <Select value={code} onChange={e => { setCode(e.target.value); setMessage("") }} options={[{ value: "+237", label: "+237" }]}></Select>
-                                        </div>
-                                        <div className="w-full basis-3/4">
-                                            <Input value={phone} onChange={e => { setPhone(e.target.value); setMessage("") }} type="tel" placeholder="Phone" name="phone" id="phone"></Input>
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        }
-
-
+                    <div className="grid grid-cols-1 gap-6 py-4 mt-4">
+                        <div className="block ">
+                            <label htmlFor="password" className="text-[14px] font-normal text-normal">Current Password</label>
+                            <div className="relative mt-1">
+                                <Input value={currentPassword} onChange={e => { setCurrentPassword(e.target.value); setMessage("") }} placeholder="Password" className='mt-1' name="password" id="password" type={openEye ? "text" : "password"} ></Input>
+                                <button type="button" onClick={() => { setOpenEye(!openEye) }} id="passwordButton" name="showpasswordButton"
+                                    className="absolute -translate-y-1/2 top-1/2 right-2 opacity-30">
+                                    <Image src={EyeOpenImage.src} width={24} height={24} className={openEye ? 'block' : 'hidden'} alt='eye-open'></Image>
+                                    <Image src={EyeCloseImage.src} width={24} height={24} className={!openEye ? 'block' : 'hidden'} alt='eye-close'></Image>
+                                </button>
+                            </div>
+                        </div>
+                        <div className="block ">
+                            <label htmlFor="password" className="text-[14px] font-normal text-normal">New Password</label>
+                            <div className="relative mt-1">
+                                <Input value={newPassword} onChange={e => { setNewPassword(e.target.value); setMessage("") }} placeholder="Password" className='mt-1' name="password" id="password" type={openEyeNewPassword ? "text" : "password"} ></Input>
+                                <button type="button" onClick={() => { setOpenEyeNewPassword(!openEyeNewPassword) }} id="passwordButton" name="showpasswordButton"
+                                    className="absolute -translate-y-1/2 top-1/2 right-2 opacity-30">
+                                    <Image src={EyeOpenImage.src} width={24} height={24} className={openEyeNewPassword ? 'block' : 'hidden'} alt='eye-open'></Image>
+                                    <Image src={EyeCloseImage.src} width={24} height={24} className={!openEyeNewPassword ? 'block' : 'hidden'} alt='eye-close'></Image>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <Button onClick={() => setLoginWithEmail(!loginWithEmail)} label={loginWithEmail ? "Retrieve with my phone number" : "Retrieve with email"} typeButton='clear' type='button'></Button>
+        
             <Button label="Submit" typeButton='dark' type='submit'></Button>
-            <Link href={"/auth/signin"} className='text-orange-500' >Back</Link>
+           
         </form >
     )
 }

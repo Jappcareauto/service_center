@@ -55,7 +55,7 @@ const CardChartBar = (props: { subTitle: string, maxWidth: string, height: strin
                             display: true,
                             scaleLabel: {
                                 display: true,
-                                labelString: "Month",
+                                labelString: "",
                             },
                             gridLines: {
                                 borderDash: [2],
@@ -99,10 +99,10 @@ const CardChartBar = (props: { subTitle: string, maxWidth: string, height: strin
     }, [props.data])
     return (
         <>
-            <div className={"flex flex-col  min-h-52 w-full justify-between text  h-full border border-stone-200 max-md:pb-4 max-md:min-h-24 rounded-3xl  p-4  px-4 " + props.maxWidth}>
+            <div className={"flex flex-col border border-neutral   w-full justify-between max-w-[360px] pt-[16px] px-[24px] pb-[24px] max-md:min-h-24 rounded-[20px]  h-[180px]  " + props.maxWidth}>
                 <div className="rounded-t mb-0 bg-transparent">
                     <div className="flex items-center justify-end">
-                        <span className="p-2 px-3 text-sm  rounded-full bg-stone-100 ">{props.subTitle}
+                        <span className="p-2 px-3 text-sm text-neutral-light rounded-full bg-neutral">{props.subTitle}
                         </span>
                     </div>
                 </div>

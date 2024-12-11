@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
     try {
         const config = {
             method: 'post',
-            url:  process.env.API_URL + 'auth/verify/'+ code,
+            url:  "https://api.jappcare.com/api/v1/" + 'auth/verify/'+ code,
             headers: {
                 'Content-Type': 'application/json'
             },
