@@ -13,7 +13,6 @@ export default function RootLayout({
             <div className="w-full  " style={{ maxWidth: 800, width: "100%" }}>
                 {children}
             </div>
-
         </div>
     );
 }

@@ -8,7 +8,7 @@ export const GET = async (req: NextRequest) => {
     try {
         const config = {
             method: 'get',
-            url:  process.env.API_URL + 'appointment/list',
+            url:  'https://api.jappcare.com/api/v1/' + 'appointment/list',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,

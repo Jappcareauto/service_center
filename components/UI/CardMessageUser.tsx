@@ -5,7 +5,7 @@ const CardMessageUser = (props: { chatRoomId: string, image: string, userName: s
     return (
         <Link href={"/service_center/chat/" + props.chatRoomId}>
             <div
-                className="flex max-w-96 h-16 p-2 pr-4 justify-between shadow-md border border-stone-100 items-start my-4 w-full gap-4 rounded-full card-profile cursor-pointer hover:bg-stone-50 transition-all">
+                className="flex max-w-96 h-16 p-2 pr-4 justify-between  items-start my-4 w-full gap-4 rounded-full card-profile cursor-pointer hover:bg-stone-50 transition-all">
                 <div className="flex gap-2 items-center">
                     <Image width={48} height={48} className="rounded-full" src={props.image} alt={""}  ></Image>
                     <div>

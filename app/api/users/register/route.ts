@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
     try {
         const config = {
             method: 'post',
-            url: process.env.API_URL + 'auth/register',
+            url: "https://api.jappcare.com/api/v1/" + 'auth/register',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -31,8 +31,9 @@ export const POST = async (req: NextRequest) => {
             JSON.stringify(sender.data), { status: 200 }
         )
     } catch (error) {
+        console.log(error)
         return new NextResponse(
-            JSON.stringify(error), { status: 200 }
+            JSON.stringify(error), { status: 500 }
         )
     }
 

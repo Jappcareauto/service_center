@@ -227,8 +227,7 @@ export default function Page() {
                                 subTitle={item.subTitle}
                                 title={item.title}
                                 stat={item.stat}
-                                pourcentage={item.pourcentage}
-                                sup={item.sup}>
+                              >
                             </CardBasic>
                         ))
                     }

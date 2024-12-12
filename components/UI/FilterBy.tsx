@@ -4,7 +4,7 @@ const FilterBy = (props: { filterTab: { actived: boolean, label: string }[], onE
         <div className="flex gap-2 items-start ">
             {
                 props.filterTab.map((item, index) => (
-                    <Button key={item.label} typeButton={item.actived ? 'primary' : 'gray'} onClick={() => props.onEvent(index)} className="text-sm rounded-3xl px-3 w-fit" label={item.label}></Button>
+                    <Button key={item.label} typeButton={item.actived ? 'primary' : 'gray'} onClick={() => props.onEvent(index)} className="text-sm rounded-3xl px-4 h-[40px] w-fit" label={item.label}></Button>
                 ))
             }
         </div>
