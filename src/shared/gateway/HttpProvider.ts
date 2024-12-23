@@ -108,7 +108,6 @@ export abstract class HttpProvider {
     url: string,
     data: FormData
   }) {
-    const token = await this.token();
     let response: any;
     try {
       response = await this.postFile(url, data);

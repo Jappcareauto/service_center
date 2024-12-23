@@ -1,9 +1,9 @@
 import { AppStore } from "@/app/store";
 import { RouteObject } from "react-router-dom";
+import ChangePasswordView from "../../ui/change-passwod/ChangePasswordView";
 import ForgotPasswordView from "../../ui/forgot-password/ForgotPasswordView";
 import LoginView from "../../ui/login/LoginView";
 import VerifyEmailView from "../../ui/verify-email/VerifyEmailView";
-import ChangePasswordView from "../../ui/change-passwod/ChangePasswordView";
 
 export const AuthRoutes = {
   login: '/login',
@@ -13,7 +13,7 @@ export const AuthRoutes = {
 }
 
 
-export const AuthRouter = (store: AppStore): RouteObject[] => {
+export const AuthRouter = (_: AppStore): RouteObject[] => {
   return [
     {
       path: AuthRoutes.login,

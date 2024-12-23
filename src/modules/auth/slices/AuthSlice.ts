@@ -19,7 +19,7 @@ export const AuthSlice = createSlice({
       state.loading = LoadingState.pending;
     }).addCase(LoginAsync.rejected, (state) => {
       state.loading = LoadingState.failed;
-    }).addCase(LoginAsync.fulfilled, (state, { payload }) => {
+    }).addCase(LoginAsync.fulfilled, (state) => {
       state.loading = LoadingState.success;
     })
   }

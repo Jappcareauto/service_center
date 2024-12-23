@@ -22,7 +22,7 @@ const InputPasseord: React.FC<OwnProps> = ({
         }
         {...props}
       />
-      <EyeIcon className="absolute top-11 right-4" />
+      <EyeIcon onClick={() => setVisible(!visible)} className="absolute top-11 right-4" />
     </div>
   )
 }

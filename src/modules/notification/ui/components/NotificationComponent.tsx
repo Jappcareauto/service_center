@@ -1,5 +1,4 @@
 import Notification2Icon from '@/shared/generics/icons/Notification2Icon'
-import React from 'react'
 
 const NotificationComponent = () => {
   return (
