@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 const DateRangeComponent = () => {
 
-  const [currentLabel, setCurrentLabel] = useState('This Week');
+  const [currentLabel] = useState('This Week');
 
   return (
     <div className="mt-4">
