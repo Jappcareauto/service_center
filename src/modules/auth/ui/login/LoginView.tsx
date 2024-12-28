@@ -2,12 +2,14 @@ import PrimaryButton from "@/shared/generics/buttons/PrimaryButton"
 import Input from "@/shared/generics/inputs/Input"
 import InputPasseord from "@/shared/generics/inputs/InputPasseord"
 import UnAuthenticatePageLayout from "@/shared/generics/layouts/UnAuthenticatePageLayout"
+import Loader from "@/shared/generics/loader/Loader"
 import { useLogin } from "./useLogin"
 
 const LoginView = () => {
   const {
     form, onSubmit,
-    handleGoToForgotPassword
+    handleGoToForgotPassword,
+    loading,
   } = useLogin();
   const {
     handleSubmit, register,
@@ -42,9 +44,14 @@ const LoginView = () => {
           </button>
         </div>
         <PrimaryButton
-          className="w-full mt-14"
+          disabled={loading}
+          className="w-full mt-14 flex items-center justify-center"
         >
-          Sign In
+          {
+            loading ?
+              <Loader /> :
+              'Sign In'
+          }
         </PrimaryButton>
       </form>
     </UnAuthenticatePageLayout>

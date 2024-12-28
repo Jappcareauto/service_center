@@ -6,9 +6,11 @@ import { twMerge } from 'tailwind-merge';
 interface OwnProps {
   labels: string[];
   disableDisposition?: boolean;
+  filterClassName?: (isSelected: boolean) => string;
 }
 const FilterBar: React.FC<OwnProps> = ({
   labels, disableDisposition,
+  filterClassName,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isList, setIsList] = useState(false);
@@ -25,7 +27,8 @@ const FilterBar: React.FC<OwnProps> = ({
               className={
                 twMerge(
                   'rounded-full h-10 px-5 flex items-center justify-center cursor-pointer',
-                  isSelected ? "bg-primary text-white" : "bg-primaryAccent text-black"
+                  isSelected ? "bg-primary text-white" : "bg-primaryAccent text-black",
+                  filterClassName?.(isSelected),
                 )
               }>
               {label}

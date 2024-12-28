@@ -4,13 +4,19 @@ import { twMerge } from 'tailwind-merge';
 
 interface OwnProps {
   className?: string;
+  parentClassName?: string;
   name?: string;
 }
 
-const Avatar: React.FC<OwnProps> = ({ className, name }) => {
+const Avatar: React.FC<OwnProps> = ({ className, name, parentClassName }) => {
   return (
     <div className='flex items-center w-full gap-x-4 font-normal'>
-      <div className='rounded-full border-[2px] border-primary p-[1.5px]'>
+      <div className={
+        twMerge(
+          'rounded-full border-[2px] border-primary p-[1.5px]',
+          parentClassName,
+        )
+      }>
         <img src={IMAGES.avatar} alt="" className={
           twMerge(
             'w-12 h-12',
@@ -18,7 +24,7 @@ const Avatar: React.FC<OwnProps> = ({ className, name }) => {
           )
         } />
       </div>
-      <p>{name ?? 'Dave’s Garage'}</p>
+      {!!name && <p>{name}</p>}
     </div>
   )
 }

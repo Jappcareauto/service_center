@@ -41,7 +41,7 @@ const menuItems = (): MenuItem[] => [
   {
     title: 'Statistics',
     icon: <StatisticIcon />,
-    route: '#',
+    route: DashboardRoutes.statistics,
   },
   {
     title: 'Invoices',

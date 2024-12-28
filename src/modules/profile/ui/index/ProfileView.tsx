@@ -6,6 +6,10 @@ import Home2Icon from "@/shared/generics/menu/icons/Home2Icon"
 import LocationIcon from "@/shared/generics/menu/icons/LocationIcon"
 import OpenIcon from "@/shared/generics/menu/icons/OpenIcon"
 import StarIcon from "@/shared/generics/menu/icons/StarIcon"
+import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey"
+import { ModalEvents } from "@/shared/helpers/hooks/useModal"
+import SpecializedServicesComponent from "../components/SpecializedServicesComponent"
+import EditProfileView from "../edit/EditProfileView"
 
 const ProfileView = () => {
   return (
@@ -35,6 +39,7 @@ const ProfileView = () => {
             </div>
             <div className="flex items-center gap-x-4">
               <PrimaryButton
+                onClick={() => ModalEvents.open(ModalEventKey.EDIT_PROFILE)}
                 className="border border-black h-10 rounded-full font-normal bg-transparent text-black text-sm"
               >
                 Edit Profile
@@ -74,15 +79,17 @@ const ProfileView = () => {
           <div className="flex flex-row overflow-x-auto w-full">
             {
               [
-                IMAGES.car2,
-                IMAGES.car2,
-                IMAGES.car2,
-                IMAGES.car2,
-              ].map((image, index) => {
-                return <img
-                  className="w-[150px] h-[150px] rounded-[20px] mr-3"
-                  key={'image-' + index}
-                  src={image} alt="" />
+                { img: IMAGES.s1, title: "General Maintenance" },
+                { img: IMAGES.s2, title: "Body Shop" },
+                { img: IMAGES.s3, title: "Deep Cleaning" },
+                { img: IMAGES.s4, title: "Paint Shop" },
+              ].map((s, index) => {
+                return <SpecializedServicesComponent
+                  className=""
+                  key={'service-' + index}
+                  image={s.img}
+                  title={s.title}
+                />
               })
             }
           </div>
@@ -103,6 +110,7 @@ const ProfileView = () => {
           </div>
         </div>
       </div>
+      <EditProfileView />
     </div>
   )
 }

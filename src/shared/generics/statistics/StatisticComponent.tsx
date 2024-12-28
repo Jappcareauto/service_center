@@ -4,6 +4,7 @@ interface OwnProps {
   icon: React.ReactElement,
   value: string;
   title: string;
+  titleClassName?: string;
   badgeTitle: string;
   second?: boolean;
 }
@@ -11,7 +12,7 @@ interface OwnProps {
 const StatisticComponent: React.FC<OwnProps> = ({
   icon, value,
   title, badgeTitle,
-  second,
+  second, titleClassName,
 }) => {
   return (
     <div className={
@@ -36,7 +37,8 @@ const StatisticComponent: React.FC<OwnProps> = ({
       )}>
         <h1 className="font-bold text-3xl">{value}</h1>
         <p className={twMerge(
-          second ? "text-grey4" : ""
+          second ? "text-grey4" : "",
+          titleClassName,
         )}>{title}</p>
       </div>
     </div>

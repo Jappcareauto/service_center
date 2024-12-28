@@ -10,14 +10,16 @@ const DashboardLayout = () => {
   return (
     <div className="grid grid-cols-[270px_auto]">
       <SideMenu />
-      <div className="px-[58px]">
-        <div className="h-[72px] w-full flex items-center justify-end gap-x-4">
+      <div className="">
+        <div className="h-[72px] w-full flex items-center justify-end gap-x-4 px-[58px]">
           <NotificationIcon
             onClick={() => ModalEvents.open(ModalEventKey.NOTIFICATION)}
             className="cursor-pointer text-grey2" />
           <SettingIcon className="cursor-pointer text-grey2" />
         </div>
-        <Outlet />
+        <div className="overflow-y-auto h-[calc(100vh-72px)] px-[58px]">
+          <Outlet />
+        </div>
       </div>
       <NotificationView />
     </div>
