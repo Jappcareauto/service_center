@@ -68,7 +68,7 @@ const LineChartComponent2 = () => {
           display: false,
         },
         ticks: {
-          callback: (value: any) => ``,
+          callback: () => ``,
         },
       },
     },
