@@ -3,6 +3,8 @@ import { AppStore } from "@/app/store";
 import { AppointmentRouter } from "@/modules/appointment/infra/routes/Router";
 import { AuthRoutes } from "@/modules/auth/infra/routes/Router";
 import { AuthSelectors } from "@/modules/auth/slices/AuthSelectors";
+import ChatView from "@/modules/chat/ui/index/ChatView";
+import ChatMessagesView from "@/modules/chat/ui/messages/ChatMessagesView";
 import EmergencyView from "@/modules/emergency/ui/index/EmergencyView";
 import ProfileView from "@/modules/profile/ui/index/ProfileView";
 import StatisticsView from "@/modules/statistics/ui/index/StatisticsView";
@@ -16,6 +18,8 @@ export const DashboardRoutes = {
   emergency: '/emergency-assistance',
   profile: '/profile',
   statistics: '/statistics',
+  chat: '/chat',
+  chatDetails: '/chat/:id',
 }
 
 
@@ -44,6 +48,16 @@ export const DashboardRouter = (store: AppStore): RouteObject[] => {
         {
           path: DashboardRoutes.statistics,
           element: <StatisticsView />
+        },
+        {
+          path: DashboardRoutes.chat,
+          element: <ChatView />,
+          children: [
+            {
+              path: DashboardRoutes.chatDetails,
+              element: <ChatMessagesView />
+            }
+          ]
         },
         {
           path: '',

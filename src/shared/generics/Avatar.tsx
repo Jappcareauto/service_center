@@ -6,20 +6,26 @@ interface OwnProps {
   className?: string;
   parentClassName?: string;
   name?: string;
+  disabledBorder?: boolean;
+  url?: string;
 }
 
-const Avatar: React.FC<OwnProps> = ({ className, name, parentClassName }) => {
+const Avatar: React.FC<OwnProps> = ({ className, name, parentClassName, disabledBorder, url }) => {
   return (
-    <div className='flex items-center w-full gap-x-4 font-normal'>
+    <div className='flex items-center gap-x-4 font-normal'>
       <div className={
         twMerge(
           'rounded-full border-[2px] border-primary p-[1.5px]',
+          disabledBorder ? 'border-none p-0' : '',
           parentClassName,
         )
       }>
-        <img src={IMAGES.avatar} alt="" className={
+        <img
+          src={url ?? IMAGES.avatar}
+          alt=""
+          className={
           twMerge(
-            'w-12 h-12',
+            'w-12 h-12 rounded-full',
             className,
           )
         } />

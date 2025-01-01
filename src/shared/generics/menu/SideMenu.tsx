@@ -36,7 +36,7 @@ const menuItems = (): MenuItem[] => [
   {
     title: 'Chats',
     icon: <ChatIcon />,
-    route: '#',
+    route: DashboardRoutes.chat,
   },
   {
     title: 'Statistics',

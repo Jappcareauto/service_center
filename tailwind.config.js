@@ -23,6 +23,8 @@ export default {
         background: "#FFF8F6",
         green: '#006D35',
         greenAccent: '#C4FFCD',
+        red: '#F1351B',
+        redAccent: '#FFEDE9',
       },
       backgroundImage: {
         'map': "url('/src/assets/images/map.png')",
