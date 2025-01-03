@@ -78,7 +78,7 @@ jobs:
         run: sudo docker pull ${{ secrets.DOCKER_USERNAME }}/service-center:dev
 
       - name: Delete Old Docker Container
-        run: sudo docker rm -f vite-app || true
+        run: sudo docker rm -f service-center || true
 
       - name: Run Docker Container
         run: |
