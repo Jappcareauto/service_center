@@ -22,7 +22,9 @@ export const useLogin = () => {
     dispatch(LoginAsync(data))
       .unwrap()
       .then((_) => {
+
         window.open(DashboardRoutes.dashboard, '_self');
+        
       })
       .catch((error) => {
         console.log(error);
