@@ -22,23 +22,7 @@ export const useAppointement = () => {
         // Dispatch actions sequentially
         const response = await dispatch(findAllAppointment()).unwrap();
         console.log("respondddddse", response);
-        // Update appointments with vehicle data
-        // const updatedAppointments = appointments.map((appointment) => {
-        //   const vehicle = vehicles.find(
-        //     (vehicle) => vehicle.id === appointment.vehicleId
-        //   );
 
-        //   return {
-        //     ...appointment,
-        //     vehicle,
-        //   };
-        // });
-        // Dispatch updated appointments to the store
-        // dispatch(
-        //   appointmentSliceAction.updateAppointments({
-        //     appointments,
-        //   })
-        // );
       } catch (err) {
         console.error("Error fetching appointments and vehicles:", err);
       }

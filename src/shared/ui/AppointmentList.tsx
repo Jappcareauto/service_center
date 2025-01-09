@@ -13,15 +13,24 @@ const AppointmentList: FC<Props> = ({ appointments, loading }) => {
   switch (loading) {
     case LoadingState.pending:
       return (
-        <div className="mx-auto">
-          <Loader />
-        </div>
+        <>
+          <div className="mx-auto">
+            <Loader />
+          </div>
+          {appointments?.map((appointment) => (
+            <AppointmentComponent
+              appointment={appointment}
+              key={appointment.id}
+            />
+          ))}
+        </>
       );
     case LoadingState.failed:
       return (
         <div>
-          <p className="text-4xl mx-auto text-center mt-5">failed to load data</p>
-          
+          <p className="text-4xl mx-auto text-center mt-5">
+            failed to load data
+          </p>
         </div>
       );
 

@@ -208,6 +208,9 @@ export abstract class HttpProvider {
         console.log("Token have expired");
         const response = await fetch(BASE_URL + "/auth/refresh-token", {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ refreshToken: token.refreshToken }),
         });
         const newAccess: Token = await response.json();
