@@ -6,11 +6,11 @@ import StatisticIcon from "@/shared/generics/menu/icons/StatisticIcon";
 import StatisticComponent from "@/shared/generics/statistics/StatisticComponent";
 import DisclosiorAlertComponent from "./components/DisclosiorAlertComponent";
 import FilterBar from "./components/FilterBar";
-import { useAppointement } from "@/modules/appointment/ui/index/useAppointment";
 import AppointmentList from "@/shared/ui/AppointmentList";
+import { useDashboardView } from "./useDashboardView";
 
 const DashboardView = () => {
-  const { appointments,loading   } = useAppointement();
+  const { appointments,loading   } = useDashboardView();
 
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">

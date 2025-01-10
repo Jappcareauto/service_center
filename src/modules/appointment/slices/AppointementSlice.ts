@@ -2,10 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LoadingState } from "@/shared/enums/LoadingState";
 import { Appointment } from "../model/Appointment";
 import { Pagination } from "@/shared/model/Pagination";
-import { findAllAppointment } from "../useCase/findAll/findAllAppointmentAsync";
+import { findAllAppointmentAsync } from "../useCase/findAll/findAllAppointmentAsync";
 
 interface AppointmentState {
   loading: LoadingState;
+  loadingErrorMessage:string,
   appointments?: Appointment[];
   pagination?: Pagination;
   activeAppointment?: Appointment;
@@ -13,6 +14,7 @@ interface AppointmentState {
 
 const initialState: AppointmentState = {
   loading: LoadingState.idle,
+  loadingErrorMessage:""
 };
 
 export const AppointmentSlice = createSlice({
@@ -33,18 +35,21 @@ export const AppointmentSlice = createSlice({
       action: PayloadAction<{ appointments: Appointment[] }>
     ) => {
       state.appointments = action.payload.appointments;
-      console.log("state.appointments", state.appointments);
+    },
+    setLoadingStatut: (state, action: PayloadAction<{ loading: LoadingState }>) => {
+      state.loading = action.payload.loading;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(findAllAppointment.pending, (state) => {
+    builder.addCase(findAllAppointmentAsync.pending, (state) => {
       state.loading = LoadingState.pending;
     });
-    builder.addCase(findAllAppointment.rejected, (state) => {
+    builder.addCase(findAllAppointmentAsync.rejected, (state) => {
       state.loading = LoadingState.failed;
     });
-    builder.addCase(findAllAppointment.fulfilled, (state, action) => {
-      state.appointments = action.payload.data;
+    builder.addCase(findAllAppointmentAsync.fulfilled, (state, action) => {
+      console.log("action.payload", action.payload);
+      // state.appointments = action.payload.data;
       state.pagination = action.payload.pagination;
       state.loading = LoadingState.success;
     });

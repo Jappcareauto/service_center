@@ -84,6 +84,7 @@ export abstract class HttpProvider {
       throw new InternetErrorException();
     }
     if (response.status === 500) {
+      
       throw new InternalServerException();
     }
     try {

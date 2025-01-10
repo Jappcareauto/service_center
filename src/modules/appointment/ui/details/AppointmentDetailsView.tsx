@@ -28,15 +28,19 @@ const AppointmentDetailsView = () => {
     case LoadingState.pending:
       content = (
         <>
-        <div className="flex w-full justify-center mt-20">
-          <Loader />
-        </div>
-          
-        <div className="w-full flex justify-between items-center px-6">
+          <div className="flex w-full justify-center -mt-7">
+            <Loader />
+          </div>
+
+          <div className="w-full flex justify-between items-center px-6">
             <h2 className="font-medium">Appointment Details</h2>
             <Expended2Icon
               className="cursor-pointer"
-              onClick={() => navigate(AppointmentRoutes.appointmentDetails)}
+              onClick={() =>
+                navigate(
+                  AppointmentRoutes.appointmentDetails()
+                )
+              }
             />
           </div>
           <div className="h-[calc(100vh-190px)] overflow-y-auto">
@@ -116,19 +120,22 @@ const AppointmentDetailsView = () => {
     case LoadingState.failed:
       content = (
         <div className="flex w-full justify-center mt-20">
-          <p>failed to load data</p>
+          <p>We couldn't load the data. Please try again later.</p>
         </div>
       );
       break;
     default:
       content = (
         <>
-        
           <div className="w-full flex justify-between items-center px-6">
             <h2 className="font-medium">Appointment Details</h2>
             <Expended2Icon
               className="cursor-pointer"
-              onClick={() => navigate(AppointmentRoutes.appointmentDetails)}
+              onClick={() =>
+                navigate(
+                  AppointmentRoutes.appointmentDetails()
+                )
+              }
             />
           </div>
           <div className="h-[calc(100vh-190px)] overflow-y-auto">

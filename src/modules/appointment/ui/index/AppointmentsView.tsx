@@ -8,7 +8,6 @@ import AppointmentList from "@/shared/ui/AppointmentList";
 
 const AppointmentsView = () => {
   const { appointments, loading } = useAppointement();
-  console.log("loading component", loading);
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div>

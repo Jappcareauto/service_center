@@ -4,7 +4,7 @@ import { appointmentSliceAction } from "@/modules/appointment/slices/Appointemen
 import { AppointementState } from "@/modules/appointment/slices/AppointenmentSelector";
 // import { findAllAppointment } from "@/modules/appointment/useCase/findAll/findAllAppointment";
 // import { vehicleState } from "@/modules/vehicle/slice/vehicleSelector";
-import { formatDate } from "@/shared/utils/dateFormat";
+import { formatDateToMedium } from "@/shared/utils/dateFormat";
 
 type Props = {
   appointment: Appointment;
@@ -18,7 +18,7 @@ const useAppointmentComponent = ({ appointment }: Props) => {
   const activeAppointment = useAppSelector(AppointementState.activeAppointment);
 
   //format date
-  const date = formatDate(appointment?.date || "");
+  const date = formatDateToMedium(appointment?.date || "");
   //handle fetch one appointment
 
   const handleSectActiveAppointment = (id: string) => {

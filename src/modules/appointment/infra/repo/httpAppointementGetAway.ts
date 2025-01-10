@@ -11,7 +11,6 @@ export class httpAppointenmentGetAway
     const response = await this.getWithResult({
       url: AppointmentApiRoutes.getAll(),
     });
-    console.log("response", response);
 
     return response;
   }
