@@ -6,7 +6,7 @@ import { LoginResponse } from "../../usecases/login/LoginResponse";
 import { AuthApiRoutes } from "../routes/ApiRoutes";
 
 export default class HttpAuthGateway extends HttpProvider implements AuthGateway {
-  async login(command: LoginCommand): Promise<LoginResponse> {
+  async   login(command: LoginCommand): Promise<LoginResponse> {
     const response = await this.postWithResult({
       url: AuthApiRoutes.login,
       command,
