@@ -29,7 +29,7 @@ export const useDashboardView = () => {
   useEffect(() => {
     fetchData();
     // const fetchByInterval = setInterval(() => {}, 5 * 60 * 60);
-  });
+  }, []);
 
   return {
     appointments,
