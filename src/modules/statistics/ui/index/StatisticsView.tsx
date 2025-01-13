@@ -9,8 +9,11 @@ import { ModalEventKey } from '@/shared/helpers/hooks/ModalEventKey'
 import { ModalEvents } from '@/shared/helpers/hooks/useModal'
 import LineChartComponent2 from '../components/LineChartComponent2'
 import StatisticsProfileView from '../profile/StatisticsProfileView'
+// import useStatisticsView from './useStatisticsView'
 
 const StatisticsView = () => {
+
+  // const a = useStatisticsView()
   return (
     <div>
       <Avatar name="" className='w-16 h-16' />

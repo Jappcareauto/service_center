@@ -13,12 +13,10 @@ interface AppointmentComponentProps {
 const AppointmentComponent: FC<AppointmentComponentProps> = ({
   appointment,
 }) => {
-  const {
-    appointment: appointmentData,
-    handleSectActiveAppointment,
-  } = useAppointmentComponent({
-    appointment,
-  });
+  const { appointment: appointmentData, handleSectActiveAppointment } =
+    useAppointmentComponent({
+      appointment,
+    });
   return (
     <div className="border border-borderColor rounded-[20px] bg-white p-4">
       <div className="flex items-center justify-between">
@@ -26,7 +24,7 @@ const AppointmentComponent: FC<AppointmentComponentProps> = ({
           <div className="rounded-full border-[2px] border-primary p-[1.5px]">
             <img src={IMAGES.avatar} alt="" className="w-12 h-12" />
           </div>
-          <p>{appointmentData?.createdBy ?? "Anonyme"}</p>
+          <p>{appointmentData?.createdBy || "Anonyme"}</p>
         </div>
         <div
           className={
@@ -38,7 +36,7 @@ const AppointmentComponent: FC<AppointmentComponentProps> = ({
       </div>
       <h2 className="font-medium mt-3 text-primary">
         {/* Body shop appointment */}
-        {appointmentData?.createdBy}
+        {appointmentData?.note}
       </h2>
       <h2 className="font-medium mt-1">
         {/* Porsche Taycan Turbo S */}
