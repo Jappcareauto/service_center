@@ -14,26 +14,30 @@ type Props = {
 };
 
 const InvoiceItem: FC<Props> = ({ invoice }) => {
-  const startDate = formatDateToMedium(invoice.startDate);
-  const endDate = formatDateToMedium(invoice.endDate);
+  const issueDate = formatDateToMedium(invoice.issueDate);
+  const endDate = formatDateToMedium(invoice.dueDate);
   return (
-    <div className="border-y-2 border-grey3 px-4 h-12 flex items-center justify-between ">
-      <div className="flex items-center gap-10 ">
+    <div className="border-y-2 border-grey3 px-4 min-h-12 flex items-center justify-between ">
+      <div className="flex items-center lg:gap-10 ">
         <div className="flex gap-4 items-center">
-          <Avatar className="h-7 w-7" />
+          
+            <Avatar className="h-7 w-7" name={invoice.billedToUser?.name} />
+        
           <h2 className="first-letter:uppercase font-normal">Sarah Maya</h2>
         </div>
-        <h3 className="">20 500 Frs</h3>
+        <h3 className="">
+          {invoice?.money?.amount} {invoice.money?.currency}
+        </h3>
         <div className="flex gap-x-1">
           <Calendar2Icon />
-          <h3>{startDate}</h3>
+          <h3>{issueDate}</h3>
         </div>
         <div className="flex gap-x-1">
           <Calendar2Icon />
 
           <h3>{endDate}</h3>
         </div>
-        <ButtonStatus status={InvoiceStatus.Decline} />
+        <ButtonStatus status={InvoiceStatus.Paid} />
       </div>
       <div className="flex gap-5">
         <ArrowDown />

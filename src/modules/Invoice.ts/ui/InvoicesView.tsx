@@ -4,12 +4,17 @@ import InvoiceIcon from "@/shared/generics/menu/icons/InvoiceIcon";
 import StatisticComponent from "@/shared/generics/statistics/StatisticComponent";
 import { FC } from "react";
 import InvoiceItem from "./components/invoiceItem";
-import { InvoiceStatus } from "../model/InvoiceStatus";
 import { useInvoicesView } from "./useInvoicesView";
 import { InvoiceRoutes } from "../infra/routes/Router";
+import Loader from "@/shared/generics/loader/Loader";
+import { LoadingState } from "@/shared/enums/LoadingState";
 
 const InvoicesView: FC = () => {
- const {handleNavigation} =   useInvoicesView()
+  const { handleNavigation, invoiceState } = useInvoicesView();
+  const invoicesList = invoiceState.invoices?.map((invoice) => (
+    <InvoiceItem invoice={invoice} key={invoice.id} />
+  ));
+
   return (
     <div>
       {/* geader */}
@@ -23,9 +28,9 @@ const InvoicesView: FC = () => {
             labels={["Pending", "Paid", "Declined", "Draft"]}
             disableDisposition
           />
-          <PrimaryButton className="border border-black bg-inherit text-black hover:bg-primary hover:text-white duration-200 hover:border-none h-10 rounded-full font-normal text-sm"
-          
-          onClick={()=>handleNavigation(InvoiceRoutes.createInvoice())}
+          <PrimaryButton
+            className="border border-black bg-inherit text-black hover:bg-primary hover:text-white duration-200 hover:border-none h-10 rounded-full font-normal text-sm"
+            onClick={() => handleNavigation(InvoiceRoutes.createInvoice())}
           >
             Create Invoce
           </PrimaryButton>
@@ -53,53 +58,12 @@ const InvoicesView: FC = () => {
         </div>
       </div>
       {/* invoice item */}
-      <div className="mt-5">
-        <InvoiceItem
-          invoice={{
-            name: "Invoice #001",
-            price: 1200.5,
-            startDate: "2025-01-01",
-            endDate: "2025-01-31",
-            status: InvoiceStatus.Paid,
-          }}
-        />
-        <InvoiceItem
-          invoice={{
-            name: "Invoice #001",
-            price: 1200.5,
-            startDate: "2025-01-01",
-            endDate: "2025-01-31",
-            status: InvoiceStatus.Paid,
-          }}
-        />
-        <InvoiceItem
-          invoice={{
-            name: "Invoice #001",
-            price: 1200.5,
-            startDate: "2025-01-01",
-            endDate: "2025-01-31",
-            status: InvoiceStatus.Paid,
-          }}
-        />
-        <InvoiceItem
-          invoice={{
-            name: "Invoice #001",
-            price: 1200.5,
-            startDate: "2025-01-01",
-            endDate: "2025-01-31",
-            status: InvoiceStatus.Paid,
-          }}
-        />
-        <InvoiceItem
-          invoice={{
-            name: "Invoice #001",
-            price: 1200.5,
-            startDate: "2025-01-01",
-            endDate: "2025-01-31",
-            status: InvoiceStatus.Paid,
-          }}
-        />
-      </div>
+      {invoiceState.loading === LoadingState.pending && (
+        <div className="flex justify-center my-5 duration-300 ease-in-out">
+          <Loader />
+        </div>
+      )}
+      <div className="mt-5  contain-layout duration-1000 ">{invoicesList}</div>
     </div>
   );
 };

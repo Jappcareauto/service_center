@@ -17,13 +17,12 @@ export const RightModal = ({ children, isOpen, close, className }: Props) => {
         ></div>
       )}
       <div
-        className={
-          twMerge(
-            'fixed  top-0 right-0 w:full  bg-background h-full z-50  ease-in-out duration-500',
-            'overflow-x-hidden overflow-y-auto w-[418px] scrollbar-thin scrollbar-thumb-azmana-gray-5 scrollbar-track-azmana-gray shadow-lg',
-            isOpen ? "translate-x-0" : "-translate-x-[-420px]",
-            className,
-          )}
+        className={twMerge(
+          "fixed  top-0 right-0 w:full  bg-background h-full z-50  ease-in-out duration-500",
+          "overflow-x-hidden overflow-y-auto w-[418px] scrollbar-thin scrollbar-thumb-azmana-gray-5 scrollbar-track-azmana-gray shadow-lg",
+          isOpen ? "translate-x-0" : "-translate-x-[-420px]",
+          className
+        )}
       >
         {children}
       </div>

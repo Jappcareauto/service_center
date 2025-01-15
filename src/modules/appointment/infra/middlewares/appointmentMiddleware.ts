@@ -3,6 +3,7 @@ import { FindAllVehicleAsync } from "@/modules/vehicle/useCase/findAllVehicle/fi
 import { appointmentSliceAction } from "../../slices/AppointementSlice";
 import { findAllAppointmentAsync } from "../../useCase/findAll/findAllAppointmentAsync";
 import { LoadingState } from "@/shared/enums/LoadingState";
+import { findAllServiceenterAsync } from "@/modules/service/usecase/findAllService/findAllServiceCenterAsync";
 
 export const appointmentMiddleware = (listener: AppStartListening) => {
   listener({
@@ -35,7 +36,9 @@ export const appointmentMiddleware = (listener: AppStartListening) => {
         appointmentSliceAction.setLoadingStatut({
           loading: LoadingState.success,
         })
+
       );
+      listenerApi.dispatch(findAllServiceenterAsync())
     },
   });
 };

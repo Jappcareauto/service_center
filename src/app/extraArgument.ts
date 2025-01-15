@@ -1,14 +1,18 @@
 import HttpAuthGateway from "@/modules/auth/infra/repo/HttpAuthGateway";
 import { Dependencies } from "./Dependencies";
-import { httpAppointenmentGetAway } from "@/modules/appointment/infra/repo/httpAppointementGetAway";
+import { HttpAppointenmentGetAway } from "@/modules/appointment/infra/repo/httpAppointementGetAway";
 import { httpVehicleGateway } from "@/modules/vehicle/infra/repo/httpVehicleGateway";
 import { HttpStatsGateWay } from "@/modules/statistics/infra/repos/httpStatsGateway";
 import { HttpInvoiceGateway } from "@/modules/Invoice.ts/infra/repo/HttpInvoiceGateway";
+import { HttpServiceGateway } from "@/modules/service/infra/repos/httpServiceCenterGateway";
+import { HttpUserGateWay } from "@/modules/user/infra/repos/httpUserGateway";
 
 export const extraArgument: Dependencies = {
   authGateway: new HttpAuthGateway(),
-  AppointementGetway: new httpAppointenmentGetAway(),
+  AppointementGetway: new HttpAppointenmentGetAway(),
   vehicleGateWay: new httpVehicleGateway(),
   statsGateWay: new HttpStatsGateWay(),
-  invoiceGateway:new HttpInvoiceGateway()
+  invoiceGateway: new HttpInvoiceGateway(),
+  serviceGateway: new HttpServiceGateway(),
+  UserGateway: new HttpUserGateWay(),
 };

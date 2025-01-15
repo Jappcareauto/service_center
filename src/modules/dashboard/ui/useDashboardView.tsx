@@ -24,6 +24,7 @@ export const useDashboardView = () => {
       const error = getErrorState(err);
       console.log("error", error);
     }
+    
   };
 
   useEffect(() => {

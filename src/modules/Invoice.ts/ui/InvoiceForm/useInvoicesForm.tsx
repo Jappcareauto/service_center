@@ -1,47 +1,110 @@
 import { useState } from "react";
-import { FormServiceItem } from "../../model/FormServiceItem";
+import { useNavigate } from "react-router-dom";
+import { ServiceItem } from "../../model/ServiceItem";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { invoiceSelector } from "../../slice/selectors";
+import { invoiceFormAction } from "../../slice/invoiceSlice";
+import { serviceCenterSelector } from "@/modules/service/slice/selectors";
+import { FormListItem } from "@/shared/model/FormListItem";
 
-function UseInvoicesForm() {
-  const [services, setServices] = useState<FormServiceItem[]>([
-    { name: "service", price: 2000, quantity: 2, totalPrice: 4000 },
-  ]);
-  const [serviceItem, setServiceItem] = useState<FormServiceItem>({
+//
+//
+//
+function useInvoicesForm() {
+  const invoiceFormState = useAppSelector(invoiceSelector.addInvoiceFormState);
+  const serviceCenterState = useAppSelector(
+    serviceCenterSelector.serviceCenterState
+  );
+
+  const dispatch = useAppDispatch();
+  const navigte = useNavigate();
+  const id = new Date();
+  const [newService, setNewService] = useState<ServiceItem>({
     name: "",
     price: 0,
     quantity: 0,
     totalPrice: 0,
+    id: id.toISOString(),
   });
 
-  const handleEditServiceItem = (
-    key: keyof FormServiceItem,
-    value: unknown
-  ) => {
-    setServiceItem((prevState) => {
-      const newItem = { ...prevState, [key]: value };
-      if (newItem?.price && newItem?.quantity) {
-        newItem.totalPrice = newItem.price * newItem.quantity;
-      } else {
-        newItem.totalPrice = 0;
-      }
-      return newItem;
+  const [activeServiceCenter, setActiveSrviceCenter] = useState<FormListItem>({
+    description:
+      serviceCenterState?.servicesCenter?.[0]?.category || "failed to load",
+    name: serviceCenterState?.servicesCenter?.[0]?.name || "",
+    id: serviceCenterState?.servicesCenter?.[0]?.id || "",
+  });
+
+  const [isServiceListOpen, setIsServiceListOpen] = useState(false);
+
+  const handleEditServiceItem = (key: keyof ServiceItem, value: unknown) => {
+    console.log("key", key, value);
+    setNewService((prevService) => {
+      return {
+        ...prevService,
+        [key]: value,
+      };
     });
   };
-
-  const handleAddService = () => {
-    if (serviceItem?.name && serviceItem?.price && serviceItem?.quantity) {
-      setServices((prevServices) => [...prevServices, serviceItem]);
-      setServiceItem({ name: "", price: 0, quantity: 0, totalPrice: 0 });
+  //service list
+  const toogleServiceList = () => {
+    setIsServiceListOpen((prev) => !prev);
+  };
+  const handleSetServiceCenter = (service: FormListItem) => {
+    setActiveSrviceCenter(service);
+    toogleServiceList();
+  };
+  //actionslice
+  const handleChangeTaux = (taux: number) => {
+    dispatch(invoiceFormAction.handleTotalPrice({ taux: taux }));
+  };
+  //action
+  const handleAddService = (service: ServiceItem) => {
+    if (service.name === "" && !service.price && !service.quantity) {
+      return;
     }
+    dispatch(invoiceFormAction.addService({ ...service, id: id.toString() }));
+    handleChangeTaux(invoiceFormState.totalAmountState.taux || 0);
+    setNewService({
+      id: id.toString(),
+      name: "",
+      price: 0,
+      quantity: 0,
+      totalPrice: 0,
+    });
+  };
+  //action
+  const handleIsTaux = (isTaux: boolean) => {
+    dispatch(invoiceFormAction.toogleTaux({ isTaux: isTaux }));
+    handleChangeTaux(invoiceFormState.totalAmountState.taux);
+  };
+  //submit
+  const handleSubmitForm = ({ navTo }: { navTo: string }) => {
+    navigte(navTo);
+  };
+  const handleDeleteService = (id: string) => {
+    dispatch(invoiceFormAction.deleteService({ id }));
+    handleChangeTaux(invoiceFormState.totalAmountState.taux || 0);
   };
 
-  const formServicesState = {
-    services,
-    handleAddService,
-    serviceItem,
-    handleEditServiceItem,
+  return {
+    state: {
+      invoiceFormState,
+      newService,
+      activeServiceCenter,
+      serviceCenterState,
+      isServiceListOpen,
+    },
+    action: {
+      handleSetServiceCenter,
+      toogleServiceList,
+      handleAddService,
+      handleSubmitForm,
+      handleEditServiceItem,
+      handleChangeTaux,
+      handleIsTaux,
+      handleDeleteService,
+    },
   };
-
-  return { formServicesState };
 }
 
-export default UseInvoicesForm;
+export default useInvoicesForm;

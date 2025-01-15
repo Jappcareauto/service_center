@@ -1,3 +1,5 @@
+import { UserGateway } from "./../modules/user/gateway/userGateWay";
+import { ServiceGateway } from "../modules/service/gateway/serviceCenterGateway";
 import { VehicleGateWay } from "./../modules/vehicle/gateway/VehicleGateway";
 import { AppointementGetway } from "./../modules/appointment/gateway/AppointmentGateway";
 import { AuthGateway } from "@/modules/auth/gateway/AuthGateway";
@@ -10,4 +12,6 @@ export interface Dependencies {
   vehicleGateWay: VehicleGateWay;
   statsGateWay: StatsGateway;
   invoiceGateway: InvoiceGateway;
+  serviceGateway: ServiceGateway;
+  UserGateway: UserGateway;
 }

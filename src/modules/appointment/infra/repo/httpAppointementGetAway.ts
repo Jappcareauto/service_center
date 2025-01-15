@@ -3,7 +3,7 @@ import { AppointementGetway } from "../../gateway/AppointmentGateway";
 import { FindAllResponse } from "../../useCase/findAll/findAllAppointmentResponse";
 import { AppointmentApiRoutes } from "../routes/ApiRoutes";
 
-export class httpAppointenmentGetAway
+export class HttpAppointenmentGetAway
   extends HttpProvider
   implements AppointementGetway
 {

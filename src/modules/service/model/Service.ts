@@ -1,4 +1,4 @@
-import { Audit } from "./Audit";
+import { Audit } from "../../../shared/model/Audit";
 import { ServiceCenter } from "./ServiceCenter";
 
 export interface Service extends Audit {
