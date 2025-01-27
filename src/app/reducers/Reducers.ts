@@ -5,7 +5,8 @@ import { combineReducers } from "@reduxjs/toolkit";
 import { VehicleSlice } from "@/modules/vehicle/slice/vehicleSlice";
 import { StatsSlice } from "@/modules/statistics/slice/statsSlice";
 import { InvoicesSlice } from "@/modules/Invoice.ts/slice/invoiceSlice";
-import { ServicesSlice } from "@/modules/service/slice/ServiceCenterSlice";
+import { ServicesSlice } from "@/modules/service/slice/serviceSlice";
+import { UserSlice } from "@/modules/user/slice/userSlice";
 
 export const rootReducer = combineReducers({
   [AuthSlice.name]: AuthSlice.reducer,
@@ -14,4 +15,5 @@ export const rootReducer = combineReducers({
   [StatsSlice.name]: StatsSlice.reducer,
   [InvoicesSlice.name]: InvoicesSlice.reducer,
   [ServicesSlice.name]: ServicesSlice.reducer,
+  [UserSlice.name]:UserSlice.reducer
 });

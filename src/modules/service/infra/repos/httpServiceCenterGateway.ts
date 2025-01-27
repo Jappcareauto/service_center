@@ -1,12 +1,12 @@
 import { HttpProvider } from "@/shared/gateway/HttpProvider";
 import { ServiceGateway } from "../../gateway/serviceCenterGateway";
-import { findAllServiceCenterResponse } from "../../usecase/findAllService/findAllServiceCenterResponse";
-import { ServiceCenterApiRoute } from "../routes/ApiRoutes";
+import { findAllServiceResponse } from "../../usecase/findAllServiceCenter/findAllServiceResponse";
+import { ServiceApiRoute } from "../routes/ApiRoutes";
 
 export class HttpServiceGateway extends HttpProvider implements ServiceGateway {
- async findAllService(): Promise<findAllServiceCenterResponse> {
+ async findAllService(): Promise<findAllServiceResponse> {
     const response = await this.getWithResult({
-      url: ServiceCenterApiRoute.findAll(),
+      url: ServiceApiRoute.findAll(),
     });
     return response;
   }

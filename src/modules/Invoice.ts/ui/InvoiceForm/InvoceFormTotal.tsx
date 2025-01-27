@@ -1,14 +1,23 @@
 import Input from "@/shared/generics/inputs/Input";
 import Switch from "@/shared/generics/switch/Switch";
-import { FormServiceTotal } from "../../model/FormServiceTotal";
 import { FC } from "react";
-import useInvoicesForm from "./useInvoicesForm";
+import useInvoicesForm from "./hooks/useInvoicesForm";
 import { validPositiveNumber } from "@/shared/utils/validNumber";
 type Props = {
   isEdditing: boolean;
-  totalService?: FormServiceTotal;
+  taux?: number;
+  TauxAmount?: number;
+  totalAmount?: number;
+  PaymentMethod?: string;
+  subTotal?: number;
 };
-const InvoceFormTotal: FC<Props> = ({ isEdditing }) => {
+const InvoceFormTotal: FC<Props> = ({
+  isEdditing,
+  TauxAmount,
+  taux,
+  subTotal,
+  PaymentMethod,
+}) => {
   const {
     action,
     state: { invoiceFormState },
@@ -22,32 +31,59 @@ const InvoceFormTotal: FC<Props> = ({ isEdditing }) => {
         {isEdditing && (
           <div className="flex justify-between items-center">
             <h3>Include Tax</h3>
-            <Switch isEnable={invoiceFormState.totalAmountState.isTaux} onChange={(isOpen) => action.handleIsTaux(isOpen)} />
+            <Switch
+              isEnable={invoiceFormState.totalAmountState.isTaux}
+              onChange={(isOpen) => action.handleIsTaux(isOpen)}
+            />
           </div>
         )}
         <div className="flex justify-between items-center">
           <h3>SubTotal</h3>
-          <h3>{invoiceFormState.serviceState.totalPrices} Frs </h3>
+          <h3 className="font-semibold">
+            {isEdditing ? invoiceFormState.serviceState.totalPrices : subTotal}
+            {" "}  Frs
+          </h3>
         </div>
+
         <div className="flex justify-between items-center">
           <div className="flex gap-2 items-center">
             <h3>Taux</h3>
-            <Input
-              className="max-w-24"
-              placeholder="10%"
-              value={tauxValue}
-              onChange={(e) => {
-                const value = parseFloat(e.target.value);
-                action.handleChangeTaux(value);
-              }}
-              min={0}
-            />
+            <h3 className="font-semibold">{!isEdditing && taux} %</h3>
+            {isEdditing && (
+              <Input
+                className="max-w-24"
+                placeholder="10%"
+                value={tauxValue}
+
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  action.handleChangeTaux(value);
+                }}
+              />
+            )}
           </div>
-          <h3>{invoiceFormState.totalAmountState.tauxAmount} Frs</h3>
+          <h3 className="font-semibold">
+            {isEdditing
+              ? invoiceFormState.totalAmountState.tauxAmount
+              : TauxAmount}{" "}
+            Frs
+          </h3>
         </div>
+
+        {!isEdditing && (
+          <div className="   flex items-center justify-between  rounded-xl">
+            <h3>Payment Method</h3>
+            <h3 className="font-semibold"> {PaymentMethod} </h3>
+          </div>
+        )}
         <div className="h-12 p-4 bg-primaryAccent flex items-center justify-between text-primary rounded-xl">
           <h3>Total</h3>
-          <h3> {invoiceFormState.totalAmountState.totalAmount} Frs</h3>
+          <h3 className="font-semibold">
+            {isEdditing
+              ? invoiceFormState.totalAmountState.totalAmount
+              : subTotal}{" "}
+            Frs
+          </h3>
         </div>
       </div>
     </div>

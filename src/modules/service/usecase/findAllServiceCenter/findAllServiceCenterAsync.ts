@@ -1,9 +1,10 @@
 import { createAppAsyncThunk } from "@/app/createAppAsyncThunk";
-import { ServiceCenterApiRoute } from "../../infra/routes/ApiRoutes";
+import { ServiceApiRoute } from "../../infra/routes/ApiRoutes";
 import { getErrorState } from "@/shared/errors/getErrorState";
+import { findAllServiceResponse } from "./findAllServiceResponse";
 
-export const findAllServiceenterAsync = createAppAsyncThunk(
-  ServiceCenterApiRoute.findAll(),
+export const findAllServiceAsync = createAppAsyncThunk<findAllServiceResponse>(
+  ServiceApiRoute.findAll(),
   async (_, { extra: { serviceGateway }, rejectWithValue }) => {
     try {
       const response = await serviceGateway.findAllService();

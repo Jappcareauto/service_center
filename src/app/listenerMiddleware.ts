@@ -4,6 +4,7 @@ import { Dependencies } from "./Dependencies";
 import { AppDispatch, RootState } from "./store";
 import { appointmentMiddleware } from "../modules/appointment/infra/middlewares/appointmentMiddleware";
 import { authMiddleware } from "@/modules/auth/infra/middlewares/authMiddleware";
+import { invoiceMiddleware } from "@/modules/Invoice.ts/middleware/invoiceMiddleware";
 export const listenerMiddleware = createListenerMiddleware<
   RootState,
   AppDispatch,
@@ -26,3 +27,4 @@ export const addAppListener = addListener as TypedAddListener<
 
 appointmentMiddleware(startAppListening);
 authMiddleware(startAppListening);
+invoiceMiddleware(startAppListening);

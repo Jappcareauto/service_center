@@ -22,6 +22,7 @@ interface InitialState {
       totalPrices: number;
     };
   };
+  activeInvoice?: Invoice;
 }
 
 const initialState: InitialState = {
@@ -37,13 +38,7 @@ const initialState: InitialState = {
     },
     serviceState: {
       item: [
-        {
-          name: "service",
-          price: 2000,
-          quantity: 2,
-          totalPrice: 4000,
-          id: "111",
-        },
+    
       ],
       totalItems: 0,
       totalPrices: 4000,
@@ -55,6 +50,18 @@ export const InvoicesSlice = createSlice({
   name: "invoices",
   initialState,
   reducers: {
+    findOneInvoice: (state, action: PayloadAction<{ id: string }>) => {
+      state.activeInvoice = state.invoicesState.invoices?.find(
+        (invoice) => invoice.id === action.payload.id
+      );
+    },
+    updateInvoices: (state, action: PayloadAction<{ invoices: Invoice[] }>) => {
+      state.invoicesState.invoices = action.payload.invoices;
+    },
+
+    //
+    //
+    //
     addServiceToForm: (state, action: PayloadAction<ServiceItem>) => {
       const totalItemPrice = action.payload.price * action.payload.quantity;
       const totalPrice =
@@ -64,7 +71,12 @@ export const InvoicesSlice = createSlice({
         ...state.AddInvoiceForm.serviceState,
         item: [
           ...state.AddInvoiceForm.serviceState.item,
-          { ...action.payload, totalPrice: totalItemPrice },
+          {
+            ...action.payload,
+            price: action.payload.price * 1,
+            quantity: action.payload.quantity * 1,
+            totalPrice: totalItemPrice,
+          },
         ],
         totalItems: totalItems,
         totalPrices: totalPrice,
@@ -123,8 +135,9 @@ export const InvoicesSlice = createSlice({
       state.invoicesState.loading = LoadingState.failed;
     });
     builder.addCase(findAllInvoiceAsync.fulfilled, (state, action) => {
-      state.invoicesState.invoices = action.payload;
+      state.invoicesState.invoices = action.payload.data;
       state.invoicesState.loading = LoadingState.success;
+      console.log("action.payload", action.payload);
     });
   },
 });

@@ -1,5 +1,5 @@
-import { findInvoiceResponse } from "../useCase/findAllInvoice/findInvoiceResponse";
+import { findInvoiceResponse } from "../useCase/findAllInvoice/findAllInvoiceResponse";
 
 export interface InvoiceGateway {
-  findAllInvoice: () => Promise<findInvoiceResponse[]>;
+  findAllInvoice: () => Promise<findInvoiceResponse>;
 }

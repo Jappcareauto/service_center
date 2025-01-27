@@ -1,5 +1,6 @@
 export interface BilledToUser {
-  fullName: string;
+  id:string
+  name: string;
   phoneNumber: string;
   email: string;
 }

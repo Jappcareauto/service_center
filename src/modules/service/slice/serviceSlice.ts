@@ -1,13 +1,13 @@
 import { LoadingState } from "@/shared/enums/LoadingState";
 import { Pagination } from "@/shared/model/Pagination";
 import { createSlice } from "@reduxjs/toolkit";
-import { findAllServiceenterAsync } from "../usecase/findAllService/findAllServiceCenterAsync";
-import { ServiceCenter } from "../model/ServiceCenter";
+import { findAllServiceAsync } from "../usecase/findAllServiceCenter/findAllServiceCenterAsync";
+import { Service } from "../model/Service";
 
 interface InitialState {
   allServiceCenterState: {
     loading: LoadingState;
-    servicesCenter?: ServiceCenter[];
+    servicesCenter?: Service[];
     pagination?: Pagination;
   };
 }
@@ -23,16 +23,15 @@ export const ServicesSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(findAllServiceenterAsync.pending, (state) => {
+    builder.addCase(findAllServiceAsync.pending, (state) => {
       state.allServiceCenterState.loading = LoadingState.pending;
     });
-    builder.addCase(findAllServiceenterAsync.rejected, (state) => {
+    builder.addCase(findAllServiceAsync.rejected, (state) => {
       state.allServiceCenterState.loading = LoadingState.failed;
     });
-    builder.addCase(findAllServiceenterAsync.fulfilled, (state, { payload }) => {
+    builder.addCase(findAllServiceAsync.fulfilled, (state, { payload }) => {
       state.allServiceCenterState.pagination = payload.pagination;
       state.allServiceCenterState.servicesCenter = payload.data;
-      console.log("paylaod", payload);
       state.allServiceCenterState.loading = LoadingState.success;
     });
   },

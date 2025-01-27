@@ -1,3 +1,3 @@
 export const InvoiceApiRoute = {
-  findAll: () => "/invoice",
+  findAll: () => "/invoice/list",
 };

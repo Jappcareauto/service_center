@@ -3,7 +3,7 @@ import { FindAllVehicleAsync } from "@/modules/vehicle/useCase/findAllVehicle/fi
 import { appointmentSliceAction } from "../../slices/AppointementSlice";
 import { findAllAppointmentAsync } from "../../useCase/findAll/findAllAppointmentAsync";
 import { LoadingState } from "@/shared/enums/LoadingState";
-import { findAllServiceenterAsync } from "@/modules/service/usecase/findAllService/findAllServiceCenterAsync";
+import { findAllServiceAsync } from "@/modules/service/usecase/findAllServiceCenter/findAllServiceCenterAsync";
 
 export const appointmentMiddleware = (listener: AppStartListening) => {
   listener({
@@ -14,17 +14,27 @@ export const appointmentMiddleware = (listener: AppStartListening) => {
           loading: LoadingState.pending,
         })
       );
+
+      // -------------------------services
+      const servicesResponse = await listenerApi
+        .dispatch(findAllServiceAsync())
+        .unwrap();
+      const services = servicesResponse.data;
+      // -----------------------vehicle
       const vehicleData = await listenerApi
         .dispatch(FindAllVehicleAsync())
         .unwrap();
+
       const appointmentData = action.payload;
       const updatedAppointments = appointmentData.data.map((appointment) => {
         const vehicle = vehicleData.data.find(
           (vehicle) => vehicle.id === appointment.vehicleId
         );
+        const service = services?.find((s) => s.id === appointment.serviceId);
         return {
           ...appointment,
           vehicle,
+          service,
         };
       });
       listenerApi.dispatch(
@@ -36,9 +46,8 @@ export const appointmentMiddleware = (listener: AppStartListening) => {
         appointmentSliceAction.setLoadingStatut({
           loading: LoadingState.success,
         })
-
       );
-      listenerApi.dispatch(findAllServiceenterAsync())
+      listenerApi.dispatch(findAllServiceAsync());
     },
   });
 };

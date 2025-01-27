@@ -1,6 +1,6 @@
 import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
 import Input from "@/shared/generics/inputs/Input";
-import useInvoicesForm from "./useInvoicesForm";
+import useInvoicesForm from "./hooks/useInvoicesForm";
 import { FC } from "react";
 import { ServiceItem } from "../../model/ServiceItem";
 import Trash2 from "@/shared/generics/menu/icons/Trash2";
@@ -9,8 +9,13 @@ import { validPositiveNumber } from "@/shared/utils/validNumber";
 type Props = {
   isEdditing: boolean;
   servicesItems?: ServiceItem[];
+  labourFee?: number;
 };
-const FormInvoiceServicesItem: FC<Props> = ({ isEdditing, servicesItems }) => {
+const FormInvoiceServicesItem: FC<Props> = ({
+  isEdditing,
+  servicesItems,
+  labourFee,
+}) => {
   const {
     state: { newService, invoiceFormState },
     action,
@@ -25,17 +30,25 @@ const FormInvoiceServicesItem: FC<Props> = ({ isEdditing, servicesItems }) => {
   const listItem = data?.map((service) => (
     <div className="flex justify-between my-4" key={service.id}>
       <div className=" ">{service.name}</div>
-      <ul className=" w-1/2 grid grid-cols-4 place-items-end   ">
+      <ul
+        className={` w-1/2 grid  place-items-end ${
+          !isEdditing ? "grid-cols-3" : "grid-cols-4"
+        }  `}
+      >
         <li>{service.quantity} </li>
         <li>{service.price} Frs</li>
-        <li>{service.totalPrice} Frs</li>
-        <li
-          onClick={() => {
-            action.handleDeleteService(service.id);
-          }}
-        >
-          <Trash2 />
+        <li className="font-semibold">
+          {service.quantity * 1 * service.price * 1} Frs
         </li>
+        {isEdditing && (
+          <li
+            onClick={() => {
+              action.handleDeleteService(service.id);
+            }}
+          >
+            <Trash2 />
+          </li>
+        )}
       </ul>
     </div>
   ));
@@ -44,7 +57,11 @@ const FormInvoiceServicesItem: FC<Props> = ({ isEdditing, servicesItems }) => {
     <div className="border-2 text-wrap  border-grey3 rounded-xl p-5 ">
       <div className=" border-b-2   pb-1 justify-between flex text-primary  border-grey3">
         <div className=" ">Item</div>
-        <ul className=" w-1/2 grid grid-cols-4 place-items-end">
+        <ul
+          className={` w-1/2 grid  place-items-end ${
+            !isEdditing ? "grid-cols-3" : "grid-cols-4"
+          } `}
+        >
           <li className="">Qnty</li>
           <li>Unit price</li>
           <li>Total Price </li>
@@ -106,6 +123,12 @@ const FormInvoiceServicesItem: FC<Props> = ({ isEdditing, servicesItems }) => {
             </PrimaryButton>
           </div>
         </div>
+      )}
+      {!isEdditing && (
+        <ul className=" grid grid-cols-2">
+          <li>Labour Fee</li>
+          <li className="font-semibold justify-self-end ">{labourFee} Frs </li>
+        </ul>
       )}
     </div>
   );

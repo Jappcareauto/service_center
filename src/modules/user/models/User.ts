@@ -1,4 +1,5 @@
 import { Audit } from "@/shared/model/Audit";
+import { File } from "@/shared/model/FIle";
 import { Garage } from "@/shared/model/Garage";
 import { Location } from "@/shared/model/Location";
 import { PaymentOption } from "@/shared/model/PaymentOption";

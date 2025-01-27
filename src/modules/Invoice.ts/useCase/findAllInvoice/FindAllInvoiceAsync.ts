@@ -1,8 +1,8 @@
 import { createAppAsyncThunk } from "@/app/createAppAsyncThunk";
-import { findInvoiceResponse } from "./findInvoiceResponse";
+import { findInvoiceResponse } from "./findAllInvoiceResponse";
 import { getErrorState } from "@/shared/errors/getErrorState";
 
-export const findAllInvoiceAsync = createAppAsyncThunk<findInvoiceResponse[]>(
+export const findAllInvoiceAsync = createAppAsyncThunk<findInvoiceResponse>(
   "invoice/all",
   async (_, { extra: { invoiceGateway }, rejectWithValue }) => {
     try {

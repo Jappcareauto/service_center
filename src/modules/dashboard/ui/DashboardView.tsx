@@ -37,7 +37,7 @@ const DashboardView = () => {
             <h2 className="font-medium">Recent Appointments</h2>
           </div>
           <div className="mt-5 mb-4">
-            <FilterBar labels={["Not Started", "In Progress", "Completed"]} />
+            <FilterBar  labels={["Not Started", "In Progress", "Completed"]} />
           </div>
           <div className="flex flex-col gap-y-4">
           <AppointmentList loading={loading} appointments={appointments} /> 

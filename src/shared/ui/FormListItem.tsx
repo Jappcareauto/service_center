@@ -1,12 +1,13 @@
-import { FormListItem } from "@/shared/model/FormListItem";
+import { FormListItemModel } from "@/shared/model/FormListItem";
 import { FC } from "react";
 
 // import { useState } from "react";
 type Props = {
-  data: FormListItem;
+  data: FormListItemModel;
 };
 
-const InvoiceFormServiceCenterItem: FC<Props> = ({ data }) => {
+const FormListItem: FC<Props> = ({ data }) => {
+
   return (
     <div className="hover:bg-primaryAccent p-2 min-h-8 rounded-xl ">
       <h2 className="text-primary  font-semibold ">{data.name} </h2>
@@ -14,4 +15,4 @@ const InvoiceFormServiceCenterItem: FC<Props> = ({ data }) => {
     </div>
   );
 };
-export default InvoiceFormServiceCenterItem;
+export default FormListItem;

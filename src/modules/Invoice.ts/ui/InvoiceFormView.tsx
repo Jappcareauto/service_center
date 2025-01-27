@@ -1,91 +1,63 @@
 import { FC } from "react";
 import InvoiceFormHeader from "./InvoiceForm/FormHeader";
 import Input from "@/shared/generics/inputs/Input";
-import ChevronDown from "@/shared/generics/menu/icons/ChevronDown";
 import FormServicesItem from "./InvoiceForm/FormInvoiceServicesItem";
 import InvoceFormTotal from "./InvoiceForm/InvoceFormTotal";
 import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
-import useInvoicesForm from "./InvoiceForm/useInvoicesForm";
-import InvoiceFormServiceCenterItem from "./InvoiceForm/InvoiceFormServiceCenter";
-import InvoiceBillingCard from "./InvoiceForm/InvoiceBillingCard";
+import useInvoicesForm from "./InvoiceForm/hooks/useInvoicesForm";
+
+import InvoiceListBilledTo from "./InvoiceForm/InvoiceListBilledTo";
+import VehicleListItem from "./InvoiceForm/VehicleListItem";
+import AppointmentComponent from "@/modules/dashboard/ui/components/AppointmentComponent";
+import AppointmentDetailsView from "@/modules/appointment/ui/details/AppointmentDetailsView";
 
 const InvoiceFormView: FC = () => {
   const {
     action,
-    state: { activeServiceCenter, isServiceListOpen },
+    state: { activeAppointment, formInput, isDueDate },
   } = useInvoicesForm();
-  const {
-    state: { serviceCenterState },
-  } = useInvoicesForm();
+
   return (
     <div className="mb-5">
+      <AppointmentDetailsView/>
       <InvoiceFormHeader />
       {/* first part */}
       <div className=" grid grid-cols-2 gap-x-5">
         <Input label="Invoice Number" onChange={() => {}} />
-        <Input label="Vehicle" onChange={() => {}} />
+
+        <VehicleListItem />
         <Input
           label="Issue Date"
           type="date"
-          value={"2025-01-01"}
-          onChange={() => {}}
+          value={formInput.issueDate}
+          onChange={(e) => {
+            action.handleChangeInput({
+              key: "issueDate",
+              value: e.target.value,
+            });
+          }}
         />
         <Input
+          placeholder="Due Date (Optional)"
           label="Due Date"
-          type="date"
-          value={"2025-01-01"}
-          onChange={() => {}}
+          type={`${isDueDate ? "date" : "text"}`}
+          value={formInput.dueDate}
+          onChange={(e) => {
+            action.handleChangeInput({ key: "dueDate", value: e.target.value });
+          }}
         />
       </div>
       {/* billed To */}
       <div>
-        <InvoiceBillingCard />
+      <h3 className="mt-4 -mb-2">Billed To</h3>
+
+        <InvoiceListBilledTo />
       </div>
 
       {/* service */}
       <div className="mt-5 relative  ">
-        <div
-          onClick={action.toogleServiceList}
-          className={` hover:bg-primaryAccent cursor-pointer duration-200 p-2 space-y-2 border-grey3  border-2 rounded-xl flex justify-between min-h-20 ${
-            isServiceListOpen && "bg-primaryAccent"
-          }`}
-        >
-          <div className="">
-            <h2 className="text-primary ">Service </h2>
-            <h3 className="font-medium">{activeServiceCenter.name}</h3>
-          </div>
-          <ChevronDown
-            className={`${
-              isServiceListOpen && "rotate-180 duration-300 ease-linear"
-            } `}
-          />
-        </div>
-        {isServiceListOpen && (
-          <div className=" z-10 p-2 space-y-2 bg-background max-h-96 border-grey3  mt-1 absolute w-full border-2 border-t-0 rounded-xl flex flex-col  justify-between min-h-20">
-            <div className="overflow-y-scroll">
-              {serviceCenterState.servicesCenter?.map((serviceCenter) => (
-                <div
-                  key={serviceCenter.id}
-                  onClick={() =>
-                    action.handleSetServiceCenter({
-                      description: serviceCenter.category,
-                      id: serviceCenter.id,
-                      name: serviceCenter.name,
-                    })
-                  }
-                >
-                  <InvoiceFormServiceCenterItem
-                    data={{
-                      description: serviceCenter.category,
-                      name: serviceCenter.name,
-                      id: serviceCenter.id,
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <h3 className="my-2">Service</h3>
+        <AppointmentComponent appointment={activeAppointment!} />
       </div>
       {/* quantity */}
       <div className="mt-5">

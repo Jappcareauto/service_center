@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { findAllInvoiceAsync } from "../useCase/findAllInvoice/FindAllInvoiceAsync";
-import { invoiceSelector } from "../slice/selectors";
+import { findAllInvoiceAsync } from "../../../useCase/findAllInvoice/FindAllInvoiceAsync";
+import { invoiceSelector } from "../../../slice/selectors";
 import { FindAllUserAsync } from "@/modules/user/usecase/findAllUser/findAllUserAsync";
 
 export const useInvoicesView = () => {

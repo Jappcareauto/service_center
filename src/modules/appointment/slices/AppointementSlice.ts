@@ -35,6 +35,7 @@ export const AppointmentSlice = createSlice({
       action: PayloadAction<{ appointments: Appointment[] }>
     ) => {
       state.appointments = action.payload.appointments;
+      console.log('appointments', action.payload.appointments)
     },
     setLoadingStatut: (state, action: PayloadAction<{ loading: LoadingState }>) => {
       state.loading = action.payload.loading;

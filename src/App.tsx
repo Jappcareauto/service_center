@@ -9,3 +9,4 @@ const App: React.FC<{ store: AppStore }> = ({ store }) => {
 };
 
 export default App;
+

@@ -6,9 +6,10 @@ const invoice = (state: RootState) => state.invoices.invoicesState.invoices;
 const allInvoiceloading = (state: RootState) =>
   state.invoices.invoicesState.loading;
 const addInvoiceFormState = (state: RootState) => state.invoices.AddInvoiceForm;
-
+const activeInvoice = (state: RootState) => state.invoices.activeInvoice;
 export const invoiceSelector = {
   invoice,
   allInvoiceloading,
   addInvoiceFormState,
+  activeInvoice,
 };

@@ -7,6 +7,7 @@ import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 import { ModalEvents } from "@/shared/helpers/hooks/useModal";
 import { FC } from "react";
 import useAppointmentComponent from "./useAppointmentComponent";
+import { formatStatusText } from "@/shared/utils/formatText";
 interface AppointmentComponentProps {
   appointment: Appointment;
 }
@@ -17,6 +18,7 @@ const AppointmentComponent: FC<AppointmentComponentProps> = ({
     useAppointmentComponent({
       appointment,
     });
+  const formatedStatus = formatStatusText(appointment.status);
   return (
     <div className="border border-borderColor rounded-[20px] bg-white p-4">
       <div className="flex items-center justify-between">
@@ -28,15 +30,15 @@ const AppointmentComponent: FC<AppointmentComponentProps> = ({
         </div>
         <div
           className={
-            "text-sm rounded-2xl px-3 py-2 bg-primaryAccent whitespace-nowrap text-primary"
+            "text-sm rounded-2xl px-3 py-2 lowercase first-letter:uppercase bg-primaryAccent whitespace-nowrap text-primary"
           }
         >
-          {appointmentData?.status}
+          {formatedStatus}
         </div>
       </div>
       <h2 className="font-medium mt-3 text-primary">
         {/* Body shop appointment */}
-        {appointmentData?.note}
+        {appointmentData?.service?.title}
       </h2>
       <h2 className="font-medium mt-1">
         {/* Porsche Taycan Turbo S */}

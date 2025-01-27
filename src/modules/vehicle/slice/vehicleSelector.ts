@@ -7,7 +7,7 @@ const loading = (state: RootState) => state.vehicle.activeVehicleState.loading;
 const vehicles = (state: RootState) => state.vehicle.allVehiclesState.vehicles;
 const allVehicleLoading = (state: RootState) =>
   state.vehicle.allVehiclesState.loading;
-export const vehicleState = {
+export const vehicleSelector = {
   loading,
   activeVehicle,
   allVehicleLoading,

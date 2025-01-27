@@ -20,9 +20,12 @@ export interface Invoice extends Audit {
   dueDate: string;
   paidDate: string;
   appointment?: Appointment;
+  appointmentId: string;
   items?: InvoiceItem[];
+  billedFromUserId: string;
+  billedToUserId: string;
+  vehicleId:string,
   billedFromUser?: User;
   billedToUser?: User;
   isPaid: boolean;
-
 }

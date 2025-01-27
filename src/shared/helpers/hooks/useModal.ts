@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { CustomEventData } from "@/shared/events/CustomEventData";
 import { EventsKey } from "@/shared/events/EventsKey";
 import { useEffect, useState } from "react";

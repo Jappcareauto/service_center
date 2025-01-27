@@ -1,7 +1,7 @@
-import { findAllServiceCenterResponse } from "../usecase/findAllService/findAllServiceCenterResponse";
+import { findAllServiceResponse } from "../usecase/findAllServiceCenter/findAllServiceResponse";
 
 export interface ServiceGateway {
-  findAllService: () => Promise<findAllServiceCenterResponse>;
+  findAllService: () => Promise<findAllServiceResponse>;
 }
 
 

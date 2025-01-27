@@ -3,21 +3,18 @@ import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
 import InvoiceIcon from "@/shared/generics/menu/icons/InvoiceIcon";
 import StatisticComponent from "@/shared/generics/statistics/StatisticComponent";
 import { FC } from "react";
-import InvoiceItem from "./components/invoiceItem";
-import { useInvoicesView } from "./useInvoicesView";
+import { useInvoicesView } from "./components/hooks/useInvoicesView";
 import { InvoiceRoutes } from "../infra/routes/Router";
 import Loader from "@/shared/generics/loader/Loader";
 import { LoadingState } from "@/shared/enums/LoadingState";
+import InvoiceListItem from "./components/InvoiceList";
 
 const InvoicesView: FC = () => {
   const { handleNavigation, invoiceState } = useInvoicesView();
-  const invoicesList = invoiceState.invoices?.map((invoice) => (
-    <InvoiceItem invoice={invoice} key={invoice.id} />
-  ));
 
   return (
     <div>
-      {/* geader */}
+      {/* header */}
       <div className="space-y-5">
         <div className="flex gap-3 ">
           <InvoiceIcon />
@@ -63,7 +60,9 @@ const InvoicesView: FC = () => {
           <Loader />
         </div>
       )}
-      <div className="mt-5  contain-layout duration-1000 ">{invoicesList}</div>
+      <div className="mt-5  contain-layout duration-1000 ">
+        <InvoiceListItem invoices={invoiceState.invoices} />{" "}
+      </div>
     </div>
   );
 };

@@ -1,3 +1,3 @@
-export const ServiceCenterApiRoute = {
-  findAll: () => "/service-center",
+export const ServiceApiRoute = {
+  findAll: () => "/service/list",
 };

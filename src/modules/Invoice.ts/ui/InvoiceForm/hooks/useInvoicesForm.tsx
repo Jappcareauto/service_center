@@ -1,21 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ServiceItem } from "../../model/ServiceItem";
+import { ServiceItem } from "../../../model/ServiceItem";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { invoiceSelector } from "../../slice/selectors";
-import { invoiceFormAction } from "../../slice/invoiceSlice";
+import { invoiceSelector } from "../../../slice/selectors";
+import { invoiceFormAction } from "../../../slice/invoiceSlice";
 import { serviceCenterSelector } from "@/modules/service/slice/selectors";
-import { FormListItem } from "@/shared/model/FormListItem";
+
+import { AppointementState } from "@/modules/appointment/slices/AppointenmentSelector";
+import {
+  FormInvoiceSubmitModel,
+  ValidateFormAddInvoice,
+} from "@/modules/Invoice.ts/validations/FormInvoiceSubmitModel";
+import { useGetMyself } from "@/modules/user/hooks/useGetMyself";
 
 //
+//
+
 //
 //
 function useInvoicesForm() {
   const invoiceFormState = useAppSelector(invoiceSelector.addInvoiceFormState);
+  const activeAppointment = useAppSelector(AppointementState.activeAppointment);
   const serviceCenterState = useAppSelector(
     serviceCenterSelector.serviceCenterState
   );
-
+  const {
+    state: { myself },
+  } = useGetMyself();
   const dispatch = useAppDispatch();
   const navigte = useNavigate();
   const id = new Date();
@@ -27,17 +38,7 @@ function useInvoicesForm() {
     id: id.toISOString(),
   });
 
-  const [activeServiceCenter, setActiveSrviceCenter] = useState<FormListItem>({
-    description:
-      serviceCenterState?.servicesCenter?.[0]?.category || "failed to load",
-    name: serviceCenterState?.servicesCenter?.[0]?.name || "",
-    id: serviceCenterState?.servicesCenter?.[0]?.id || "",
-  });
-
-  const [isServiceListOpen, setIsServiceListOpen] = useState(false);
-
   const handleEditServiceItem = (key: keyof ServiceItem, value: unknown) => {
-    console.log("key", key, value);
     setNewService((prevService) => {
       return {
         ...prevService,
@@ -45,14 +46,30 @@ function useInvoicesForm() {
       };
     });
   };
-  //service list
-  const toogleServiceList = () => {
-    setIsServiceListOpen((prev) => !prev);
+
+  const [formInput, setFormInput] = useState({
+    dueDate: "",
+    issueDate: "2025-01-01",
+  });
+  const [isDueDate, setIsDueDate] = useState(false);
+  const handleChangeInput = ({
+    key,
+    value,
+  }: {
+    key: "issueDate" | "dueDate";
+    value: string;
+  }) => {
+    if (key === "dueDate" && value !== "") {
+      setIsDueDate(true);
+    }
+    if (key === "dueDate" && value === "") {
+      setIsDueDate(false);
+    }
+    console.log("value", value);
+
+    setFormInput((prevState) => ({ ...prevState, [key]: value }));
   };
-  const handleSetServiceCenter = (service: FormListItem) => {
-    setActiveSrviceCenter(service);
-    toogleServiceList();
-  };
+
   //actionslice
   const handleChangeTaux = (taux: number) => {
     dispatch(invoiceFormAction.handleTotalPrice({ taux: taux }));
@@ -78,31 +95,49 @@ function useInvoicesForm() {
     handleChangeTaux(invoiceFormState.totalAmountState.taux);
   };
   //submit
-  const handleSubmitForm = ({ navTo }: { navTo: string }) => {
-    navigte(navTo);
-  };
   const handleDeleteService = (id: string) => {
     dispatch(invoiceFormAction.deleteService({ id }));
     handleChangeTaux(invoiceFormState.totalAmountState.taux || 0);
   };
+  const handleSubmitForm = ({ navTo }: { navTo: string }) => {
+    const dataToSubmit: FormInvoiceSubmitModel = {
+      appointmentId: activeAppointment!.id,
+      billedFromUserId: myself!.id,
+      billedToUserId: myself!.id,
+      issueDate: formInput.dueDate,
+      dueDate: formInput.issueDate,
+      items: invoiceFormState.serviceState.item,
+      money: {
+        amount: invoiceFormState.totalAmountState.totalAmount,
+        currency: "XAF",
+      },
+      vehicleId: activeAppointment!.vehicleId,
+    };
+
+    const validatedData = ValidateFormAddInvoice.safeParse(dataToSubmit);
+
+    console.log("validatedData", validatedData.data);
+
+    navigte(navTo);
+  };
 
   return {
     state: {
+      activeAppointment,
       invoiceFormState,
       newService,
-      activeServiceCenter,
       serviceCenterState,
-      isServiceListOpen,
+      formInput,
+      isDueDate,
     },
     action: {
-      handleSetServiceCenter,
-      toogleServiceList,
       handleAddService,
       handleSubmitForm,
-      handleEditServiceItem,
       handleChangeTaux,
       handleIsTaux,
       handleDeleteService,
+      handleChangeInput,
+      handleEditServiceItem,
     },
   };
 }

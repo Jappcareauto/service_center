@@ -20,7 +20,7 @@ const AppointmentDetailsView = () => {
   });
   const navigate = useNavigate();
 
-  const { activeAppointment, loading } = useAppointementDetail();
+  const { state:{ activeAppointment, loading} } = useAppointementDetail();
 
   let content = <></>;
 
@@ -164,6 +164,7 @@ const AppointmentDetailsView = () => {
               <div className="">
                 <h2 className="text-primary font-medium">
                   {/* Body shop appointment */}
+                  {activeAppointment.service?.title}
                 </h2>
                 <div className="flex justify-between mt-4">
                   <div className="flex flex-col gap-y-2">
