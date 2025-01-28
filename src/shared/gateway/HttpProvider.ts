@@ -14,7 +14,7 @@ interface Token {
 export abstract class HttpProvider {
   public async post(
     url: string,
-    data: Object,
+    data: object,
     signal?: AbortSignal
   ): Promise<Response> {
     const token = await this.token();
@@ -84,7 +84,6 @@ export abstract class HttpProvider {
       throw new InternetErrorException();
     }
     if (response.status === 500) {
-      
       throw new InternalServerException();
     }
     try {
@@ -236,13 +235,13 @@ export abstract class HttpProvider {
         return newAccess.accessToken;
       }
       if (refreshTokenTimeLeft < 1) {
-        handleCleanStoreAndNavigateToLogin();
+        // handleCleanStoreAndNavigateToLogin();
         return "";
       }
       return token.accessToken;
     } catch (error) {
       console.log("error", error);
-      handleCleanStoreAndNavigateToLogin();
+      // handleCleanStoreAndNavigateToLogin();
       return "";
     }
   }

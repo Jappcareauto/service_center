@@ -1,16 +1,15 @@
 import FilterBar from "@/modules/dashboard/ui/components/FilterBar";
-import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
+// import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
 import InvoiceIcon from "@/shared/generics/menu/icons/InvoiceIcon";
 import StatisticComponent from "@/shared/generics/statistics/StatisticComponent";
 import { FC } from "react";
 import { useInvoicesView } from "./components/hooks/useInvoicesView";
-import { InvoiceRoutes } from "../infra/routes/Router";
 import Loader from "@/shared/generics/loader/Loader";
 import { LoadingState } from "@/shared/enums/LoadingState";
 import InvoiceListItem from "./components/InvoiceList";
 
 const InvoicesView: FC = () => {
-  const { handleNavigation, invoiceState } = useInvoicesView();
+  const {  invoiceState } = useInvoicesView();
 
   return (
     <div>
@@ -25,12 +24,12 @@ const InvoicesView: FC = () => {
             labels={["Pending", "Paid", "Declined", "Draft"]}
             disableDisposition
           />
-          <PrimaryButton
+          {/* <PrimaryButton
             className="border border-black bg-inherit text-black hover:bg-primary hover:text-white duration-200 hover:border-none h-10 rounded-full font-normal text-sm"
             onClick={() => handleNavigation(InvoiceRoutes.createInvoice())}
           >
             Create Invoce
-          </PrimaryButton>
+          </PrimaryButton> */}
         </div>
       </div>
       {/* statistics */}

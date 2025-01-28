@@ -1,6 +1,6 @@
 import { LoadingState } from "@/shared/enums/LoadingState";
 import { Pagination } from "@/shared/model/Pagination";
-import { createSlice } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { findAllServiceAsync } from "../usecase/findAllServiceCenter/findAllServiceCenterAsync";
 import { Service } from "../model/Service";
 
@@ -10,13 +10,28 @@ interface InitialState {
     servicesCenter?: Service[];
     pagination?: Pagination;
   };
+  collections: {
+    ids: [];
+    entities: Record<string, Service>;
+  };
 }
 
 const initialState: InitialState = {
   allServiceCenterState: {
     loading: LoadingState.idle,
   },
+  collections: {
+    entities: {},
+    ids: [],
+  },
 };
+
+const sortComparer = (a: Service, b: Service) => {
+  return a.title.localeCompare(b.title);
+};
+export const serviceApdapter = createEntityAdapter<Service>({
+  sortComparer,
+});
 
 export const ServicesSlice = createSlice({
   name: "services",
@@ -33,6 +48,7 @@ export const ServicesSlice = createSlice({
       state.allServiceCenterState.pagination = payload.pagination;
       state.allServiceCenterState.servicesCenter = payload.data;
       state.allServiceCenterState.loading = LoadingState.success;
+      serviceApdapter.setAll(state.collections, payload.data);
     });
   },
 });

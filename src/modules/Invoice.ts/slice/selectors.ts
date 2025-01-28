@@ -1,6 +1,6 @@
 import { RootState } from "@/app/store";
 
-const invoice = (state: RootState) => state.invoices.invoicesState.invoices;
+const invoices = (state: RootState) => state.invoices.invoicesState.invoices;
 // const invoicePagination = (state: RootState) =>
 //   state.invoices.invoicesState.pagination;
 const allInvoiceloading = (state: RootState) =>
@@ -8,7 +8,7 @@ const allInvoiceloading = (state: RootState) =>
 const addInvoiceFormState = (state: RootState) => state.invoices.AddInvoiceForm;
 const activeInvoice = (state: RootState) => state.invoices.activeInvoice;
 export const invoiceSelector = {
-  invoice,
+  invoices,
   allInvoiceloading,
   addInvoiceFormState,
   activeInvoice,

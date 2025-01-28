@@ -66,7 +66,7 @@ function InvoiceDetail() {
                 id: activeInvoice?.billedFromUser?.id || "",
                 name: activeInvoice?.billedFromUser?.name || "",
                 phoneNumber:
-                  activeInvoice?.billedFromUser?.phones?.[0].number || "",
+                  activeInvoice?.billedFromUser?.phones?.[0]?.number || "",
               }}
             />
           </div>
@@ -78,7 +78,7 @@ function InvoiceDetail() {
                 id: activeInvoice?.billedToUser?.id || "",
                 name: activeInvoice?.billedToUser?.name || "",
                 phoneNumber:
-                  activeInvoice?.billedToUser?.phones?.[0].number || "",
+                  activeInvoice?.billedToUser?.phones?.[0]?.number || "",
               }}
             />
           </div>

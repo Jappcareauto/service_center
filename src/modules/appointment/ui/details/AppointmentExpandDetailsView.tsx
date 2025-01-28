@@ -8,7 +8,10 @@ import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
 import { InvoiceRoutes } from "@/modules/Invoice.ts/infra/routes/Router";
 
 const AppointmentExpandDetailsView = () => {
-  const { state:{ activeAppointment},action } = useAppointementDetail();
+  const {
+    state: { activeAppointment },
+    action,
+  } = useAppointementDetail();
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-32">
       <div>
@@ -97,9 +100,13 @@ const AppointmentExpandDetailsView = () => {
         <div className="flex flex-col ">
           <h3>Invoice</h3>
           <div className="self-end">
-            <PrimaryButton onClick={()=>action.handleNavigation(InvoiceRoutes.createInvoice(activeAppointment?.id))} className="bg-inherit text-black border-black border font-normal hover:text-white hover:bg-primary rounded-full hover:border-primary duration-200 " 
-            
-            
+            <PrimaryButton
+              onClick={() =>
+                action.handleNavigation(
+                  InvoiceRoutes.createInvoice(activeAppointment?.id)
+                )
+              }
+              className="bg-inherit text-black border-black border font-normal hover:text-white hover:bg-primary rounded-full hover:border-primary duration-200 "
             >
               Create Invoice
             </PrimaryButton>

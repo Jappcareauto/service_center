@@ -2,7 +2,7 @@
 import dayjs from 'dayjs';
 
 
-export function formatDateToMedium(date: string): string {
+export function formatDateToMedium(date?: Date): string {
   return dayjs(date).format('MMM, DD, YYYY hA');
 }
 

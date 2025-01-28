@@ -37,9 +37,7 @@ const initialState: InitialState = {
       isTaux: false,
     },
     serviceState: {
-      item: [
-    
-      ],
+      item: [],
       totalItems: 0,
       totalPrices: 4000,
     },
@@ -55,8 +53,10 @@ export const InvoicesSlice = createSlice({
         (invoice) => invoice.id === action.payload.id
       );
     },
+    //
     updateInvoices: (state, action: PayloadAction<{ invoices: Invoice[] }>) => {
       state.invoicesState.invoices = action.payload.invoices;
+      
     },
 
     //

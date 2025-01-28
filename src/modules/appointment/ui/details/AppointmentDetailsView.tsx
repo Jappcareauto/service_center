@@ -10,18 +10,22 @@ import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 import { useModal } from "@/shared/helpers/hooks/useModal";
 import { useNavigate } from "react-router-dom";
 import { AppointmentRoutes } from "../../infra/routes/Router";
-import useAppointementDetail from "./useAppointementDetail";
+// import useAppointementDetail from "./useAppointementDetail";
 import Loader from "@/shared/generics/loader/Loader";
 import { LoadingState } from "@/shared/enums/LoadingState";
-
-const AppointmentDetailsView = () => {
+import { FC } from "react";
+import { Appointment } from "../../model/Appointment";
+type Props = {
+  loading: LoadingState;
+  appointment: Appointment;
+};
+const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
   const modal = useModal({
     eventName: ModalEventKey.APPOINTMENT_DETAILS,
   });
   const navigate = useNavigate();
 
-  const { state:{ activeAppointment, loading} } = useAppointementDetail();
-
+  // const {} = useAppointementDetail();
   let content = <></>;
 
   switch (loading) {
@@ -36,11 +40,7 @@ const AppointmentDetailsView = () => {
             <h2 className="font-medium">Appointment Details</h2>
             <Expended2Icon
               className="cursor-pointer"
-              onClick={() =>
-                navigate(
-                  AppointmentRoutes.appointmentDetails()
-                )
-              }
+              onClick={() => navigate(AppointmentRoutes.appointmentDetails())}
             />
           </div>
           <div className="h-[calc(100vh-190px)] overflow-y-auto">
@@ -48,23 +48,23 @@ const AppointmentDetailsView = () => {
               <div className="">
                 <h1 className="text-primary font-medium">
                   {/* Porsche Taycan Turbo S */}
-                  {activeAppointment?.vehicle?.name}
+                  {appointment?.vehicle?.name}
                 </h1>
                 <p>
                   {/* 2024, RWD */}
-                  {activeAppointment.vehicle?.detail?.model}
+                  {appointment?.vehicle?.detail?.model}
                 </p>
               </div>
               <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full min-h-[190px] p-4">
                 {/* vehicle image */}
                 <img
-                  src={activeAppointment.vehicle?.imageUrl}
-                  alt={activeAppointment.vehicle?.name}
+                  src={appointment?.vehicle?.imageUrl}
+                  alt={appointment?.vehicle?.name}
                 />
               </div>
               <div className="flex justify-between items-center">
                 <Avatar />
-                <Tag tagText={activeAppointment?.status} />
+                <Tag tagText={appointment?.status} />
               </div>
               <div className="">
                 <h2 className="text-primary font-medium">
@@ -76,14 +76,14 @@ const AppointmentDetailsView = () => {
                       <Calendar2Icon />
                       <p>
                         {/* Oct, 20, 2024 10am */}
-                        {activeAppointment.date}
+                        {/* {appointment.date} */}
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1 text-grey4">
                       <LocationIcon />
                       <p>
                         {/* At Home */}
-                        {activeAppointment.locationType}
+                        {appointment.locationType}
                       </p>
                     </div>
                   </div>
@@ -93,12 +93,12 @@ const AppointmentDetailsView = () => {
                   </div>
                 </div>
               </div>
-              <p>{activeAppointment.vehicle?.description}</p>
+              <p>{appointment.vehicle?.description}</p>
             </div>
             <div className="flex flex-col gap-y-3 mt-5">
               <h2 className="font-medium pl-6">Images</h2>
               <div className="flex flex-row overflow-x-auto w-full px-6">
-                {activeAppointment.vehicle?.media?.items.map((image, index) => {
+                {appointment.vehicle?.media?.items.map((image, index) => {
                   return (
                     <img
                       className="w-[112px] h-[112px] rounded-[20px] mr-2"
@@ -132,9 +132,11 @@ const AppointmentDetailsView = () => {
             <Expended2Icon
               className="cursor-pointer"
               onClick={() =>
-                navigate(
-                  AppointmentRoutes.appointmentDetails()
-                )
+                navigate(AppointmentRoutes.appointmentDetails(), {
+                  state: {
+                    appointmentId: appointment?.id,
+                  },
+                })
               }
             />
           </div>
@@ -143,28 +145,28 @@ const AppointmentDetailsView = () => {
               <div className="">
                 <h1 className="text-primary font-medium">
                   {/* Porsche Taycan Turbo S */}
-                  {activeAppointment?.vehicle?.name}
+                  {appointment?.vehicle?.name}
                 </h1>
                 <p>
                   {/* 2024, RWD */}
-                  {activeAppointment.vehicle?.detail?.model}
+                  {appointment.vehicle?.detail?.model}
                 </p>
               </div>
               <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full min-h-[190px] p-4">
                 {/* vehicle image */}
                 <img
-                  src={activeAppointment.vehicle?.imageUrl}
-                  alt={activeAppointment.vehicle?.name}
+                  src={appointment.vehicle?.imageUrl}
+                  alt={appointment.vehicle?.name}
                 />
               </div>
               <div className="flex justify-between items-center">
                 <Avatar />
-                <Tag tagText={activeAppointment?.status} />
+                <Tag tagText={appointment?.status} />
               </div>
               <div className="">
                 <h2 className="text-primary font-medium">
                   {/* Body shop appointment */}
-                  {activeAppointment.service?.title}
+                  {appointment.service?.title}
                 </h2>
                 <div className="flex justify-between mt-4">
                   <div className="flex flex-col gap-y-2">
@@ -172,14 +174,14 @@ const AppointmentDetailsView = () => {
                       <Calendar2Icon />
                       <p>
                         {/* Oct, 20, 2024 10am */}
-                        {activeAppointment.date}
+                        {/* {appointment.date} */}
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1 text-grey4">
                       <LocationIcon />
                       <p>
                         {/* At Home */}
-                        {activeAppointment.locationType}
+                        {appointment.locationType}
                       </p>
                     </div>
                   </div>
@@ -189,12 +191,12 @@ const AppointmentDetailsView = () => {
                   </div>
                 </div>
               </div>
-              <p>{activeAppointment.vehicle?.description}</p>
+              <p>{appointment.vehicle?.description}</p>
             </div>
             <div className="flex flex-col gap-y-3 mt-5">
               <h2 className="font-medium pl-6">Images</h2>
               <div className="flex flex-row overflow-x-auto w-full px-6">
-                {activeAppointment.vehicle?.media?.items.map((image, index) => {
+                {appointment.vehicle?.media?.items.map((image, index) => {
                   return (
                     <img
                       className="w-[112px] h-[112px] rounded-[20px] mr-2"

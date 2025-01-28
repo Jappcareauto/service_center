@@ -10,6 +10,7 @@ import InvoiceListBilledTo from "./InvoiceForm/InvoiceListBilledTo";
 import VehicleListItem from "./InvoiceForm/VehicleListItem";
 import AppointmentComponent from "@/modules/dashboard/ui/components/AppointmentComponent";
 import AppointmentDetailsView from "@/modules/appointment/ui/details/AppointmentDetailsView";
+import { LoadingState } from "@/shared/enums/LoadingState";
 
 const InvoiceFormView: FC = () => {
   const {
@@ -19,7 +20,12 @@ const InvoiceFormView: FC = () => {
 
   return (
     <div className="mb-5">
-      <AppointmentDetailsView/>
+      {activeAppointment && (
+        <AppointmentDetailsView
+          appointment={activeAppointment}
+          loading={LoadingState.success}
+        />
+      )}
       <InvoiceFormHeader />
       {/* first part */}
       <div className=" grid grid-cols-2 gap-x-5">
@@ -49,7 +55,7 @@ const InvoiceFormView: FC = () => {
       </div>
       {/* billed To */}
       <div>
-      <h3 className="mt-4 -mb-2">Billed To</h3>
+        <h3 className="mt-4 -mb-2">Billed To</h3>
 
         <InvoiceListBilledTo />
       </div>

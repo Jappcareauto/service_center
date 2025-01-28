@@ -7,7 +7,7 @@ import { useAppointement } from "./useAppointment";
 import AppointmentList from "@/shared/ui/AppointmentList";
 
 const AppointmentsView = () => {
-  const { appointments, loading } = useAppointement();
+  const { appointments, loading, ActiveAppointment } = useAppointement();
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div>
@@ -30,12 +30,17 @@ const AppointmentsView = () => {
             <FilterBar labels={["Not Started", "In Progress", "Completed"]} />
           </div>
           <div className="flex flex-col gap-y-4">
-          <AppointmentList loading={loading} appointments={appointments} /> 
+            <AppointmentList loading={loading} appointments={appointments} />
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-y-6"></div>
-      <AppointmentDetailsView />
+      {ActiveAppointment && (
+        <AppointmentDetailsView
+          appointment={ActiveAppointment}
+          loading={loading}
+        />
+      )}{" "}
     </div>
   );
 };

@@ -10,7 +10,7 @@ import AppointmentList from "@/shared/ui/AppointmentList";
 import { useDashboardView } from "./useDashboardView";
 
 const DashboardView = () => {
-  const { appointments,loading   } = useDashboardView();
+  const { appointments, loading, activeAppointment } = useDashboardView();
 
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
@@ -37,11 +37,10 @@ const DashboardView = () => {
             <h2 className="font-medium">Recent Appointments</h2>
           </div>
           <div className="mt-5 mb-4">
-            <FilterBar  labels={["Not Started", "In Progress", "Completed"]} />
+            <FilterBar labels={["Not Started", "In Progress", "Completed"]} />
           </div>
           <div className="flex flex-col gap-y-4">
-          <AppointmentList loading={loading} appointments={appointments} /> 
-
+            <AppointmentList loading={loading} appointments={appointments} />
           </div>
         </div>
       </div>
@@ -63,7 +62,12 @@ const DashboardView = () => {
           </div>
         </div>
       </div>
-      <AppointmentDetailsView />
+      {activeAppointment && (
+        <AppointmentDetailsView
+          appointment={activeAppointment}
+          loading={loading}
+        />
+      )}
     </div>
   );
 };

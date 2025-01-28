@@ -6,6 +6,7 @@ import { HttpStatsGateWay } from "@/modules/statistics/infra/repos/httpStatsGate
 import { HttpInvoiceGateway } from "@/modules/Invoice.ts/infra/repo/HttpInvoiceGateway";
 import { HttpServiceGateway } from "@/modules/service/infra/repos/httpServiceCenterGateway";
 import { HttpUserGateWay } from "@/modules/user/infra/repos/httpUserGateway";
+import { HttpChatGateway } from "@/modules/chat/infra/repo/httpChatGateway";
 
 export const extraArgument: Dependencies = {
   authGateway: new HttpAuthGateway(),
@@ -15,4 +16,5 @@ export const extraArgument: Dependencies = {
   invoiceGateway: new HttpInvoiceGateway(),
   serviceGateway: new HttpServiceGateway(),
   UserGateway: new HttpUserGateWay(),
+  chatGateway: new HttpChatGateway(),
 };

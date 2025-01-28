@@ -7,6 +7,7 @@ import { StatsSlice } from "@/modules/statistics/slice/statsSlice";
 import { InvoicesSlice } from "@/modules/Invoice.ts/slice/invoiceSlice";
 import { ServicesSlice } from "@/modules/service/slice/serviceSlice";
 import { UserSlice } from "@/modules/user/slice/userSlice";
+import { chatRoomSlice } from "@/modules/chat/slice/messageSlice";
 
 export const rootReducer = combineReducers({
   [AuthSlice.name]: AuthSlice.reducer,
@@ -15,5 +16,6 @@ export const rootReducer = combineReducers({
   [StatsSlice.name]: StatsSlice.reducer,
   [InvoicesSlice.name]: InvoicesSlice.reducer,
   [ServicesSlice.name]: ServicesSlice.reducer,
-  [UserSlice.name]:UserSlice.reducer
+  [UserSlice.name]: UserSlice.reducer,
+  [chatRoomSlice.name]: chatRoomSlice.reducer,
 });

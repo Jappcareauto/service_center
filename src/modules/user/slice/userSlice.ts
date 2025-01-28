@@ -1,11 +1,15 @@
 import { LoadingState } from "@/shared/enums/LoadingState";
 import { Pagination } from "@/shared/model/Pagination";
 import { User } from "../models/User";
-import { createSlice } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { FindAllUserAsync } from "../usecase/findAllUser/findAllUserAsync";
 import { findSelfAsync } from "../usecase/findSelf/findSelfAsync";
 
 interface InitialState {
+  collections: {
+    ids: string[];
+    entities: Record<string, User>;
+  };
   allUserState: {
     loading: LoadingState;
     users?: User[];
@@ -15,12 +19,23 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
+  collections: {
+    entities: {},
+    ids: [],
+  },
   allUserState: {
     loading: LoadingState.idle,
   },
   mySelfState: { loading: LoadingState.idle },
 };
 
+const sortComparer = (a: User, b: User) => {
+  return a.name.localeCompare(b.name);
+};
+
+export const userAdapter = createEntityAdapter<User>({
+  sortComparer,
+});
 export const UserSlice = createSlice({
   name: "user",
   initialState,
@@ -36,6 +51,7 @@ export const UserSlice = createSlice({
       state.allUserState.loading = LoadingState.success;
       state.allUserState.users = action.payload.data;
       state.allUserState.pagination = action.payload.pagination;
+      userAdapter.setAll(state.collections, action.payload.data);
     });
 
     //

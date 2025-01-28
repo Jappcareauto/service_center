@@ -6,7 +6,7 @@ import { invoiceSelector } from "../../../slice/selectors";
 import { invoiceFormAction } from "../../../slice/invoiceSlice";
 import { serviceCenterSelector } from "@/modules/service/slice/selectors";
 
-import { AppointementState } from "@/modules/appointment/slices/AppointenmentSelector";
+import { AppointementSelector } from "@/modules/appointment/slices/AppointenmentSelector";
 import {
   FormInvoiceSubmitModel,
   ValidateFormAddInvoice,
@@ -20,7 +20,7 @@ import { useGetMyself } from "@/modules/user/hooks/useGetMyself";
 //
 function useInvoicesForm() {
   const invoiceFormState = useAppSelector(invoiceSelector.addInvoiceFormState);
-  const activeAppointment = useAppSelector(AppointementState.activeAppointment);
+  const activeAppointment = useAppSelector(AppointementSelector.activeAppointment);
   const serviceCenterState = useAppSelector(
     serviceCenterSelector.serviceCenterState
   );

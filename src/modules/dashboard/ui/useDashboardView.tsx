@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { AppointementState } from "@/modules/appointment/slices/AppointenmentSelector";
-import { findAllAppointmentAsync } from "@/modules/appointment/useCase/findAll/findAllAppointmentAsync";
+import { AppointementSelector } from "@/modules/appointment/slices/AppointenmentSelector";
+import { useFindAllAppointment } from "@/modules/appointment/useCase/findAll/useFindAllAppointment";
 import { StatsRange } from "@/modules/statistics/models/statsRanche";
 import { findAllAppointmentStatsAsync } from "@/modules/statistics/usecase/appointmentStats/findAllAppointmentStats/findAllAppointmentStatsAsync";
 import { calculateRange } from "@/modules/statistics/utils/calculStatsRange";
@@ -11,20 +11,20 @@ export const useDashboardView = () => {
   //dispatch Action
   const dispatch = useAppDispatch();
   //state
-  const appointments = useAppSelector(AppointementState.appointments);
-  const loading = useAppSelector(AppointementState.loading);
-  const pagination = useAppSelector(AppointementState.pagination);
-
+  const {
+    state: { appointments, loading },
+  } = useFindAllAppointment();
+  const activeAppointment = useAppSelector((state) =>
+    AppointementSelector.activeAppointment(state)
+  );
   const fetchData = async () => {
     try {
       const dataRange = calculateRange(StatsRange.MONTH);
       await dispatch(findAllAppointmentStatsAsync(dataRange)).unwrap();
-      await dispatch(findAllAppointmentAsync()).unwrap();
     } catch (err) {
       const error = getErrorState(err);
       console.log("error", error);
     }
-    
   };
 
   useEffect(() => {
@@ -35,6 +35,6 @@ export const useDashboardView = () => {
   return {
     appointments,
     loading,
-    pagination,
+    activeAppointment,
   };
 };

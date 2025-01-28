@@ -10,6 +10,10 @@ export const useGetMyself = () => {
   useEffect(() => {
     dispatch(FindAllUserAsync())
       .unwrap()
+      .then((result) => {
+        console.log("result", result);
+      })
+
       .catch((err) => console.log("err", err));
   }, []);
 
