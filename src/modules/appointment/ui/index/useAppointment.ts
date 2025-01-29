@@ -1,9 +1,11 @@
 import { useAppSelector } from "@/app/hooks";
 import { useFindAllAppointment } from "../../useCase/findAll/useFindAllAppointment";
 import { AppointementSelector } from "../../slices/AppointenmentSelector";
+import { useFilterAppointment } from "@/shared/slice/useFilterAppointment";
 
 export const useAppointement = () => {
-  //appointmentsStates
+  const { action, state } = useFilterAppointment();
+
   const {
     state: { appointments, loading },
   } = useFindAllAppointment();
@@ -12,8 +14,14 @@ export const useAppointement = () => {
   );
 
   return {
-    loading,
-    appointments,
-    ActiveAppointment,
+    state: {
+      loading,
+      appointments,
+      ActiveAppointment,
+      activeFilter: state.filter,
+    },
+    action: {
+      ...action,
+    },
   };
 };

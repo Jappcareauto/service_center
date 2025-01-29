@@ -5,10 +5,12 @@ import { StatsRange } from "@/modules/statistics/models/statsRanche";
 import { findAllAppointmentStatsAsync } from "@/modules/statistics/usecase/appointmentStats/findAllAppointmentStats/findAllAppointmentStatsAsync";
 import { calculateRange } from "@/modules/statistics/utils/calculStatsRange";
 import { getErrorState } from "@/shared/errors/getErrorState";
+import { useFilterAppointment } from "@/shared/slice/useFilterAppointment";
 import { useEffect } from "react";
 
 export const useDashboardView = () => {
   //dispatch Action
+  const { state, action } = useFilterAppointment();
   const dispatch = useAppDispatch();
   //state
   const {
@@ -33,8 +35,7 @@ export const useDashboardView = () => {
   }, []);
 
   return {
-    appointments,
-    loading,
-    activeAppointment,
+    state: { appointments, loading, activeAppointment, ...state },
+    action: { ...action },
   };
 };

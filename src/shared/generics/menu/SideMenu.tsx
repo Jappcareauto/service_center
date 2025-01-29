@@ -1,4 +1,3 @@
-import IMAGES from "@/assets/images";
 import { AppointmentRoutes } from "@/modules/appointment/infra/routes/Router";
 import { DashboardRoutes } from "@/modules/dashboard/infra/routes/Router";
 import React from "react";
@@ -11,6 +10,11 @@ import InvoiceIcon from "./icons/InvoiceIcon";
 import ProfileIcon from "./icons/ProfileIcon";
 import StatisticIcon from "./icons/StatisticIcon";
 import { InvoiceRoutes } from "@/modules/Invoice.ts/infra/routes/Router";
+import { useAppSelector } from "@/app/hooks";
+import { userSelector } from "@/modules/user/slice/selectors";
+import { LoadingState } from "@/shared/enums/LoadingState";
+import Loader from "../loader/Loader";
+import Avatar from "../Avatar";
 
 interface MenuItem {
   title: string;
@@ -59,14 +63,18 @@ const menuItems = (): MenuItem[] => [
 const SideMenu = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { loading, mySelf } = useAppSelector((state) =>
+    userSelector.mySelfState(state)
+  );
   return (
     <div className="w-[270px] border-r border-r-borderColor h-screen px-4 pt-10">
       <p className="mb-4">Good Morning</p>
       <button className="flex items-center px-4 py-3 border border-borderColor rounded-2xl w-full gap-x-4 mb-6 font-medium">
-        <div className="rounded-full border-[2px] border-primary p-[1.5px]">
-          <img src={IMAGES.avatar} alt="" className="w-12 h-12" />
-        </div>
-        <p>Dave’s Garage</p>
+        {loading === LoadingState.pending ? (
+          <Loader />
+        ) : (
+          <Avatar name={mySelf?.name} className="" />
+        )}
       </button>
 
       <div className="flex flex-col gap-y-2">
@@ -80,10 +88,10 @@ const SideMenu = () => {
               className={twMerge(
                 "flex gap-x-4 h-14 rounded-xl items-center px-5 font-light hover:bg-primaryAccent hover:text-primary",
                 isSelected ? "bg-primaryAccent text-primary" : "",
-                !index ? "mb-16" : ""
+                !index ? "mb-" : ""
               )}
             >
-              {item.icon}{" "}
+              {item.icon}
               <span className="text-textColor text-sm">{item.title}</span>
             </button>
           );

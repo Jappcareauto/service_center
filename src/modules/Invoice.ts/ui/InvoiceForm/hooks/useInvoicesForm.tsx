@@ -11,7 +11,7 @@ import {
   FormInvoiceSubmitModel,
   ValidateFormAddInvoice,
 } from "@/modules/Invoice.ts/validations/FormInvoiceSubmitModel";
-import { useGetMyself } from "@/modules/user/hooks/useGetMyself";
+import { useFindMyself } from "@/modules/user/hooks/usefindMyself";
 
 //
 //
@@ -26,7 +26,7 @@ function useInvoicesForm() {
   );
   const {
     state: { myself },
-  } = useGetMyself();
+  } = useFindMyself();
   const dispatch = useAppDispatch();
   const navigte = useNavigate();
   const id = new Date();

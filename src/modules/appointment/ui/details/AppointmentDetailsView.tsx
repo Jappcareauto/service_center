@@ -15,6 +15,9 @@ import Loader from "@/shared/generics/loader/Loader";
 import { LoadingState } from "@/shared/enums/LoadingState";
 import { FC } from "react";
 import { Appointment } from "../../model/Appointment";
+import { formatDateToMedium } from "@/shared/utils/dateFormat";
+import { useUpdateAppointmentStatus } from "../../useCase/update/status/useUpdateAppointmentStatus";
+import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
 type Props = {
   loading: LoadingState;
   appointment: Appointment;
@@ -23,11 +26,14 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
   const modal = useModal({
     eventName: ModalEventKey.APPOINTMENT_DETAILS,
   });
+  const {
+    action,
+    state: { loading: updateStatus },
+  } = useUpdateAppointmentStatus();
   const navigate = useNavigate();
-
   // const {} = useAppointementDetail();
   let content = <></>;
-
+  console.log("appointment", appointment.user?.name);
   switch (loading) {
     case LoadingState.pending:
       content = (
@@ -62,8 +68,8 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
                   alt={appointment?.vehicle?.name}
                 />
               </div>
-              <div className="flex justify-between items-center">
-                <Avatar />
+              <div className="flex justify-between  items-center">
+                <Avatar name={appointment.user?.name} />
                 <Tag tagText={appointment?.status} />
               </div>
               <div className="">
@@ -76,7 +82,7 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
                       <Calendar2Icon />
                       <p>
                         {/* Oct, 20, 2024 10am */}
-                        {/* {appointment.date} */}
+                        {formatDateToMedium(appointment.date)}
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1 text-grey4">
@@ -112,7 +118,34 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
             </div>
           </div>
           <div className="p-6">
-            <PrimaryButton className="w-full">Mark as completed</PrimaryButton>
+            <PrimaryButton
+              disabled={
+                updateStatus === LoadingState.pending ||
+                appointment.status === AppointmentFilter.COMPLETED
+              }
+              className={`w-full ${
+                appointment.status === AppointmentFilter.COMPLETED &&
+                "bg-primaryAccent border text-primary border-primaryAccent2"
+              } `}
+              onClick={() =>
+                action.onUpdateStatus({
+                  id: appointment.id,
+                  status: {
+                    status: AppointmentFilter.COMPLETED,
+                  },
+                })
+              }
+            >
+              {updateStatus === LoadingState.pending ? (
+                <div className="flex w-full justify-center">
+                  <Loader />
+                </div>
+              ) : appointment.status === AppointmentFilter.COMPLETED ? (
+                "Completed"
+              ) : (
+                " Mark as completed"
+              )}
+            </PrimaryButton>
           </div>
         </>
       );
@@ -160,7 +193,7 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
                 />
               </div>
               <div className="flex justify-between items-center">
-                <Avatar />
+                <Avatar name={appointment.user?.name} />
                 <Tag tagText={appointment?.status} />
               </div>
               <div className="">
@@ -174,7 +207,7 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
                       <Calendar2Icon />
                       <p>
                         {/* Oct, 20, 2024 10am */}
-                        {/* {appointment.date} */}
+                        {formatDateToMedium(appointment.date)}
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1 text-grey4">
@@ -210,7 +243,34 @@ const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
             </div>
           </div>
           <div className="p-6">
-            <PrimaryButton className="w-full">Mark as completed</PrimaryButton>
+            <PrimaryButton
+              disabled={
+                updateStatus === LoadingState.pending ||
+                appointment.status === AppointmentFilter.COMPLETED
+              }
+              className={`w-full ${
+                appointment.status === AppointmentFilter.COMPLETED &&
+                "bg-primaryAccent border text-primary border-primaryAccent2"
+              } `}
+              onClick={() =>
+                action.onUpdateStatus({
+                  id: appointment.id,
+                  status: {
+                    status: AppointmentFilter.COMPLETED,
+                  },
+                })
+              }
+            >
+              {updateStatus === LoadingState.pending ? (
+                <div className="flex w-full justify-center">
+                  <Loader />
+                </div>
+              ) : appointment.status === AppointmentFilter.COMPLETED ? (
+                "Completed"
+              ) : (
+                " Mark as completed"
+              )}
+            </PrimaryButton>
           </div>
         </>
       );

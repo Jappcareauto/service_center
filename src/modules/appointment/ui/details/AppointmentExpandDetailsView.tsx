@@ -18,7 +18,7 @@ const AppointmentExpandDetailsView = () => {
         <h2 className="font-medium">Appointment Details</h2>
         <div className="mt-10 flex flex-col gap-y-6">
           <div className="flex justify-between items-center">
-            <Avatar />
+            <Avatar name={activeAppointment.user?.name} />
             <Tag tagText={activeAppointment.status} />
           </div>
           <div>
@@ -26,24 +26,25 @@ const AppointmentExpandDetailsView = () => {
               <img
                 src={activeAppointment.vehicle?.imageUrl}
                 alt={activeAppointment.vehicle?.name}
+                className="rounded-lg"
               />
             </div>
-            <h1 className="font-medium mt-4">
+            <h1 className="font-medium mt-2">
               {/* Porsche Taycan Turbo S */}
               {activeAppointment.vehicle?.name}
             </h1>
-            <p>
+            <p className="">
               {/* 2024, RWD */}
               {activeAppointment.vehicle?.detail?.model}
             </p>
           </div>
 
           <div className="">
-            <h2 className="text-primary font-medium">
+            <h2 className="text-primary font-medium -mt-4">
               {/* Body shop appointment */}
-              {activeAppointment.note}
+              {activeAppointment.service?.title}
             </h2>
-            <div className="flex flex-col gap-y-2 mt-4">
+            <div className="flex flex-col gap-y-2 mt-2">
               <div className="flex items-center gap-x-1 text-grey4">
                 <Calendar2Icon />
 
@@ -70,7 +71,7 @@ const AppointmentExpandDetailsView = () => {
             bumper. */}
             {activeAppointment.vehicle?.description}
           </p>
-          <div className="flex flex-col gap-y-3 mt-5">
+          <div className="flex flex-col gap-y-3 ">
             <h2 className="font-medium">Images</h2>
             <div className="flex flex-row overflow-x-auto w-full">
               {activeAppointment.vehicle?.media?.items?.map((image, index) => {

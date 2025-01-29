@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { userSelector } from "../slice/selectors";
 import { FindAllUserAsync } from "../usecase/findAllUser/findAllUserAsync";
 
-export const useGetMyself = () => {
+export const useFindMyself = () => {
   const myselfState = useAppSelector(userSelector.mySelfState);
   const dispatch = useAppDispatch();
 

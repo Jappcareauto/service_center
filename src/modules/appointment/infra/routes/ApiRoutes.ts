@@ -1,9 +1,9 @@
 export const AppointmentApiRoutes = {
-  getById: (id: string) => `/appointments/${id}`,
-  update: (id: string) => `/appointments/${id}`,
-  delete: (id: string) => `/appointments/${id}`,
+  getById: (id: string) => `/appointment/${id}`,
+  update: (id: string) => `/appointment/${id}`,
+  delete: (id: string) => `/appointment/${id}`,
   getAll: () => `/appointment/list`,
-  create: () => `/appointments`,
-  updateStatus: (id: string) => `/appointments/${id}/status`,
-  getStatus: () => `/appointments/status`,
+  create: () => `/appointment`,
+  updateStatus: (id: string) => `/appointment/${id}/status`,
+  getStatus: () => `/appointment/status`,
 };

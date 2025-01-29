@@ -23,8 +23,8 @@ const AppointmentComponent: FC<AppointmentComponentProps> = ({
     <div className="border border-borderColor rounded-[20px] bg-white p-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center w-full gap-x-4 font-normal">
-          <Avatar className="w-12 h-12" />
-          <p>{appointmentData?.createdBy || "Anonyme"}</p>
+          <Avatar className="w-12 h-12" name={appointmentData?.user?.name||"Anonyme"} />
+          {/* <p>{appointmentData?.user?.name || "Anonyme"}</p> */}
         </div>
         <div
           className={

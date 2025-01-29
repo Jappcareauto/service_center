@@ -16,7 +16,7 @@ const Avatar: React.FC<OwnProps> = ({
   parentClassName,
   disabledBorder,
 }) => {
-  const profilText = getFirtsLetters(name || "D G");
+  const profilText = getFirtsLetters(name || "Anonyme");
 
   return (
     <div className="flex items-center gap-x-4 font-normal">
@@ -31,7 +31,7 @@ const Avatar: React.FC<OwnProps> = ({
           // src={url ?? IMAGES.avatar}
           // alt=""
           className={twMerge(
-            "w-12 h-12 m-auto flex items-center  uppercase font-bold justify-center text-sm bg-black text-primary rounded-full",
+            "w-12 h-12 flex items-center  uppercase font-bold justify-center text-sm bg-black text-primary rounded-full",
             className
           )}
         >
