@@ -6,6 +6,7 @@ import { authMiddleware } from "@/modules/auth/infra/middlewares/authMiddleware"
 import { invoiceMiddleware } from "@/modules/Invoice.ts/middleware/invoiceMiddleware";
 import { appointmentMiddleware } from "@/modules/appointment/infra/middlewares/findAllappointmentMiddleware";
 import { updateAppointmentStatusMiddleware } from "@/modules/appointment/infra/middlewares/updateAppointmentStatusMiddleWare";
+import { createInvoiceMiddleware } from "@/modules/Invoice.ts/middleware/createInvocieMiddleWere";
 export const listenerMiddleware = createListenerMiddleware<
   RootState,
   AppDispatch,
@@ -30,3 +31,4 @@ appointmentMiddleware(startAppListening);
 authMiddleware(startAppListening);
 invoiceMiddleware(startAppListening);
 updateAppointmentStatusMiddleware(startAppListening);
+createInvoiceMiddleware(startAppListening);

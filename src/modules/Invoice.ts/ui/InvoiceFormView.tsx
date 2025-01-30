@@ -11,11 +11,13 @@ import VehicleListItem from "./InvoiceForm/VehicleListItem";
 import AppointmentComponent from "@/modules/dashboard/ui/components/AppointmentComponent";
 import AppointmentDetailsView from "@/modules/appointment/ui/details/AppointmentDetailsView";
 import { LoadingState } from "@/shared/enums/LoadingState";
+import { formatDateToShortString } from "@/shared/utils/dateFormat";
+import Loader from "@/shared/generics/loader/Loader";
 
 const InvoiceFormView: FC = () => {
   const {
     action,
-    state: { activeAppointment, formInput, isDueDate },
+    state: { activeAppointment, formInput, isDueDate, formLoading },
   } = useInvoicesForm();
 
   return (
@@ -29,13 +31,13 @@ const InvoiceFormView: FC = () => {
       <InvoiceFormHeader />
       {/* first part */}
       <div className=" grid grid-cols-2 gap-x-5">
-        <Input label="Invoice Number" onChange={() => {}} />
+        <Input label="Invoice Number" disabled onChange={() => {}} />
 
         <VehicleListItem />
         <Input
           label="Issue Date"
           type="date"
-          value={formInput.issueDate}
+          value={formatDateToShortString(formInput.issueDate)}
           onChange={(e) => {
             action.handleChangeInput({
               key: "issueDate",
@@ -72,18 +74,23 @@ const InvoiceFormView: FC = () => {
       <div className="mt-5">
         <InvoceFormTotal isEdditing />
       </div>
+
+      {formLoading === LoadingState.failed && (
+        <div className="mt-5 duration-500 text-center text-red">
+          Failed to create the invoice. This appointment may already have an
+          invoice.
+        </div>
+      )}
       <div className="flex justify-end px-2 gap-4 my-5">
-        <PrimaryButton
+        {/* <PrimaryButton
           className="bg-inherit text-black border border-black"
           type="button"
         >
           Save Draft
-        </PrimaryButton>
-        <PrimaryButton
-          type="button"
-          onClick={() => action.handleSubmitForm({ navTo: "" })}
-        >
-          Send to client
+        </PrimaryButton> */}
+
+        <PrimaryButton type="button" onClick={() => action.handleSubmitForm()}>
+          {formLoading === LoadingState.pending ? <Loader /> : "Send to client"}
         </PrimaryButton>
       </div>
     </div>

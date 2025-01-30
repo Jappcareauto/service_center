@@ -12,6 +12,9 @@ import {
   ValidateFormAddInvoice,
 } from "@/modules/Invoice.ts/validations/FormInvoiceSubmitModel";
 import { useFindMyself } from "@/modules/user/hooks/usefindMyself";
+import dayjs from "dayjs";
+import { useCreateInvoice } from "@/modules/Invoice.ts/useCase/createInvoice/useCreateInvoice";
+import { InvoiceRoutes } from "@/modules/Invoice.ts/infra/routes/Router";
 
 //
 //
@@ -19,15 +22,18 @@ import { useFindMyself } from "@/modules/user/hooks/usefindMyself";
 //
 //
 function useInvoicesForm() {
+  const dispatch = useAppDispatch();
+  const createInvoice = useCreateInvoice();
   const invoiceFormState = useAppSelector(invoiceSelector.addInvoiceFormState);
-  const activeAppointment = useAppSelector(AppointementSelector.activeAppointment);
+  const activeAppointment = useAppSelector(
+    AppointementSelector.activeAppointment
+  );
   const serviceCenterState = useAppSelector(
     serviceCenterSelector.serviceCenterState
   );
   const {
     state: { myself },
   } = useFindMyself();
-  const dispatch = useAppDispatch();
   const navigte = useNavigate();
   const id = new Date();
   const [newService, setNewService] = useState<ServiceItem>({
@@ -49,7 +55,7 @@ function useInvoicesForm() {
 
   const [formInput, setFormInput] = useState({
     dueDate: "",
-    issueDate: "2025-01-01",
+    issueDate: new Date(),
   });
   const [isDueDate, setIsDueDate] = useState(false);
   const handleChangeInput = ({
@@ -99,13 +105,15 @@ function useInvoicesForm() {
     dispatch(invoiceFormAction.deleteService({ id }));
     handleChangeTaux(invoiceFormState.totalAmountState.taux || 0);
   };
-  const handleSubmitForm = ({ navTo }: { navTo: string }) => {
+  const handleSubmitForm = async () => {
     const dataToSubmit: FormInvoiceSubmitModel = {
       appointmentId: activeAppointment!.id,
       billedFromUserId: myself!.id,
       billedToUserId: myself!.id,
-      issueDate: formInput.dueDate,
-      dueDate: formInput.issueDate,
+      issueDate: dayjs(formInput.issueDate).toISOString(),
+      dueDate: dayjs(formInput.dueDate).isValid()
+        ? dayjs(formInput.dueDate).toISOString()
+        : undefined,
       items: invoiceFormState.serviceState.item,
       money: {
         amount: invoiceFormState.totalAmountState.totalAmount,
@@ -116,9 +124,15 @@ function useInvoicesForm() {
 
     const validatedData = ValidateFormAddInvoice.safeParse(dataToSubmit);
 
-    console.log("validatedData", validatedData.data);
+    if (validatedData.error) {
+      console.log("validatedData", validatedData.data);
+      return console.log("validatedData", validatedData.error.errors);
+    }
+    console.log("validatedDatasuccess", validatedData.data);
 
-    navigte(navTo);
+    createInvoice.action.onCreateInvoce(validatedData.data).then((result) => {
+      navigte(InvoiceRoutes.invoiceDetail(result.id));
+    });
   };
 
   return {
@@ -129,6 +143,7 @@ function useInvoicesForm() {
       serviceCenterState,
       formInput,
       isDueDate,
+      formLoading: createInvoice.state.loading,
     },
     action: {
       handleAddService,

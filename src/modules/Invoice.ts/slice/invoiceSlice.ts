@@ -1,10 +1,23 @@
 import { Invoice } from "@/modules/Invoice.ts/model/Invoice";
 import { findAllInvoiceAsync } from "@/modules/Invoice.ts/useCase/findAllInvoice/FindAllInvoiceAsync";
 import { LoadingState } from "@/shared/enums/LoadingState";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createEntityAdapter,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { ServiceItem } from "../model/ServiceItem";
+import { createInvoiceAsync } from "../useCase/createInvoice/createInvoiceAsync";
 
 interface InitialState {
+  createInvoceState: {
+    loading: LoadingState;
+    invoice?: Invoice;
+  };
+  collections: {
+    ids: string[];
+    entities: Record<string, Invoice>;
+  };
   invoicesState: {
     loading: LoadingState;
     invoices?: Invoice[];
@@ -26,12 +39,15 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
+  createInvoceState: {
+    loading: LoadingState.idle,
+  },
   invoicesState: {
     loading: LoadingState.idle,
   },
   AddInvoiceForm: {
     totalAmountState: {
-      taux: 1,
+      taux: 0,
       totalAmount: 0,
       tauxAmount: 0,
       isTaux: false,
@@ -39,15 +55,33 @@ const initialState: InitialState = {
     serviceState: {
       item: [],
       totalItems: 0,
-      totalPrices: 4000,
+      totalPrices: 0,
     },
   },
+  collections: {
+    entities: {},
+    ids: [],
+  },
 };
+
+const sortComparer = (a: Invoice, b: Invoice) =>
+  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+export const invoiceAdapter = createEntityAdapter<Invoice, string>({
+  sortComparer,
+  selectId: (invoice) => invoice.number,
+});
 
 export const InvoicesSlice = createSlice({
   name: "invoices",
   initialState,
   reducers: {
+    addOne: (state, action: PayloadAction<{ invoice: Invoice }>) => {
+      invoiceAdapter.addOne(state.collections, {
+        ...action.payload.invoice,
+        createdAt: new Date(),
+      });
+    },
     findOneInvoice: (state, action: PayloadAction<{ id: string }>) => {
       state.activeInvoice = state.invoicesState.invoices?.find(
         (invoice) => invoice.id === action.payload.id
@@ -56,7 +90,6 @@ export const InvoicesSlice = createSlice({
     //
     updateInvoices: (state, action: PayloadAction<{ invoices: Invoice[] }>) => {
       state.invoicesState.invoices = action.payload.invoices;
-      
     },
 
     //
@@ -137,7 +170,23 @@ export const InvoicesSlice = createSlice({
     builder.addCase(findAllInvoiceAsync.fulfilled, (state, action) => {
       state.invoicesState.invoices = action.payload.data;
       state.invoicesState.loading = LoadingState.success;
-      console.log("action.payload", action.payload);
+      invoiceAdapter.setAll(state.collections, action.payload.data);
+    });
+
+    //adInvoice
+
+    builder.addCase(createInvoiceAsync.pending, (state) => {
+      state.createInvoceState.loading = LoadingState.pending;
+    });
+
+    builder.addCase(createInvoiceAsync.rejected, (state) => {
+      state.createInvoceState.loading = LoadingState.failed;
+    });
+
+    builder.addCase(createInvoiceAsync.fulfilled, (state, { payload }) => {
+      state.createInvoceState.invoice = payload;
+      invoiceAdapter.addOne(state.collections, payload);
+      state.createInvoceState.loading = LoadingState.success;
     });
   },
 });

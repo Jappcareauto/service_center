@@ -90,7 +90,7 @@ function InvoiceDetail() {
             <div className="">
               <h2 className="text-primary ">Service </h2>
               <h3 className="font-medium">
-                {activeInvoice?.appointment?.date}
+                {formatDateToMedium(activeInvoice?.appointment?.date)}
               </h3>
             </div>
             <ChevronDown />

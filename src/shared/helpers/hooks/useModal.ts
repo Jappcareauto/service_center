@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
 
 import { CustomEventData } from "@/shared/events/CustomEventData";
 import { EventsKey } from "@/shared/events/EventsKey";
@@ -20,8 +21,7 @@ export const useModal = (
     { eventName?: ModalEventKey, callback?: (data?: any) => void } = {} as any
 ): ModalBehavior => {
   const [isOpen, setIsOpen] = useState(false);
-
-
+  
   const handleListenModalEvent = (event: CustomEvent<CustomEventData<ModalEventsProps>>) => {
     if (eventName !== event.detail.data.eventName) return;
     setIsOpen(event.detail.data.isOpen);

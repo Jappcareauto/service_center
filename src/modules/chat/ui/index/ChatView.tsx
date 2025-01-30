@@ -20,7 +20,7 @@ const ChatView = () => {
             <ChatIcon className="" />
             <h2 className="font-[600]">Chat</h2>
           </div>
-          <FilterBar labels={["All", "Unread", "Read"]} disableDisposition />
+          <FilterBar onFilter={()=>{}} labels={["All", "Unread", "Read"]} disableDisposition />
           <Input
             className="rounded-full bg-primaryAccent border-none"
             placeholder="Search"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AppStore } from "@/app/store";
 import { RouteObject } from "react-router-dom";
 import AppointmentExpandDetailsView from "../../ui/details/AppointmentExpandDetailsView";
@@ -9,8 +10,7 @@ export const AppointmentRoutes = {
   appointmentDetails: () => `/appointment/details`,
 };
 
-export const AppointmentRouter = (state: AppStore): RouteObject[] => {
-  const globalState = state.getState();
+export const AppointmentRouter = (_state: AppStore): RouteObject[] => {
   return [
     {
       path: AppointmentRoutes.appointment,
