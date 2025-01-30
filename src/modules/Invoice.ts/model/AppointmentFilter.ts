@@ -1,0 +1,5 @@
+export enum AppointmentFilter {
+  NOTSTARTED = "NOT_STARTED",
+  INPROPGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+}

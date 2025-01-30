@@ -10,7 +10,8 @@ export const LoginAsync = createAppAsyncThunk<LoginResponse, LoginCommand>(
       const response = await authGateway.login(command);
       return response;
     } catch (err) {
-      return rejectWithValue(getErrorState(err));
+      console.log('err', err)
+      return rejectWithValue(getErrorState(err)); 
     }
   }
 );

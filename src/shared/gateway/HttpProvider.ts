@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BASE_URL } from "@/app/config/Base";
 import InternalServerException from "@/shared/exceptions/InternalServerException";
 import { InternetErrorException } from "@/shared/exceptions/InternetErrorException";
@@ -14,7 +16,7 @@ interface Token {
 export abstract class HttpProvider {
   public async post(
     url: string,
-    data: Object,
+    data: object,
     signal?: AbortSignal
   ): Promise<Response> {
     const token = await this.token();
@@ -30,12 +32,30 @@ export abstract class HttpProvider {
       signal,
     });
   }
+  public async put(
+    url: string,
+    data: object,
+    signal?: AbortSignal
+  ): Promise<Response> {
+    const token = await this.token();
+    return this.fetchData(url, {
+      method: "PUT",
+      redirect: "error",
+      headers: {
+        "X-CSRF-TOKEN": token,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+      signal,
+    });
+  }
 
   public async postFile(url: string, data: FormData): Promise<Response> {
     const token = await this.token();
 
     return this.fetchData(url, {
-      method: "POST",
+      method: "PUT",
       redirect: "error",
       headers: { "X-CSRF-TOKEN": token },
       body: data,
@@ -84,7 +104,6 @@ export abstract class HttpProvider {
       throw new InternetErrorException();
     }
     if (response.status === 500) {
-      
       throw new InternalServerException();
     }
     try {
@@ -104,6 +123,28 @@ export abstract class HttpProvider {
     let response: any;
     try {
       response = await this.post(url, command);
+    } catch (error) {
+      throw new InternetErrorException();
+    }
+    if (response.status === 500) {
+      throw new InternalServerException();
+    }
+    try {
+      return await response.json();
+    } catch (error) {
+      throw new InternalServerException();
+    }
+  }
+  public async putWithResult({
+    url,
+    command,
+  }: {
+    url: string;
+    command: object;
+  }) {
+    let response: any;
+    try {
+      response = await this.put(url, command);
     } catch (error) {
       throw new InternetErrorException();
     }
@@ -236,13 +277,13 @@ export abstract class HttpProvider {
         return newAccess.accessToken;
       }
       if (refreshTokenTimeLeft < 1) {
-        handleCleanStoreAndNavigateToLogin();
+        // handleCleanStoreAndNavigateToLogin();
         return "";
       }
       return token.accessToken;
     } catch (error) {
       console.log("error", error);
-      handleCleanStoreAndNavigateToLogin();
+      // handleCleanStoreAndNavigateToLogin();
       return "";
     }
   }

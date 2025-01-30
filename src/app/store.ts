@@ -56,3 +56,4 @@ export type AppStore = ReturnType<typeof createStore>
 export type RootState = ReturnType<typeof rootReducer>;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = ThunkDispatch<RootState, Dependencies, Action>;
+

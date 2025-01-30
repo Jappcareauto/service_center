@@ -3,9 +3,10 @@ import AppointmentComponent from "@/modules/dashboard/ui/components/AppointmentC
 import { FC } from "react";
 import { LoadingState } from "../enums/LoadingState";
 import Loader from "../generics/loader/Loader";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface Props {
-  appointments: Appointment[] | undefined;
+  appointments: Appointment[];
   loading: LoadingState;
 }
 
@@ -35,9 +36,20 @@ const AppointmentList: FC<Props> = ({ appointments, loading }) => {
       );
 
     case LoadingState.success:
-      return appointments?.map((appointment) => (
-        <AppointmentComponent appointment={appointment} key={appointment.id} />
-      ));
+      return (
+        <AnimatePresence>
+          {appointments?.length === 0 ? (
+            <p className="mx-auto text-3xl">No appointment registered.</p>
+          ) : (
+            appointments?.map((appointment) => (
+              <motion.div layout key={appointment.id}>
+                <AppointmentComponent appointment={appointment} />
+              </motion.div>
+            ))
+          )}
+          ;
+        </AnimatePresence>
+      );
 
     default:
       return appointments?.map((appointment) => (

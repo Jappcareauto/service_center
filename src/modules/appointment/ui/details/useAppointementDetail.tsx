@@ -1,17 +1,33 @@
-import { useAppSelector } from "@/app/hooks";
-import { AppointementState } from "../../slices/AppointenmentSelector";
+import {
+  // useAppDispatch,
+  useAppSelector,
+} from "@/app/hooks";
+import { AppointementSelector } from "../../slices/AppointenmentSelector";
 import { formatDateToMedium } from "@/shared/utils/dateFormat";
+import { useNavigate } from "react-router-dom";
+// import { appointmentSliceAction } from "../../slices/AppointementSlice";
 
 const useAppointementDetail = () => {
-  const activeAppointment = useAppSelector(AppointementState.activeAppointment);
- 
+  // const dispatch = useAppDispatch()
+  const navigate = useNavigate();
+  const appointment = useAppSelector((state) =>
+    AppointementSelector.activeAppointment(state)
+  );
 
-  const loading = useAppSelector(AppointementState.loading);
-  const formattedDate = formatDateToMedium(activeAppointment?.date ?? "");
+  const loading = useAppSelector(AppointementSelector.loading);
+  const formattedDate = formatDateToMedium(appointment?.date);
 
+  const handleNavigation = (link: string) => {
+    navigate(link);
+  };
   return {
-    activeAppointment: { ...activeAppointment, date: formattedDate },
-    loading,
+    state: {
+      activeAppointment: { ...appointment, date: formattedDate },
+      loading,
+    },
+    action: {
+      handleNavigation,
+    },
   };
 };
 

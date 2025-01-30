@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { CustomEventData } from "@/shared/events/CustomEventData";
 import { EventsKey } from "@/shared/events/EventsKey";
 import { useEffect, useState } from "react";
@@ -28,10 +30,8 @@ export const useModal = (
 
   useEffect(() => {
     if (!eventName) return;
-    // @ts-ignore
     window.addEventListener(EventsKey.MODAL, handleListenModalEvent);
     return () => {
-      // @ts-ignore
       window.removeEventListener(EventsKey.MODAL, handleListenModalEvent);
     }
   }, []);

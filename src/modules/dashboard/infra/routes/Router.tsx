@@ -11,6 +11,7 @@ import StatisticsView from "@/modules/statistics/ui/index/StatisticsView";
 import DashboardLayout from "@/shared/generics/layouts/DashboardLayout";
 import { Navigate, RouteObject } from "react-router-dom";
 import DashboardView from "../../ui/DashboardView";
+import { InvoiceRouter } from "@/modules/Invoice.ts/infra/routes/Router";
 
 export const DashboardRoutes = {
   index: '/',
@@ -36,7 +37,6 @@ export const DashboardRouter = (store: AppStore): RouteObject[] => {
           path: DashboardRoutes.dashboard,
           element: <DashboardView />
         },
-        ...AppointmentRouter(store),
         {
           path: DashboardRoutes.emergency,
           element: <EmergencyView />
@@ -63,6 +63,8 @@ export const DashboardRouter = (store: AppStore): RouteObject[] => {
           path: '',
           element: <Navigate to={DashboardRoutes.dashboard} />
         },
+        ...AppointmentRouter(store),
+        ...InvoiceRouter(store)
       ]
     }),
   ]

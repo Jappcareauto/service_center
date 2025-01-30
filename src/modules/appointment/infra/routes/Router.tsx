@@ -19,7 +19,7 @@ export const AppointmentRouter = (state: AppStore): RouteObject[] => {
     WrappedRoute({
       path: AppointmentRoutes.appointmentDetails(),
       element: <AppointmentExpandDetailsView />,
-      canAccess: !!globalState?.appointment?.activeAppointment,
+      canAccess: true,
       redirectUrl: AppointmentRoutes.appointment,
     }),
   ];
