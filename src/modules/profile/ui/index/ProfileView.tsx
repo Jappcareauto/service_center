@@ -99,7 +99,7 @@ const ProfileView = () => {
                   className=""
                   key={"service-" + index}
                   image={s.image}
-                  title={s.name}
+                  title={s.id}
                 />
               );
             })}

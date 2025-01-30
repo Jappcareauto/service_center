@@ -21,6 +21,7 @@ const InvoicesView: FC = () => {
         </div>
         <div className="flex justify-between">
           <FilterBar
+          onFilter={()=>{}}
             labels={["Pending", "Paid", "Declined", "Draft"]}
             disableDisposition
           />
