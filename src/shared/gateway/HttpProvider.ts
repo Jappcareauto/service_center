@@ -1,9 +1,17 @@
-import { BASE_URL } from '@/app/config/Base';
-import InternalServerException from '@/shared/exceptions/InternalServerException';
-import { InternetErrorException } from '@/shared/exceptions/InternetErrorException';
-import { handleCleanStoreAndNavigateToLogin } from './handleCleanStoreAndNavigateToLogin';
-export abstract class HttpProvider {
+import { BASE_URL } from "@/app/config/Base";
+import InternalServerException from "@/shared/exceptions/InternalServerException";
+import { InternetErrorException } from "@/shared/exceptions/InternetErrorException";
+import { handleCleanStoreAndNavigateToLogin } from "./handleCleanStoreAndNavigateToLogin";
+import dayjs from "dayjs";
+import { LocalStorageKey } from "../enums/LocalStorageKey";
 
+interface Token {
+  accessToken: string;
+  accessTokenExpiry: number;
+  refreshToken: string;
+  refreshTokenExpiry: number;
+}
+export abstract class HttpProvider {
   public async post(
     url: string,
     data: Object,
@@ -15,6 +23,7 @@ export abstract class HttpProvider {
       redirect: "error",
       headers: {
         "X-CSRF-TOKEN": token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
@@ -34,10 +43,14 @@ export abstract class HttpProvider {
   }
 
   public async get(url: string, signal?: AbortSignal): Promise<Response> {
+    const token = await this.token();
     return this.fetchData(url, {
       method: "GET",
       redirect: "error",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       signal,
     })
       .then((res) => res)
@@ -71,6 +84,7 @@ export abstract class HttpProvider {
       throw new InternetErrorException();
     }
     if (response.status === 500) {
+      
       throw new InternalServerException();
     }
     try {
@@ -80,14 +94,13 @@ export abstract class HttpProvider {
     }
   }
 
-  public async postWithResult
-    ({
-      url,
-      command,
-    }: {
-      url: string;
-      command: Object;
-    }) {
+  public async postWithResult({
+    url,
+    command,
+  }: {
+    url: string;
+    command: Object;
+  }) {
     let response: any;
     try {
       response = await this.post(url, command);
@@ -104,9 +117,12 @@ export abstract class HttpProvider {
     }
   }
 
-  public async postFileWithResult({ url, data }: {
-    url: string,
-    data: FormData
+  public async postFileWithResult({
+    url,
+    data,
+  }: {
+    url: string;
+    data: FormData;
   }) {
     let response: any;
     try {
@@ -171,6 +187,63 @@ export abstract class HttpProvider {
   }
 
   private async token(): Promise<string> {
-    return '';
+    const auth = localStorage.getItem("AUTH_ACCESS");
+    if (!auth) {
+      handleCleanStoreAndNavigateToLogin();
+      return "";
+    }
+    try {
+      const token: Token = JSON.parse(auth);
+      // console.log('token', token.accessTokenExpiry)
+
+      const accessTokenExpiryTimestamp = token.accessTokenExpiry;
+      const refreshTokenExpiryTimestamp = token.refreshTokenExpiry;
+      const currentTime = dayjs().valueOf();
+
+      const accessTokenTimeLeft = accessTokenExpiryTimestamp - currentTime;
+      const refreshTokenTimeLeft = refreshTokenExpiryTimestamp - currentTime;
+      console.log("isTockenExpired", accessTokenTimeLeft);
+      console.log("isTockenExpired", refreshTokenTimeLeft);
+
+      if (accessTokenTimeLeft < 1) {
+        console.log("Token have expired");
+        const response = await fetch(BASE_URL + "/auth/refresh-token", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refreshToken: token.refreshToken }),
+        });
+        const newAccess: Token = await response.json();
+
+        console.log("newAccess", newAccess);
+        const {
+          accessToken,
+          refreshToken,
+          accessTokenExpiry,
+          refreshTokenExpiry,
+        } = newAccess;
+
+        localStorage.setItem(
+          LocalStorageKey.AUTH_ACCESS,
+          JSON.stringify({
+            accessToken,
+            refreshToken,
+            accessTokenExpiry,
+            refreshTokenExpiry,
+          })
+        );
+        return newAccess.accessToken;
+      }
+      if (refreshTokenTimeLeft < 1) {
+        handleCleanStoreAndNavigateToLogin();
+        return "";
+      }
+      return token.accessToken;
+    } catch (error) {
+      console.log("error", error);
+      handleCleanStoreAndNavigateToLogin();
+      return "";
+    }
   }
 }

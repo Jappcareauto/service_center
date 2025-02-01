@@ -15,7 +15,9 @@ const initialState: AuthState = {
 export const AuthSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    
+  },
   extraReducers: (builder) => {
     builder.addCase(LoginAsync.pending, (state) => {
       state.loading = LoadingState.pending;
