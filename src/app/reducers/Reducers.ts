@@ -8,7 +8,8 @@ import { InvoicesSlice } from "@/modules/Invoice.ts/slice/invoiceSlice";
 import { ServicesSlice } from "@/modules/service/slice/serviceSlice";
 import { UserSlice } from "@/modules/user/slice/userSlice";
 import { chatRoomSlice } from "@/modules/chat/slice/messageSlice";
-import { filterSlice  } from "@/shared/slice/filterSlice";
+import { filterSlice } from "@/shared/slice/filterSlice";
+import { emergencySlice } from "@/modules/emergency/slices/emergencySlice";
 
 export const rootReducer = combineReducers({
   [AuthSlice.name]: AuthSlice.reducer,
@@ -19,5 +20,6 @@ export const rootReducer = combineReducers({
   [ServicesSlice.name]: ServicesSlice.reducer,
   [UserSlice.name]: UserSlice.reducer,
   [chatRoomSlice.name]: chatRoomSlice.reducer,
-  [filterSlice.name]:filterSlice.reducer
+  [filterSlice.name]: filterSlice.reducer,
+  [emergencySlice.name]: emergencySlice.reducer,
 });

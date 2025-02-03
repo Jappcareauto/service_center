@@ -1,11 +1,18 @@
 import { InvoiceStatus } from "@/modules/Invoice.ts/model/InvoiceStatus";
 import { AppointmentFilter } from "../../modules/Invoice.ts/model/AppointmentFilter";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { EmergencyStatus } from "@/modules/emergency/ui/models/EmergencyStatus";
 
 export const appointmentFilter: AppointmentFilter[] = [
   AppointmentFilter.NOTSTARTED,
   AppointmentFilter.INPROPGRESS,
   AppointmentFilter.COMPLETED,
+];
+
+export const EmmergencyFilter: EmergencyStatus[] = [
+  EmergencyStatus.ACCEPTED,
+  EmergencyStatus.DECLINED,
+  EmergencyStatus.REQUESTED,
 ];
 
 interface InitialState {
@@ -33,7 +40,7 @@ export const filterSlice = createSlice({
       action: PayloadAction<{ filter: AppointmentFilter }>
     ) => {
       state.appointment.statusFilter = action.payload.filter;
-      console.log('filter', action.payload)
+      console.log("filter", action.payload);
     },
     onFilterInvoices: (
       state,
@@ -43,4 +50,4 @@ export const filterSlice = createSlice({
     },
   },
 });
-export const filterAction = filterSlice.actions
+export const filterAction = filterSlice.actions;

@@ -6,9 +6,9 @@ type Props = {
   invoices?: Invoice[];
 };
 const InvoiceListItem: FC<Props> = ({ invoices }) => {
-  return invoices?.map((invoice, index) => (
-    <div >
-      <InvoiceItem invoice={invoice} key={invoice.id || index} />
+  return invoices?.map((invoice) => (
+    <div>
+      <InvoiceItem invoice={invoice} key={invoice.id} />
     </div>
   ));
 };

@@ -9,6 +9,7 @@ export const useFindAllChatRoom = () => {
   const chatRooms = useAppSelector((state) =>
     chatRoomSelector.selectAll(state)
   );
+  const loading = useAppSelector((state) => chatRoomSelector.loading(state));
   // const loading =
   const findAll = async () => {
     const chatRoomRes = await dispatch(findAllChatRoomAsync()).unwrap();
@@ -18,5 +19,5 @@ export const useFindAllChatRoom = () => {
   useEffect(() => {
     findAll();
   }, []);
-  return { state: { chatRooms } };
+  return { state: { chatRooms, loading } };
 };

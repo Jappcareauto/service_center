@@ -7,6 +7,9 @@ import { useAppointement } from "./useAppointment";
 import AppointmentList from "@/shared/ui/AppointmentList";
 import { appointmentFilter } from "@/shared/slice/filterSlice";
 import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
+import { CalendarModal } from "../calendar/CalendarModal";
+import { ModalEvents } from "@/shared/helpers/hooks/useModal";
+import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 
 const AppointmentsView = () => {
   const {
@@ -17,7 +20,10 @@ const AppointmentsView = () => {
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div>
-        <div className="grid grid-cols-2 gap-x-6">
+        <div
+          onClick={() => ModalEvents.open(ModalEventKey.OPEN_CALENDAR)}
+          className="grid grid-cols-2 gap-x-6"
+        >
           <StatisticComponent
             title="Appointments"
             value="02"
@@ -53,6 +59,7 @@ const AppointmentsView = () => {
           loading={loading}
         />
       )}{" "}
+      <CalendarModal />
     </div>
   );
 };

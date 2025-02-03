@@ -13,6 +13,8 @@ import EditProfileView from "../edit/EditProfileView";
 import useProfilView from "../../hooks/useProfilView";
 import { LoadingState } from "@/shared/enums/LoadingState";
 import Loader from "@/shared/generics/loader/Loader";
+import { useNavigate } from "react-router-dom";
+import { DashboardRoutes } from "@/modules/dashboard/infra/routes/Router";
 
 // check the model an write from scratch
 const ProfileView = () => {
@@ -22,6 +24,7 @@ const ProfileView = () => {
       mySelfState: { myself, loading },
     },
   } = useProfilView();
+  const navigate = useNavigate();
   if (loading === LoadingState.pending)
     return (
       <div className="flex w-full justify-center my-32">
@@ -61,7 +64,10 @@ const ProfileView = () => {
               >
                 Edit Profile
               </PrimaryButton>
-              <PrimaryButton className="border border-black h-10 rounded-full font-normal bg-transparent text-black text-sm">
+              <PrimaryButton
+                onClick={() => navigate(DashboardRoutes.setting())}
+                className="border border-black h-10 rounded-full font-normal bg-transparent text-black text-sm"
+              >
                 Settings
               </PrimaryButton>
             </div>

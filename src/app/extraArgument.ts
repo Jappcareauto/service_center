@@ -7,6 +7,7 @@ import { HttpInvoiceGateway } from "@/modules/Invoice.ts/infra/repo/HttpInvoiceG
 import { HttpServiceGateway } from "@/modules/service/infra/repos/httpServiceCenterGateway";
 import { HttpUserGateWay } from "@/modules/user/infra/repos/httpUserGateway";
 import { HttpChatGateway } from "@/modules/chat/infra/repo/httpChatGateway";
+import { HttpEmergencygateway } from "@/modules/emergency/infra/repo/httpEmergencyGateway";
 
 export const extraArgument: Dependencies = {
   authGateway: new HttpAuthGateway(),
@@ -17,4 +18,5 @@ export const extraArgument: Dependencies = {
   serviceGateway: new HttpServiceGateway(),
   UserGateway: new HttpUserGateWay(),
   chatGateway: new HttpChatGateway(),
+  emergencyGateway: new HttpEmergencygateway(),
 };

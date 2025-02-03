@@ -4,10 +4,12 @@ import { RouteObject } from "react-router-dom";
 import AppointmentExpandDetailsView from "../../ui/details/AppointmentExpandDetailsView";
 import AppointmentsView from "../../ui/index/AppointmentsView";
 import { WrappedRoute } from "@/app/routes/WrappedRoute";
+import { CalendarView } from "../../ui/calendar/CalendarView";
 
 export const AppointmentRoutes = {
   appointment: "/appointment",
   appointmentDetails: () => `/appointment/details`,
+  calendar: () => "/appointment/calendar",
 };
 
 export const AppointmentRouter = (_state: AppStore): RouteObject[] => {
@@ -22,5 +24,9 @@ export const AppointmentRouter = (_state: AppStore): RouteObject[] => {
       canAccess: true,
       redirectUrl: AppointmentRoutes.appointment,
     }),
+    {
+      path: AppointmentRoutes.calendar(),
+      element: <CalendarView />,
+    },
   ];
 };
