@@ -6,6 +6,8 @@ import ChatIcon from "@/shared/generics/menu/icons/ChatIcon";
 import { Outlet, useNavigate } from "react-router-dom";
 import ChatComponent from "../components/ChatComponent";
 import { useChatView } from "../hooks/useChatView";
+import Loader from "@/shared/generics/loader/Loader";
+import { LoadingState } from "@/shared/enums/LoadingState";
 
 const ChatView = () => {
   const navigate = useNavigate();
@@ -28,6 +30,7 @@ const ChatView = () => {
           />
         </div>
         <div className="flex flex-col gap-y-4 mt-6 h-[calc(100vh-260px)] overflow-y-auto pr-6 pb-10">
+         {chatRoomsState.loading===LoadingState.pending&& <div className="flex justify-center my-2 w-full"><Loader/></div>}
           {chatRoomsState.chatRooms.map((chatRoom, index) => {
             return (
               <ChatComponent

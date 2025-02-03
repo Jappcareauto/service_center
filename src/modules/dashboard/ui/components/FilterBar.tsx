@@ -34,7 +34,7 @@ const FilterBar: React.FC<OwnProps> = ({
               key={"filter-bar-item-" + index}
               onClick={() => handleFilter(label)}
               className={twMerge(
-                "rounded-full h-10 px-5 flex items-center  first-letter:uppercase  justify-center cursor-pointer",
+                "rounded-full h-10 px-5 flex items-center lowercase first-letter:uppercase  justify-center cursor-pointer",
                 isSelected
                   ? "bg-primary text-white"
                   : "bg-primaryAccent text-black",

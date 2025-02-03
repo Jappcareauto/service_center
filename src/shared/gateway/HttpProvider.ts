@@ -50,6 +50,35 @@ export abstract class HttpProvider {
       signal,
     });
   }
+  public async patch(
+    url: string,
+    signal?: AbortSignal
+  ): Promise<Response> {
+    const token = await this.token();
+    return this.fetchData(url, {
+      method: "PATCH",
+      redirect: "error",
+      headers: {
+        "X-CSRF-TOKEN": token,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      signal,
+    });
+  }
+  public async delete(url: string, signal?: AbortSignal): Promise<Response> {
+    const token = await this.token();
+    return this.fetchData(url, {
+      method: "DELETE",
+      redirect: "error",
+      headers: {
+        "X-CSRF-TOKEN": token,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      signal,
+    });
+  }
 
   public async postFile(url: string, data: FormData): Promise<Response> {
     const token = await this.token();
@@ -82,10 +111,14 @@ export abstract class HttpProvider {
   }
 
   public async download(url: string): Promise<Response> {
+    const token = await this.token();
     return this.fetchData(url, {
       method: "GET",
       mode: "no-cors",
       referrerPolicy: "no-referrer",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => res.blob())
       .then((res) => res)
@@ -100,6 +133,23 @@ export abstract class HttpProvider {
     let response: any;
     try {
       response = await this.get(url);
+    } catch (error) {
+      throw new InternetErrorException();
+    }
+    if (response.status === 500) {
+      throw new InternalServerException();
+    }
+    try {
+      return await response.json();
+    } catch (error) {
+      throw new InternalServerException();
+    }
+  }
+  public async deleteWithResult({ url }: { url: string }) {
+    let response: any;
+    try {
+      response = await this.delete(url);
+      console.log("response", response);
     } catch (error) {
       throw new InternetErrorException();
     }
@@ -145,6 +195,26 @@ export abstract class HttpProvider {
     let response: any;
     try {
       response = await this.put(url, command);
+    } catch (error) {
+      throw new InternetErrorException();
+    }
+    if (response.status === 500) {
+      throw new InternalServerException();
+    }
+    try {
+      return await response.json();
+    } catch (error) {
+      throw new InternalServerException();
+    }
+  }
+  public async patchWithResult({
+    url, 
+  }: {
+    url: string;
+  }) {
+    let response: any;
+    try {
+      response = await this.patch(url);
     } catch (error) {
       throw new InternetErrorException();
     }

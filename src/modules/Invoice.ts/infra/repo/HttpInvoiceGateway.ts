@@ -4,6 +4,7 @@ import { findInvoiceResponse } from "../../useCase/findAllInvoice/findAllInvoice
 import { InvoiceApiRoute } from "../routes/ApiRoutes";
 import { Invoice } from "../../model/Invoice";
 import { FormInvoiceSubmitModel } from "../../validations/FormInvoiceSubmitModel";
+import { DeleteInvoiceResponse } from "../../useCase/delete/deleteInvoiceResponse";
 
 export class HttpInvoiceGateway extends HttpProvider implements InvoiceGateway {
   async findAllInvoice(): Promise<findInvoiceResponse> {
@@ -17,6 +18,19 @@ export class HttpInvoiceGateway extends HttpProvider implements InvoiceGateway {
       command,
       url: InvoiceApiRoute.createOne(),
     });
+    return response;
+  }
+
+  async downloadInvoice(id: string): Promise<unknown> {
+    const response = await this.download(InvoiceApiRoute.download(id));
+    console.log("resposne", response);
+    return response;
+  }
+  async deleteInvoice(id: string): Promise<DeleteInvoiceResponse> {
+    const response = await this.deleteWithResult({
+      url: InvoiceApiRoute.delete(id),
+    });
+    console.log("response", response);
     return response;
   }
 }

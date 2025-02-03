@@ -63,7 +63,7 @@ export const chatRoomSlice = createSlice({
     });
     builder.addCase(findAllChatRoomAsync.fulfilled, (state, action) => {
       state.loading = LoadingState.success;
-      chatRoomAdapter.setAll(state.chatRooms, action.payload);
+      chatRoomAdapter.setAll(state.chatRooms, action.payload.data);
     });
   },
 });

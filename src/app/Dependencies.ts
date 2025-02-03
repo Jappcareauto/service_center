@@ -6,6 +6,7 @@ import { AuthGateway } from "@/modules/auth/gateway/AuthGateway";
 import { StatsGateway } from "@/modules/statistics/gateway/statsGateway";
 import { InvoiceGateway } from "@/modules/Invoice.ts/gateway/InvoiceGateway";
 import { ChatGateway } from "@/modules/chat/gateway/chatGateway";
+import { EmergencyGateway } from "@/modules/emergency/gateway/emergencyGateway";
 
 export interface Dependencies {
   authGateway: AuthGateway;
@@ -15,5 +16,6 @@ export interface Dependencies {
   invoiceGateway: InvoiceGateway;
   serviceGateway: ServiceGateway;
   UserGateway: UserGateway;
-  chatGateway:ChatGateway
+  chatGateway: ChatGateway;
+  emergencyGateway: EmergencyGateway;
 }

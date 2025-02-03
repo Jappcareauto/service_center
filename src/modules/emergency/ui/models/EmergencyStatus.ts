@@ -1,0 +1,6 @@
+export enum EmergencyStatus {
+  REQUESTED = "REQUESTED",
+  ACCEPTED = "ACCEPTED",
+  DECLINED = "DECLINED",
+  IN_PROGRESS = "IN_PROGRESS",
+}

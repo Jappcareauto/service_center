@@ -1,0 +1,40 @@
+.rbc-calendar {
+  background-color: #fff8f6; /* Change background color */
+}
+
+.rbc-event {
+  background-color: #ffede6 !important ;
+  border-left: 10px #ffb693 !important ;
+  border-radius: 5px;
+  min-height: 10px !important;
+  color: black !important;
+}
+
+/* Add this for hover effect */
+
+.rbc-toolbar {
+  background-color: #fff8f6;
+  color: black;
+  border-left:20px red !important
+  
+}
+
+.rbc-today {
+  background-color: #fffae6; /* Highlight today's date */
+}
+
+.rbc-day-bg {
+  background-color: #fff;
+}
+
+.rbc-selected {
+  background-color: #f1351b; /* Selected event color */
+}
+
+/* Adjust the height of the entire row for each hour */
+.rbc-timeslot-group {
+  height: 100px ; /* Set desired height */
+}
+
+.rbc-time-slot {
+  height: 100px; /* Set desired height */}

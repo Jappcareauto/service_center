@@ -8,6 +8,7 @@ interface OwnProps {
   name?: string;
   disabledBorder?: boolean;
   url?: string;
+  isName?: boolean;
 }
 
 const Avatar: React.FC<OwnProps> = ({
@@ -15,6 +16,7 @@ const Avatar: React.FC<OwnProps> = ({
   name,
   parentClassName,
   disabledBorder,
+  isName = true,
 }) => {
   const profilText = getFirtsLetters(name || "Anonyme");
 
@@ -38,7 +40,7 @@ const Avatar: React.FC<OwnProps> = ({
           {profilText[0]} {profilText[1]}
         </div>
       </div>
-      {!!name && <p>{name}</p>}
+      {isName && !!name && <p>{name}</p>}
     </div>
   );
 };
