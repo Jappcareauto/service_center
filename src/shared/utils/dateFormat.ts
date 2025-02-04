@@ -1,14 +1,10 @@
-
-import dayjs from 'dayjs';
-
-
-export function formatDateToMedium(date: string): string {
-  return dayjs(date).format('MMM, DD, YYYY hA');
+import dayjs from "dayjs";
+export function formatDateToMedium(date?: Date | string): string {
+  const result = dayjs(date).format("MMM, DD, YYYY hA");
+  return result;
 }
 
-export function formatDateToShortString(date: Date): string {
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2);
-  const day = ("0" + date.getDate()).slice(-2);
-  return `${year}-${month}-${day}`;
+export function formatDateToShortString(date: Date | string): string {
+  const result = dayjs(date).format("YYYY-MM-DD");
+  return result;
 }

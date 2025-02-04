@@ -5,13 +5,25 @@ import StatisticComponent from "@/shared/generics/statistics/StatisticComponent"
 import AppointmentDetailsView from "../details/AppointmentDetailsView";
 import { useAppointement } from "./useAppointment";
 import AppointmentList from "@/shared/ui/AppointmentList";
+import { appointmentFilter } from "@/shared/slice/filterSlice";
+import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
+import { CalendarModal } from "../calendar/CalendarModal";
+import { ModalEvents } from "@/shared/helpers/hooks/useModal";
+import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 
 const AppointmentsView = () => {
-  const { appointments, loading } = useAppointement();
+  const {
+    action,
+    state: { appointments, loading, ActiveAppointment, activeFilter: filter },
+  } = useAppointement();
+
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div>
-        <div className="grid grid-cols-2 gap-x-6">
+        <div
+          onClick={() => ModalEvents.open(ModalEventKey.OPEN_CALENDAR)}
+          className="grid grid-cols-2 gap-x-6"
+        >
           <StatisticComponent
             title="Appointments"
             value="02"
@@ -27,15 +39,27 @@ const AppointmentsView = () => {
             <h2 className="font-medium">Appointments</h2>
           </div>
           <div className="mt-5 mb-4">
-            <FilterBar labels={["Not Started", "In Progress", "Completed"]} />
+            <FilterBar
+              labels={appointmentFilter}
+              onFilter={(filter) =>
+                action.onFilter(filter as AppointmentFilter)
+              }
+              activeFilter={filter}
+            />
           </div>
-          <div className="flex flex-col gap-y-4">
-          <AppointmentList loading={loading} appointments={appointments} /> 
+          <div className="flex flex-col  gap-y-4">
+            <AppointmentList loading={loading} appointments={appointments} />
           </div>
         </div>
       </div>
       <div className="flex flex-col gap-y-6"></div>
-      <AppointmentDetailsView />
+      {ActiveAppointment && (
+        <AppointmentDetailsView
+          appointment={ActiveAppointment}
+          loading={loading}
+        />
+      )}{" "}
+      <CalendarModal />
     </div>
   );
 };

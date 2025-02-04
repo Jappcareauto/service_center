@@ -1,11 +1,23 @@
-import { useState } from 'react';
+import { FC, useState } from "react";
 
-const Switch = () => {
-  const [enabled, setEnabled] = useState(false);
+type Props = {
+  onChange?: (value: boolean) => void;
+  isEnable?: boolean;
+};
+const Switch: FC<Props> = ({ onChange, isEnable }) => {
+  const [enabled, setEnabled] = useState(isEnable);
+
+  const handleCHange = (value: boolean) => {
+    setEnabled(value);
+    if (onChange) {
+      onChange(value);
+    }
+  };
 
   return (
     <button
-      onClick={() => setEnabled(!enabled)}
+      type="button"
+      onClick={() => handleCHange(!enabled)}
       className={`
         relative 
         w-[50px] 
@@ -14,7 +26,7 @@ const Switch = () => {
         transition-colors 
         duration-300 
         focus:outline-none
-        ${enabled ? 'bg-[#FF7E5F]' : 'bg-gray-200'}
+        ${enabled ? "bg-[#FF7E5F]" : "bg-gray-200"}
       `}
     >
       <span
@@ -30,7 +42,7 @@ const Switch = () => {
           transform 
           transition-transform 
           duration-300 
-          ${enabled ? 'translate-x-5' : 'translate-x-0'}
+          ${enabled ? "translate-x-5" : "translate-x-0"}
         `}
       />
     </button>

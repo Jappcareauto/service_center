@@ -8,9 +8,14 @@ import DisclosiorAlertComponent from "./components/DisclosiorAlertComponent";
 import FilterBar from "./components/FilterBar";
 import AppointmentList from "@/shared/ui/AppointmentList";
 import { useDashboardView } from "./useDashboardView";
+import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
+import { appointmentFilter } from "@/shared/slice/filterSlice";
 
 const DashboardView = () => {
-  const { appointments,loading   } = useDashboardView();
+  const {
+    state: { appointments, loading, activeAppointment, filter },
+    action,
+  } = useDashboardView();
 
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
@@ -37,11 +42,18 @@ const DashboardView = () => {
             <h2 className="font-medium">Recent Appointments</h2>
           </div>
           <div className="mt-5 mb-4">
-            <FilterBar labels={["Not Started", "In Progress", "Completed"]} />
+            <FilterBar
+              labels={appointmentFilter}
+              onFilter={(filter) =>
+                action.onFilter(filter as AppointmentFilter)
+              }
+              activeFilter={filter}
+            />
           </div>
           <div className="flex flex-col gap-y-4">
-          <AppointmentList loading={loading} appointments={appointments} /> 
-
+           
+              <AppointmentList loading={loading} appointments={appointments} />
+       
           </div>
         </div>
       </div>
@@ -63,7 +75,12 @@ const DashboardView = () => {
           </div>
         </div>
       </div>
-      <AppointmentDetailsView />
+      {activeAppointment && (
+        <AppointmentDetailsView
+          appointment={activeAppointment}
+          loading={loading}
+        />
+      )}
     </div>
   );
 };

@@ -11,17 +11,20 @@ import StatisticsView from "@/modules/statistics/ui/index/StatisticsView";
 import DashboardLayout from "@/shared/generics/layouts/DashboardLayout";
 import { Navigate, RouteObject } from "react-router-dom";
 import DashboardView from "../../ui/DashboardView";
+import { InvoiceRouter } from "@/modules/Invoice.ts/infra/routes/Router";
+import { PaymentRouter } from "@/modules/payment/infra/router/Router";
+import { Setting } from "@/modules/profile/ui/index/Setting";
 
 export const DashboardRoutes = {
-  index: '/',
-  dashboard: '/dashboard',
-  emergency: '/emergency-assistance',
-  profile: '/profile',
-  statistics: '/statistics',
-  chat: '/chat',
-  chatDetails: '/chat/:id',
-}
-
+  index: "/",
+  dashboard: "/dashboard",
+  emergency: "/emergency-assistance",
+  profile: "/profile",
+  statistics: "/statistics",
+  chat: "/chat",
+  chatDetails: "/chat/:id",
+  setting: () => "/profile/setting",
+};
 
 export const DashboardRouter = (store: AppStore): RouteObject[] => {
   const isLogin = AuthSelectors.isLogin(store.getState());
@@ -34,20 +37,23 @@ export const DashboardRouter = (store: AppStore): RouteObject[] => {
       children: [
         {
           path: DashboardRoutes.dashboard,
-          element: <DashboardView />
+          element: <DashboardView />,
         },
-        ...AppointmentRouter(store),
+        {
+          path: DashboardRoutes.setting(),
+          element: <Setting />,
+        },
         {
           path: DashboardRoutes.emergency,
-          element: <EmergencyView />
+          element: <EmergencyView />,
         },
         {
           path: DashboardRoutes.profile,
-          element: <ProfileView />
+          element: <ProfileView />,
         },
         {
           path: DashboardRoutes.statistics,
-          element: <StatisticsView />
+          element: <StatisticsView />,
         },
         {
           path: DashboardRoutes.chat,
@@ -55,15 +61,19 @@ export const DashboardRouter = (store: AppStore): RouteObject[] => {
           children: [
             {
               path: DashboardRoutes.chatDetails,
-              element: <ChatMessagesView />
-            }
-          ]
+              element: <ChatMessagesView />,
+            },
+          ],
         },
         {
-          path: '',
-          element: <Navigate to={DashboardRoutes.dashboard} />
+          path: "",
+          element: <Navigate to={DashboardRoutes.dashboard} />,
         },
-      ]
+
+        ...AppointmentRouter(store),
+        ...InvoiceRouter(store),
+        ...PaymentRouter(store),
+      ],
     }),
-  ]
-} 
+  ];
+};

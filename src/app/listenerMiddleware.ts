@@ -2,8 +2,11 @@ import type { TypedAddListener, TypedStartListening } from "@reduxjs/toolkit";
 import { addListener, createListenerMiddleware } from "@reduxjs/toolkit";
 import { Dependencies } from "./Dependencies";
 import { AppDispatch, RootState } from "./store";
-import { appointmentMiddleware } from "../modules/appointment/infra/middlewares/appointmentMiddleware";
 import { authMiddleware } from "@/modules/auth/infra/middlewares/authMiddleware";
+import { invoiceMiddleware } from "@/modules/Invoice.ts/middleware/invoiceMiddleware";
+import { appointmentMiddleware } from "@/modules/appointment/infra/middlewares/findAllappointmentMiddleware";
+import { updateAppointmentStatusMiddleware } from "@/modules/appointment/infra/middlewares/updateAppointmentStatusMiddleWare";
+import { createInvoiceMiddleware } from "@/modules/Invoice.ts/middleware/createInvocieMiddleWere";
 export const listenerMiddleware = createListenerMiddleware<
   RootState,
   AppDispatch,
@@ -26,3 +29,6 @@ export const addAppListener = addListener as TypedAddListener<
 
 appointmentMiddleware(startAppListening);
 authMiddleware(startAppListening);
+invoiceMiddleware(startAppListening);
+updateAppointmentStatusMiddleware(startAppListening);
+createInvoiceMiddleware(startAppListening);

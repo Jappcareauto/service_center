@@ -9,9 +9,10 @@ export const authMiddleware = (listener: AppStartListening) => {
   listener({
     actionCreator: LoginAsync.fulfilled,
     effect: async (action, listenerApi) => {
+      // await listenerApi.dispatch(findSelfAsync());
       const range = calculateRange(StatsRange.WEEK);
       await listenerApi.dispatch(findAllAppointmentStatsAsync(range));
-    //   await listenerApi.dispatch(findAllAppointmentAsync()).unwrap();
+      //   await listenerApi.dispatch(findAllAppointmentAsync()).unwrap();
       console.log("action", action);
     },
   });

@@ -105,6 +105,7 @@ const LineChartComponent2 = () => {
           <div className="text-2xl font-bold">28,000 Frs</div>
         </div>
         <FilterBar
+        onFilter={()=>{}}
           disableDisposition
           labels={['Revenue', 'This Week']}
           filterClassName={(isSelected) => isSelected ? 'bg-primaryAccent text-primary' : 'bg-grey3 text-black'}

@@ -1,24 +1,44 @@
-import IMAGES from "@/assets/images"
-import Avatar from "@/shared/generics/Avatar"
-import PrimaryButton from "@/shared/generics/buttons/PrimaryButton"
-import ExpendedIcon from "@/shared/generics/menu/icons/ExpendedIcon"
-import Home2Icon from "@/shared/generics/menu/icons/Home2Icon"
-import LocationIcon from "@/shared/generics/menu/icons/LocationIcon"
-import OpenIcon from "@/shared/generics/menu/icons/OpenIcon"
-import StarIcon from "@/shared/generics/menu/icons/StarIcon"
-import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey"
-import { ModalEvents } from "@/shared/helpers/hooks/useModal"
-import SpecializedServicesComponent from "../components/SpecializedServicesComponent"
-import EditProfileView from "../edit/EditProfileView"
+import IMAGES from "@/assets/images";
+import Avatar from "@/shared/generics/Avatar";
+import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
+import ExpendedIcon from "@/shared/generics/menu/icons/ExpendedIcon";
+import Home2Icon from "@/shared/generics/menu/icons/Home2Icon";
+import LocationIcon from "@/shared/generics/menu/icons/LocationIcon";
+import OpenIcon from "@/shared/generics/menu/icons/OpenIcon";
+import StarIcon from "@/shared/generics/menu/icons/StarIcon";
+import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
+import { ModalEvents } from "@/shared/helpers/hooks/useModal";
+import SpecializedServicesComponent from "../components/SpecializedServicesComponent";
+import EditProfileView from "../edit/EditProfileView";
+import useProfilView from "../../hooks/useProfilView";
+import { LoadingState } from "@/shared/enums/LoadingState";
+import Loader from "@/shared/generics/loader/Loader";
+import { useNavigate } from "react-router-dom";
+import { DashboardRoutes } from "@/modules/dashboard/infra/routes/Router";
 
+// check the model an write from scratch
 const ProfileView = () => {
+  const {
+    state: {
+      servicesCenterState,
+      mySelfState: { myself, loading },
+    },
+  } = useProfilView();
+  const navigate = useNavigate();
+  if (loading === LoadingState.pending)
+    return (
+      <div className="flex w-full justify-center my-32">
+        <Loader />
+      </div>
+    );
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div className="flex flex-col gap-y-6 overflow-y-auto h-[calc(100vh-80px)]">
         <img
           className="w-full h-[250px] rounded-[20px] object-cover"
-          src={IMAGES.cover}
-          alt=""
+          // need some check
+          src={myself?.profileImage?.container}
+          alt={myself?.name}
         />
         <div>
           <Avatar name="" />
@@ -45,6 +65,7 @@ const ProfileView = () => {
                 Edit Profile
               </PrimaryButton>
               <PrimaryButton
+                onClick={() => navigate(DashboardRoutes.setting())}
                 className="border border-black h-10 rounded-full font-normal bg-transparent text-black text-sm"
               >
                 Settings
@@ -52,46 +73,42 @@ const ProfileView = () => {
             </div>
           </div>
           <p className="mt-6 max-w-[340px]">
-            Experience top-notch service at Japtech Auto shop, where we offer a wide range of basic car services to keep your vehicle running smoothly.
+            Experience top-notch service at Japtech Auto shop, where we offer a
+            wide range of basic car services to keep your vehicle running
+            smoothly.
           </p>
         </div>
         <div className="flex flex-col gap-y-3">
           <h2 className="font-medium">Gallery</h2>
           <div className="flex flex-row overflow-x-auto w-full">
-            {
-              [
-                IMAGES.car2,
-                IMAGES.car2,
-                IMAGES.car2,
-                IMAGES.car2,
-              ].map((image, index) => {
-                return <img
-                  className="w-[150px] h-[150px] rounded-[20px] mr-3"
-                  key={'image-' + index}
-                  src={image} alt="" />
-              })
-            }
+            {[IMAGES.car2, IMAGES.car2, IMAGES.car2, IMAGES.car2].map(
+              (image, index) => {
+                return (
+                  <img
+                    className="w-[150px] h-[150px] rounded-[20px] mr-3"
+                    key={"image-" + index}
+                    src={image}
+                    alt=""
+                  />
+                );
+              }
+            )}
           </div>
         </div>
 
         <div className="flex flex-col gap-y-3">
           <h2 className="font-medium">Specialized Services</h2>
           <div className="flex flex-row overflow-x-auto w-full">
-            {
-              [
-                { img: IMAGES.s1, title: "General Maintenance" },
-                { img: IMAGES.s2, title: "Body Shop" },
-                { img: IMAGES.s3, title: "Deep Cleaning" },
-                { img: IMAGES.s4, title: "Paint Shop" },
-              ].map((s, index) => {
-                return <SpecializedServicesComponent
+            {servicesCenterState.servicesCenter?.map((s, index) => {
+              return (
+                <SpecializedServicesComponent
                   className=""
-                  key={'service-' + index}
-                  image={s.img}
-                  title={s.title}
+                  key={"service-" + index}
+                  image={s.image}
+                  title={s.id}
                 />
-              })
-            }
+              );
+            })}
           </div>
         </div>
         <div>
@@ -112,7 +129,7 @@ const ProfileView = () => {
       </div>
       <EditProfileView />
     </div>
-  )
-}
+  );
+};
 
-export default ProfileView
+export default ProfileView;

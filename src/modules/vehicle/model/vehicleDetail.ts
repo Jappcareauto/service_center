@@ -1,6 +1,4 @@
-
-
- export interface VehicleDetail  {
+    export interface VehicleDetail  {
     make: string;
     model: string;
     year: string;
@@ -11,7 +9,5 @@
     bodyType: string;
     vehicleId: string;
   }
-  
-
   
  

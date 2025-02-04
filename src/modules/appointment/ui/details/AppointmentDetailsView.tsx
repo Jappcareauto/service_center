@@ -10,20 +10,30 @@ import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 import { useModal } from "@/shared/helpers/hooks/useModal";
 import { useNavigate } from "react-router-dom";
 import { AppointmentRoutes } from "../../infra/routes/Router";
-import useAppointementDetail from "./useAppointementDetail";
+// import useAppointementDetail from "./useAppointementDetail";
 import Loader from "@/shared/generics/loader/Loader";
 import { LoadingState } from "@/shared/enums/LoadingState";
-
-const AppointmentDetailsView = () => {
+import { FC } from "react";
+import { Appointment } from "../../model/Appointment";
+import { formatDateToMedium } from "@/shared/utils/dateFormat";
+import { useUpdateAppointmentStatus } from "../../useCase/update/status/useUpdateAppointmentStatus";
+import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
+type Props = {
+  loading: LoadingState;
+  appointment: Appointment;
+};
+const AppointmentDetailsView: FC<Props> = ({ appointment, loading }) => {
   const modal = useModal({
     eventName: ModalEventKey.APPOINTMENT_DETAILS,
   });
+  const {
+    action,
+    state: { loading: updateStatus },
+  } = useUpdateAppointmentStatus();
   const navigate = useNavigate();
-
-  const { activeAppointment, loading } = useAppointementDetail();
-
+  // const {} = useAppointementDetail();
   let content = <></>;
-
+  console.log("appointment", appointment.user?.name);
   switch (loading) {
     case LoadingState.pending:
       content = (
@@ -36,11 +46,7 @@ const AppointmentDetailsView = () => {
             <h2 className="font-medium">Appointment Details</h2>
             <Expended2Icon
               className="cursor-pointer"
-              onClick={() =>
-                navigate(
-                  AppointmentRoutes.appointmentDetails()
-                )
-              }
+              onClick={() => navigate(AppointmentRoutes.appointmentDetails())}
             />
           </div>
           <div className="h-[calc(100vh-190px)] overflow-y-auto">
@@ -48,23 +54,23 @@ const AppointmentDetailsView = () => {
               <div className="">
                 <h1 className="text-primary font-medium">
                   {/* Porsche Taycan Turbo S */}
-                  {activeAppointment?.vehicle?.name}
+                  {appointment?.vehicle?.name}
                 </h1>
                 <p>
                   {/* 2024, RWD */}
-                  {activeAppointment.vehicle?.detail?.model}
+                  {appointment?.vehicle?.detail?.model}
                 </p>
               </div>
               <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full min-h-[190px] p-4">
                 {/* vehicle image */}
                 <img
-                  src={activeAppointment.vehicle?.imageUrl}
-                  alt={activeAppointment.vehicle?.name}
+                  src={appointment?.vehicle?.imageUrl}
+                  alt={appointment?.vehicle?.name}
                 />
               </div>
-              <div className="flex justify-between items-center">
-                <Avatar />
-                <Tag tagText={activeAppointment?.status} />
+              <div className="flex justify-between  items-center">
+                <Avatar name={appointment.user?.name} />
+                <Tag tagText={appointment?.status} />
               </div>
               <div className="">
                 <h2 className="text-primary font-medium">
@@ -76,14 +82,14 @@ const AppointmentDetailsView = () => {
                       <Calendar2Icon />
                       <p>
                         {/* Oct, 20, 2024 10am */}
-                        {activeAppointment.date}
+                        {formatDateToMedium(appointment.date)}
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1 text-grey4">
                       <LocationIcon />
                       <p>
                         {/* At Home */}
-                        {activeAppointment.locationType}
+                        {appointment.locationType}
                       </p>
                     </div>
                   </div>
@@ -93,12 +99,12 @@ const AppointmentDetailsView = () => {
                   </div>
                 </div>
               </div>
-              <p>{activeAppointment.vehicle?.description}</p>
+              <p>{appointment.vehicle?.description}</p>
             </div>
             <div className="flex flex-col gap-y-3 mt-5">
               <h2 className="font-medium pl-6">Images</h2>
               <div className="flex flex-row overflow-x-auto w-full px-6">
-                {activeAppointment.vehicle?.media?.items.map((image, index) => {
+                {appointment.vehicle?.media?.items.map((image, index) => {
                   return (
                     <img
                       className="w-[112px] h-[112px] rounded-[20px] mr-2"
@@ -112,7 +118,34 @@ const AppointmentDetailsView = () => {
             </div>
           </div>
           <div className="p-6">
-            <PrimaryButton className="w-full">Mark as completed</PrimaryButton>
+            <PrimaryButton
+              disabled={
+                updateStatus === LoadingState.pending ||
+                appointment.status === AppointmentFilter.COMPLETED
+              }
+              className={`w-full ${
+                appointment.status === AppointmentFilter.COMPLETED &&
+                "bg-primaryAccent border text-primary border-primaryAccent2"
+              } `}
+              onClick={() =>
+                action.onUpdateStatus({
+                  id: appointment.id,
+                  status: {
+                    status: AppointmentFilter.COMPLETED,
+                  },
+                })
+              }
+            >
+              {updateStatus === LoadingState.pending ? (
+                <div className="flex w-full justify-center">
+                  <Loader />
+                </div>
+              ) : appointment.status === AppointmentFilter.COMPLETED ? (
+                "Completed"
+              ) : (
+                " Mark as completed"
+              )}
+            </PrimaryButton>
           </div>
         </>
       );
@@ -132,9 +165,11 @@ const AppointmentDetailsView = () => {
             <Expended2Icon
               className="cursor-pointer"
               onClick={() =>
-                navigate(
-                  AppointmentRoutes.appointmentDetails()
-                )
+                navigate(AppointmentRoutes.appointmentDetails(), {
+                  state: {
+                    appointmentId: appointment?.id,
+                  },
+                })
               }
             />
           </div>
@@ -143,27 +178,28 @@ const AppointmentDetailsView = () => {
               <div className="">
                 <h1 className="text-primary font-medium">
                   {/* Porsche Taycan Turbo S */}
-                  {activeAppointment?.vehicle?.name}
+                  {appointment?.vehicle?.name}
                 </h1>
                 <p>
                   {/* 2024, RWD */}
-                  {activeAppointment.vehicle?.detail?.model}
+                  {appointment.vehicle?.detail?.model}
                 </p>
               </div>
               <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full min-h-[190px] p-4">
                 {/* vehicle image */}
                 <img
-                  src={activeAppointment.vehicle?.imageUrl}
-                  alt={activeAppointment.vehicle?.name}
+                  src={appointment.vehicle?.imageUrl}
+                  alt={appointment.vehicle?.name}
                 />
               </div>
               <div className="flex justify-between items-center">
-                <Avatar />
-                <Tag tagText={activeAppointment?.status} />
+                <Avatar name={appointment.user?.name} />
+                <Tag tagText={appointment?.status} />
               </div>
               <div className="">
                 <h2 className="text-primary font-medium">
                   {/* Body shop appointment */}
+                  {appointment.service?.title}
                 </h2>
                 <div className="flex justify-between mt-4">
                   <div className="flex flex-col gap-y-2">
@@ -171,14 +207,14 @@ const AppointmentDetailsView = () => {
                       <Calendar2Icon />
                       <p>
                         {/* Oct, 20, 2024 10am */}
-                        {activeAppointment.date}
+                        {formatDateToMedium(appointment.date)}
                       </p>
                     </div>
                     <div className="flex items-center gap-x-1 text-grey4">
                       <LocationIcon />
                       <p>
                         {/* At Home */}
-                        {activeAppointment.locationType}
+                        {appointment.locationType}
                       </p>
                     </div>
                   </div>
@@ -188,12 +224,12 @@ const AppointmentDetailsView = () => {
                   </div>
                 </div>
               </div>
-              <p>{activeAppointment.vehicle?.description}</p>
+              <p>{appointment.vehicle?.description}</p>
             </div>
             <div className="flex flex-col gap-y-3 mt-5">
               <h2 className="font-medium pl-6">Images</h2>
               <div className="flex flex-row overflow-x-auto w-full px-6">
-                {activeAppointment.vehicle?.media?.items.map((image, index) => {
+                {appointment.vehicle?.media?.items.map((image, index) => {
                   return (
                     <img
                       className="w-[112px] h-[112px] rounded-[20px] mr-2"
@@ -207,7 +243,34 @@ const AppointmentDetailsView = () => {
             </div>
           </div>
           <div className="p-6">
-            <PrimaryButton className="w-full">Mark as completed</PrimaryButton>
+            <PrimaryButton
+              disabled={
+                updateStatus === LoadingState.pending ||
+                appointment.status === AppointmentFilter.COMPLETED
+              }
+              className={`w-full ${
+                appointment.status === AppointmentFilter.COMPLETED &&
+                "bg-primaryAccent border text-primary border-primaryAccent2"
+              } `}
+              onClick={() =>
+                action.onUpdateStatus({
+                  id: appointment.id,
+                  status: {
+                    status: AppointmentFilter.COMPLETED,
+                  },
+                })
+              }
+            >
+              {updateStatus === LoadingState.pending ? (
+                <div className="flex w-full justify-center">
+                  <Loader />
+                </div>
+              ) : appointment.status === AppointmentFilter.COMPLETED ? (
+                "Completed"
+              ) : (
+                " Mark as completed"
+              )}
+            </PrimaryButton>
           </div>
         </>
       );

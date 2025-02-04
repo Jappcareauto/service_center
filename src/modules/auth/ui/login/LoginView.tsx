@@ -1,21 +1,18 @@
-import PrimaryButton from "@/shared/generics/buttons/PrimaryButton"
-import Input from "@/shared/generics/inputs/Input"
-import InputPasseord from "@/shared/generics/inputs/InputPasseord"
-import UnAuthenticatePageLayout from "@/shared/generics/layouts/UnAuthenticatePageLayout"
-import Loader from "@/shared/generics/loader/Loader"
-import { useLogin } from "./useLogin"
+import PrimaryButton from "@/shared/generics/buttons/PrimaryButton";
+import Input from "@/shared/generics/inputs/Input";
+import InputPasseord from "@/shared/generics/inputs/InputPasseord";
+import UnAuthenticatePageLayout from "@/shared/generics/layouts/UnAuthenticatePageLayout";
+import Loader from "@/shared/generics/loader/Loader";
+import { useLogin } from "./useLogin";
+import { LoadingState } from "@/shared/enums/LoadingState";
 
 const LoginView = () => {
+  const { form, onSubmit, handleGoToForgotPassword, loading } = useLogin();
   const {
-    form, onSubmit,
-    handleGoToForgotPassword,
-    loading,
-  } = useLogin();
-  const {
-    handleSubmit, register,
-    formState: { errors }
+    handleSubmit,
+    register,
+    formState: { errors },
   } = form;
-
 
   return (
     <UnAuthenticatePageLayout>
@@ -38,24 +35,22 @@ const LoginView = () => {
           />
         </div>
         <div className="flex justify-end w-full">
-          <button
-            onClick={handleGoToForgotPassword}
-            className="text-primary">Forgot Password?
+          <button onClick={handleGoToForgotPassword} className="text-primary">
+            Forgot Password?
           </button>
         </div>
+        
+          {loading === LoadingState.failed && <p className="my-2 ">failed to login</p>}
+        
         <PrimaryButton
-          disabled={loading}
+          disabled={loading === LoadingState.pending}
           className="w-full mt-14 flex items-center justify-center"
         >
-          {
-            loading ?
-              <Loader /> :
-              'Sign In'
-          }
+          {loading === LoadingState.pending ? <Loader /> : "Sign In"}
         </PrimaryButton>
       </form>
     </UnAuthenticatePageLayout>
-  )
-}
+  );
+};
 
-export default LoginView
+export default LoginView;
