@@ -14,7 +14,7 @@ import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 const AppointmentsView = () => {
   const {
     action,
-    state: { appointments, loading, ActiveAppointment, activeFilter: filter },
+    state: { appointments, loading, ActiveAppointment, totalAppointments, activeFilter: filter },
   } = useAppointement();
 
   return (
@@ -26,7 +26,7 @@ const AppointmentsView = () => {
         >
           <StatisticComponent
             title="Appointments"
-            value="02"
+            value={totalAppointments.toString()}
             badgeTitle="This Week"
             icon={<CalendarIcon className="text-primary" />}
             second

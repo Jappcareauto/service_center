@@ -13,12 +13,17 @@ export const useAppointement = () => {
     AppointementSelector.activeAppointment(state)
   );
 
+  const totalAppointments = () =>{
+    return appointments.length;
+  }
+
   return {
     state: {
       loading,
       appointments,
       ActiveAppointment,
       activeFilter: state.filter,
+      totalAppointments: totalAppointments()
     },
     action: {
       ...action,

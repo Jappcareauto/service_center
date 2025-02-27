@@ -40,7 +40,7 @@ const LoginView = () => {
           </button>
         </div>
         
-          {loading === LoadingState.failed && <p className="my-2 ">failed to login</p>}
+          {loading === LoadingState.failed && <p className="my-2 text-primary">failed to login</p>}
         
         <PrimaryButton
           disabled={loading === LoadingState.pending}
