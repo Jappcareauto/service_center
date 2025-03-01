@@ -4,7 +4,7 @@ import { Permissions } from '../../models/Permissions';
 export interface LoginResponse{
   userId: string,
   authorities: {
-    roles: Roles,
+    roles: Roles[],
     permissions: Permissions[]
   }
 }

@@ -7,7 +7,7 @@ import { useLogin } from "./useLogin";
 import { LoadingState } from "@/shared/enums/LoadingState";
 
 const LoginView = () => {
-  const { form, onSubmit, handleGoToForgotPassword, loading } = useLogin();
+  const { form, onSubmit, handleGoToForgotPassword, loading, errorMessage } = useLogin();
   const {
     handleSubmit,
     register,
@@ -40,7 +40,7 @@ const LoginView = () => {
           </button>
         </div>
         
-          {loading === LoadingState.failed && <p className="my-2 text-primary">failed to login</p>}
+          {loading === LoadingState.failed && <p className="my-2 text-primary">{errorMessage}</p>}
         
         <PrimaryButton
           disabled={loading === LoadingState.pending}

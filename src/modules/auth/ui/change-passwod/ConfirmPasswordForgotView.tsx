@@ -43,7 +43,7 @@ const FogotPasswordConfirmView = () => {
     setLoading(true);
     setError('');
     try {
-      await httpClient.post('/auth/reset-password', { email, password: data.password, code: otp });
+      await httpClient.post('/auth/reset-password', { email:email, newPassword: data.password, code: otp });
       navigate(AuthRoutes.login);
     } catch (error: any) {
       console.log(error)

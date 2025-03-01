@@ -1,11 +1,12 @@
 import { LoadingState } from "@/shared/enums/LoadingState";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LoginAsync } from "../usecases/login/LoginAsync";
 import { LoginResponse } from "../usecases/login/LoginResponse";
 
 type AuthState = {
   loading: LoadingState;
   auth?: LoginResponse;
+  errorMessage? : string;
 }
 
 const initialState: AuthState = {
@@ -16,7 +17,18 @@ export const AuthSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    
+    setLoading: (state, action: PayloadAction<LoadingState>) => {
+      state.loading = action.payload;
+    },
+    setAuth: (state, action: PayloadAction<LoginResponse>) => {
+      state.auth = action.payload; 
+    },
+    setErrorMessage: (state, action: PayloadAction<string>) => {
+      state.errorMessage = action.payload;
+    },
+    clearErrorMessage: (state) => {
+      state.errorMessage = undefined;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(LoginAsync.pending, (state) => {
@@ -29,3 +41,5 @@ export const AuthSlice = createSlice({
     })
   }
 });
+
+export const { setLoading, setErrorMessage, clearErrorMessage, setAuth } = AuthSlice.actions
