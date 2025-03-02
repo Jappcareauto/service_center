@@ -61,7 +61,7 @@ export const useLogin = () => {
       console.log(response);
 
       // Check if the user has the ROLE_SERVICE_MANAGER role
-      const roles = response.data.authorities.authorities.ROLE;
+      // const roles = response.data.authorities.authorities.ROLE;
       const hasServiceManagerRole = true; // roles.includes('ROLE_SERVICE_MANAGER');
      
       if (!hasServiceManagerRole) {
