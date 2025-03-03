@@ -4,7 +4,7 @@ import { AuthRoutes } from "../../infra/routes/Router";
 export const useForgotPassword = () => {
   const navigate = useNavigate();
   const handleSendMail = () => {
-    navigate(AuthRoutes.changePassword);
+    navigate(AuthRoutes.forgotPasswordConfirm);
   }
   return {
     handleSendMail,
