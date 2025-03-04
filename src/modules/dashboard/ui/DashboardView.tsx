@@ -4,18 +4,20 @@ import WeeklyStatsChart from "@/shared/generics/chart/WeeklyStatsChart";
 import CalendarIcon from "@/shared/generics/menu/icons/CalendarIcon";
 import StatisticIcon from "@/shared/generics/menu/icons/StatisticIcon";
 import StatisticComponent from "@/shared/generics/statistics/StatisticComponent";
-import DisclosiorAlertComponent from "./components/DisclosiorAlertComponent";
+// import DisclosiorAlertComponent from "./components/DisclosiorAlertComponent";
 import FilterBar from "./components/FilterBar";
 import AppointmentList from "@/shared/ui/AppointmentList";
 import { useDashboardView } from "./useDashboardView";
 import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
 import { appointmentFilter } from "@/shared/slice/filterSlice";
+import useAppointmentStats from "@/shared/hooks/appointmentStatsHook";
 
 const DashboardView = () => {
   const {
     state: { appointments, loading, activeAppointment, filter },
-    action,
+    action
   } = useDashboardView();
+  const { appointmentWeeklyStats } = useAppointmentStats();
 
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
@@ -23,7 +25,7 @@ const DashboardView = () => {
         <div className="grid grid-cols-2 gap-x-6">
           <StatisticComponent
             title="Appointments"
-            value="02"
+            value={appointments.length.toString()}
             badgeTitle="This Week"
             icon={<CalendarIcon className="text-white" />}
           />
@@ -36,7 +38,7 @@ const DashboardView = () => {
           />
         </div>
         <div className="mt-6 h-[calc(100vh_-_300px)] overflow-y-auto">
-          <DisclosiorAlertComponent />
+          {/* <DisclosiorAlertComponent /> */}
           <div className="flex items-center gap-x-2 mt-6">
             <CalendarIcon />
             <h2 className="font-medium">Recent Appointments</h2>
@@ -58,7 +60,7 @@ const DashboardView = () => {
         </div>
       </div>
       <div className="flex flex-col gap-y-6">
-        <WeeklyStatsChart />
+        <WeeklyStatsChart title="Appointments" data={appointmentWeeklyStats} />
         <div>
           <h2 className="font-medium text-base mb-4">Service</h2>
           <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">

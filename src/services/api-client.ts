@@ -1,6 +1,13 @@
 import axios from "axios"
 import { BASE_URL } from "@/app/config/Base";
 
+interface Token {
+  accessToken: string;
+  accessTokenExpiry: number;
+  refreshToken: string;
+  refreshTokenExpiry: number;
+}
+
 const apiClient = axios.create({
     baseURL: BASE_URL,
     headers: {
@@ -11,9 +18,11 @@ const apiClient = axios.create({
 // Request interceptor for adding bearer token
 apiClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("AUTH_ACCESS");
+        const token: Token | null = localStorage.getItem("AUTH_ACCESS") ? JSON.parse(localStorage.getItem("AUTH_ACCESS") as string) : null;
+        console.log("my token")
+        console.log(token?.accessToken)
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            config.headers.Authorization = `Bearer ${token.accessToken}`;
         }
         return config;
     },

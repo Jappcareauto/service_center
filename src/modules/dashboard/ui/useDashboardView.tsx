@@ -31,11 +31,10 @@ export const useDashboardView = () => {
 
   useEffect(() => {
     fetchData();
-    // const fetchByInterval = setInterval(() => {}, 5 * 60 * 60);
   }, []);
 
   return {
     state: { appointments, loading, activeAppointment, ...state },
-    action: { ...action },
+    action: { ...action }
   };
 };

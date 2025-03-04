@@ -10,12 +10,14 @@ import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter"
 import { CalendarModal } from "../calendar/CalendarModal";
 import { ModalEvents } from "@/shared/helpers/hooks/useModal";
 import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
+import useAppointmentStats from "@/shared/hooks/appointmentStatsHook";
 
 const AppointmentsView = () => {
   const {
     action,
     state: { appointments, loading, ActiveAppointment, totalAppointments, activeFilter: filter },
   } = useAppointement();
+  const { appointmentWeeklyStats } = useAppointmentStats();
 
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
@@ -31,7 +33,7 @@ const AppointmentsView = () => {
             icon={<CalendarIcon className="text-primary" />}
             second
           />
-          <WeeklyStatsChart />
+          <WeeklyStatsChart title="Appointments" data={appointmentWeeklyStats}/>
         </div>
         <div className="mt-6 h-[calc(100vh_-_300px)] overflow-y-auto">
           <div className="flex items-center gap-x-2 mt-6">

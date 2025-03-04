@@ -7,25 +7,17 @@ import {
   YAxis
 } from 'recharts';
 
+interface props {
+  title: string,
+  data: { name: string, value: number }[]
+}
 
-
-const WeeklyStatsChart = () => {
-
-  const data = [
-    { name: 'Mon', value: 200 },
-    { name: 'Tues', value: 100 },
-    { name: 'Wed', value: 250 },
-    { name: 'Thurs', value: 300 },
-    { name: 'Fri', value: 150 },
-    { name: 'Sat', value: 230 },
-    { name: 'Sun', value: 270 },
-  ];
-
+const WeeklyStatsChart = ({title, data}: props) => {
   return (
     <div className="h-[200px] w-full border rounded-2xl border-borderColor flex flex-col justify-between px-4 py-3 gap-y-2">
       <div className="flex items-center justify-end">
         <div className="text-sm rounded-2xl px-3 py-2 bg-grey3 text-grey4">
-          Appointment
+          {title}
         </div>
       </div>
       <div className='h-[150px] w-full'>

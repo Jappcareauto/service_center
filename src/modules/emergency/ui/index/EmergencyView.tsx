@@ -11,6 +11,16 @@ import { EmmergencyFilter } from "@/shared/slice/filterSlice";
 
 const EmergencyView = () => {
   const { state: findAllState } = useFindAllEmergency();
+  const data = [
+    { name: 'Mon', value: 200 },
+    { name: 'Tues', value: 100 },
+    { name: 'Wed', value: 250 },
+    { name: 'Thurs', value: 300 },
+    { name: 'Fri', value: 150 },
+    { name: 'Sat', value: 230 },
+    { name: 'Sun', value: 270 },
+  ];
+
   return (
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div>
@@ -22,7 +32,7 @@ const EmergencyView = () => {
             icon={<CalendarIcon className="text-primary" />}
             second
           />
-          <WeeklyStatsChart />
+          <WeeklyStatsChart title="This Week" data={data}/>
         </div>
         <div className="mt-6 h-[calc(100vh_-_300px)] overflow-y-auto">
           <div className="flex items-center gap-x-2 mt-6">
