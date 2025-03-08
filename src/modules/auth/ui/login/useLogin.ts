@@ -10,7 +10,7 @@ import {
 } from "../../infra/validations/login/InputLoginSchemaValidation";
 import { AuthSelectors } from "../../slices/AuthSelectors";
 import { LoadingState } from "@/shared/enums/LoadingState";
-import { clearErrorMessage, setErrorMessage, setLoading, setAuth, setServiceCenterId, getUserServiceCenter } from "../../slices/AuthSlice";
+import { clearErrorMessage, setErrorMessage, setLoading, setAuth, getUserServiceCenter } from "../../slices/AuthSlice";
 import httpClient from "@/services/api-client"
 import { findSelfAsync } from "@/modules/user/usecase/findSelf/findSelfAsync";
 import { LocalStorageKey } from "@/shared/enums/LocalStorageKey";
