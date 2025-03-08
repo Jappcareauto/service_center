@@ -21,7 +21,7 @@ export const CalendarModal = () => {
           <div>Calendar</div>
           <div
             className=""
-            onClick={() => navigate(AppointmentRoutes.calendar())}
+            onClick={() => navigate(AppointmentRoutes.calendar())} 
           >
             <svg
               width="24"

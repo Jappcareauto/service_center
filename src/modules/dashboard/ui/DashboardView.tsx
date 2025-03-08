@@ -11,11 +11,13 @@ import { useDashboardView } from "./useDashboardView";
 import { AppointmentFilter } from "@/modules/Invoice.ts/model/AppointmentFilter";
 import { appointmentFilter } from "@/shared/slice/filterSlice";
 import useAppointmentStats from "@/shared/hooks/appointmentStatsHook";
+import { ModalEvents } from "@/shared/helpers/hooks/useModal";
+import { ModalEventKey } from "@/shared/helpers/hooks/ModalEventKey";
 
 const DashboardView = () => {
   const {
     state: { appointments, loading, activeAppointment, filter },
-    action
+    action, weeksRevenue
   } = useDashboardView();
   const { appointmentWeeklyStats } = useAppointmentStats();
 
@@ -23,15 +25,19 @@ const DashboardView = () => {
     <div className="grid grid-cols-[auto_360px] gap-x-6">
       <div>
         <div className="grid grid-cols-2 gap-x-6">
-          <StatisticComponent
-            title="Appointments"
-            value={appointments.length.toString()}
-            badgeTitle="This Week"
-            icon={<CalendarIcon className="text-white" />}
-          />
+          <div
+          onClick={() => ModalEvents.open(ModalEventKey.OPEN_CALENDAR)}
+          >
+            <StatisticComponent
+              title="Appointments"
+              value={appointments.length.toString()}
+              badgeTitle={filter.replace(/_/g, ' ')}
+              icon={<CalendarIcon className="text-white" />}
+            />
+          </div>
           <StatisticComponent
             title="Revenue"
-            value="28,000 Frs"
+            value={weeksRevenue}
             badgeTitle="This Week"
             icon={<StatisticIcon className="text-primary" />}
             second

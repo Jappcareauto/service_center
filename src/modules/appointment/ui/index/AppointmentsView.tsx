@@ -29,7 +29,7 @@ const AppointmentsView = () => {
           <StatisticComponent
             title="Appointments"
             value={totalAppointments.toString()}
-            badgeTitle="This Week"
+            badgeTitle={filter.replace(/_/g, ' ')}
             icon={<CalendarIcon className="text-primary" />}
             second
           />

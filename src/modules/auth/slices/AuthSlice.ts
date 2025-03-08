@@ -2,11 +2,14 @@ import { LoadingState } from "@/shared/enums/LoadingState";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LoginAsync } from "../usecases/login/LoginAsync";
 import { LoginResponse } from "../usecases/login/LoginResponse";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import httpClient from "@/services/api-client"
 
 type AuthState = {
   loading: LoadingState;
   auth?: LoginResponse;
   errorMessage? : string;
+  serviceCenterId? : String
 }
 
 const initialState: AuthState = {
@@ -29,6 +32,9 @@ export const AuthSlice = createSlice({
     clearErrorMessage: (state) => {
       state.errorMessage = undefined;
     },
+    setServiceCenterId: (state, action: PayloadAction<string>) => {
+      state.serviceCenterId = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(LoginAsync.pending, (state) => {
@@ -42,4 +48,15 @@ export const AuthSlice = createSlice({
   }
 });
 
-export const { setLoading, setErrorMessage, clearErrorMessage, setAuth } = AuthSlice.actions
+export const getUserServiceCenter = createAsyncThunk(
+  'auth/getUserServiceCenter',
+  async (userID: string, { dispatch }) => {
+    const response = await httpClient.get(`/service-center?ownerId=${userID}`);
+    if (response.data.data.length > 0) {
+      dispatch(setServiceCenterId(response.data.data[0].id));
+    }
+    return response.data.data[0];
+  }
+);
+
+export const { setLoading, setErrorMessage, clearErrorMessage, setAuth, setServiceCenterId } = AuthSlice.actions
