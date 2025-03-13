@@ -2,7 +2,7 @@ import { twMerge } from "tailwind-merge";
 
 interface OwnProps {
   icon: React.ReactElement,
-  value: string;
+  value: string | number;
   title: string;
   titleClassName?: string;
   badgeTitle: string;

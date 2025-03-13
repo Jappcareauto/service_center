@@ -34,7 +34,7 @@ export const StatsSlice = createSlice({
       (state, { payload }) => {
         state.appointmentsStatsState.stats = payload.data;
         state.appointmentsStatsState.loading = LoadingState.success;
-        console.log("state", state);
+        console.log("stats", state.appointmentsStatsState.stats);
       }
     );
   },

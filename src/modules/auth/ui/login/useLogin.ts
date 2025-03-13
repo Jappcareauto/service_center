@@ -10,7 +10,7 @@ import {
 } from "../../infra/validations/login/InputLoginSchemaValidation";
 import { AuthSelectors } from "../../slices/AuthSelectors";
 import { LoadingState } from "@/shared/enums/LoadingState";
-import { clearErrorMessage, setErrorMessage, setLoading, setAuth } from "../../slices/AuthSlice";
+import { clearErrorMessage, setErrorMessage, setLoading, setAuth, getUserServiceCenter } from "../../slices/AuthSlice";
 import httpClient from "@/services/api-client"
 import { findSelfAsync } from "@/modules/user/usecase/findSelf/findSelfAsync";
 import { LocalStorageKey } from "@/shared/enums/LocalStorageKey";
@@ -45,15 +45,6 @@ export const useLogin = () => {
   });
 
   const onSubmit: SubmitHandler<InputLoginForm> = async (data) => {
-    // navigate(AuthRoutes.verifyEmail);
-    // dispatch(LoginAsync(data))
-    //   .unwrap()
-    //   .then((_) => {
-    //     window.open(DashboardRoutes.dashboard, "_self");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
     dispatch(setLoading(LoadingState.pending))
     dispatch(clearErrorMessage())
     try {
@@ -61,8 +52,8 @@ export const useLogin = () => {
       console.log(response);
 
       // Check if the user has the ROLE_SERVICE_MANAGER role
-      // const roles = response.data.authorities.authorities.ROLE;
-      const hasServiceManagerRole = true; // roles.includes('ROLE_SERVICE_MANAGER');
+      const roles = response.data.authorities.authoritiesClear.ROLE;
+      const hasServiceManagerRole = roles.includes('ROLE_SERVICE_MANAGER');
      
       if (!hasServiceManagerRole) {
         dispatch(setErrorMessage("You are not authorized to access this"))
@@ -89,6 +80,7 @@ export const useLogin = () => {
           }
         ))
         await dispatch(findSelfAsync());
+        await dispatch(getUserServiceCenter(response.data.authorities.userId));
         window.open(DashboardRoutes.dashboard, "_self");
       }
     } catch (error: any) {
