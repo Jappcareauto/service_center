@@ -4,6 +4,7 @@ import { LoginAsync } from "../usecases/login/LoginAsync";
 import { LoginResponse } from "../usecases/login/LoginResponse";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import httpClient from "@/services/api-client"
+import { AuthRoutes } from '@/modules/auth/infra/routes/Router';
 
 type AuthState = {
   loading: LoadingState;
@@ -54,8 +55,15 @@ export const getUserServiceCenter = createAsyncThunk(
     const response = await httpClient.get(`/service-center?ownerId=${userID}`);
     if (response.data.data.length > 0) {
       dispatch(setServiceCenterId(response.data.data[0].id));
+      return response.data.data[0];
+    }else{
+      dispatch(setErrorMessage("No service center found for this user"));
+      // reset auth state and redirect to login
+      localStorage.clear();
+      window.open(AuthRoutes.login, "_self");
+
+      return null;
     }
-    return response.data.data[0];
   }
 );
 
