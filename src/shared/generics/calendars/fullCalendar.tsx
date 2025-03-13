@@ -1,7 +1,7 @@
-import React from 'react';
 import dayjs from 'dayjs';
 import { twMerge } from 'tailwind-merge';
 import { DateType, OnChangedReturnType, useDatePicker } from '../layouts/date-picker/useDatePicker';
+import ChevronArrowLeftIcon from '../icons/ChevronArrowLeftIcon';
 
 interface Event {
   id: string;
@@ -68,7 +68,7 @@ const Calendar = <Range extends boolean>(props: OwnProps<Range>) => {
     )}>
       <div className="flex justify-between items-center">
         <div className="text-black font-medium w-full pl-2">
-          {currentDate.format('MMMM YYYY')}
+          {dayjs(currentDate).format('MMMM YYYY')}
         </div>
         <button
           type={"button"}
@@ -84,7 +84,7 @@ const Calendar = <Range extends boolean>(props: OwnProps<Range>) => {
           type={"button"}
           onClick={handleNextDate}
         >
-          <ChevronArrowRightIcon
+          <ChevronArrowLeftIcon
             className="w-8 cursor-pointer text-azmana-dark"
           />
         </button>
