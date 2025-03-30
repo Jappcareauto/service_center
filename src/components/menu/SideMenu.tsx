@@ -1,5 +1,4 @@
-import { AppointmentRoutes } from "@/modules/appointment/infra/routes/Router";
-import { DashboardRoutes } from "@/modules/dashboard/infra/routes/Router";
+import { AppointmentRoutes, DashboardRoutes, InvoiceRoutes, PaymentRoutes } from "@/routes/Navigation";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
@@ -9,15 +8,10 @@ import HomeIcon from "./icons/HomeIcon";
 import InvoiceIcon from "./icons/InvoiceIcon";
 import ProfileIcon from "./icons/ProfileIcon";
 import StatisticIcon from "./icons/StatisticIcon";
-import { InvoiceRoutes } from "@/modules/Invoice.ts/infra/routes/Router";
-import { useAppSelector } from "@/app/hooks";
-import { userSelector } from "@/modules/user/slice/selectors";
-import { LoadingState } from "@/shared/enums/LoadingState";
-import Loader from "../loader/Loader";
-import Avatar from "../Avatar";
-import { PaymentRoutes } from "@/modules/payment/infra/router/Router";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import Avatar from "@/components/Avatar";
 import { PaymentIcon } from "./icons/PaymentIcon";
-import { handleCleanStoreAndNavigateToLogin } from "@/shared/gateway/handleCleanStoreAndNavigateToLogin";
+import { logout } from "@/redux/authSlice";
 
 interface MenuItem {
   title: string;
@@ -70,19 +64,21 @@ const menuItems = (): MenuItem[] => [
 
 const SideMenu = () => {
   const location = useLocation();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, mySelf } = useAppSelector((state) =>
-    userSelector.mySelfState(state)
-  );
+  const { user } = useAppSelector((state) => state.auth);
+
+  const logoutUser = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
+  
   return (
     <div className="w-[270px] border-r border-r-borderColor h-screen px-4 pt-10">
       <p className="mb-4">Good Morning</p>
       <button className="flex items-center px-4 py-3 border border-borderColor rounded-2xl w-full gap-x-4 mb-6 font-medium">
-        {loading === LoadingState.pending ? (
-          <Loader />
-        ) :  (
-          <Avatar name={mySelf?.name} className="" />
-        )}
+        <Avatar name={user?.name} className="" />
       </button>
 
       <div className="flex flex-col gap-y-2">
@@ -106,7 +102,7 @@ const SideMenu = () => {
         })}
       </div>
       <div
-        onClick={() => handleCleanStoreAndNavigateToLogin()}
+        onClick={() => logoutUser()}
         className="flex mt-10 h-[50px] gap-x-4 hover:cursor-pointer rounded-xl items-center px-2 hover:bg-redAccent "
       >
         <div className="">
