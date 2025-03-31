@@ -5,8 +5,8 @@
 
 @theme {
     --color-primary: #FB7C37;
-    --color-primary-accent: #FFEDE6;
-    --color-primary-accent2: #FFB693;
+    --color-primaryAccent: #FFEDE6;
+    --color-primaryAccent2: #FFB693;
     --color-secondary: #111111;
     --color-grey: #797676;
     --color-grey2: #242424;
@@ -18,9 +18,9 @@
     --color-black: #111111;
     --color-background: #FFF8F6;
     --color-green: #006D35;
-    --color-green-accent: #C4FFCD;
+    --color-greenAccent: #C4FFCD;
     --color-red: #F1351B;
-    --color-red-accent: #FFEDE9;
+    --color-redAccent: #FFEDE9;
 
 }
 

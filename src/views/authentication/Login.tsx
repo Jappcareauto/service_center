@@ -10,6 +10,8 @@ import { setSuccessMessage, setErrorMessage, clearAllMessages } from "@/redux/me
 import { login as userLogin } from "@/redux/authSlice";
 import { setCurrentServiceCenter, setServiceCenters } from "@/redux/serviceCenterSlice";
 import { IUser, IServiceCenter } from "@/types";
+import InputPasseord from "@/components/inputs/inputPassword";
+import Input from "@/components/inputs/Input";
 
 export const InputLoginSchemaValidation = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -33,7 +35,7 @@ const LoginView = () => {
 
   // React Query mutation for login
   const { mutate: login, isPending } = useMutation({
-    mutationFn: (credentials: { email: string; password: string }) => 
+    mutationFn: (credentials: { email: string; password: string }) =>
       apiClient.post("/auth/login", credentials),
     onSuccess: async (response) => {
       const { data } = response.data;
@@ -46,7 +48,7 @@ const LoginView = () => {
       //   dispatch(setErrorMessage("You are not authorized to access this. "));
       //   return;
       // }
-      
+
       console.log(data)
 
       localStorage.setItem("AUTH_ACCESS", JSON.stringify({
@@ -56,21 +58,21 @@ const LoginView = () => {
         refreshTokenExpiry: data.refreshTokenExpiry,
       }));
 
-      const userId = data.authorities.userId;  
+      const userId = data.authorities.userId;
 
       // Get user profile
       const userResponse = await apiClient.get("/user/logged-in");
       dispatch(userLogin(userResponse.data.data as IUser));
-    
+
       // Get service center
-      const serviceCenterResponse = await apiClient.post(`/service-center/list?ownerId=${userId}`,{});
+      const serviceCenterResponse = await apiClient.post(`/service-center/list?ownerId=${userId}`, {});
       dispatch(setServiceCenters(serviceCenterResponse.data.data as IServiceCenter[]));
       // set the first service center as current. when flow for choosing is available, it can be updated
       dispatch(setCurrentServiceCenter(serviceCenterResponse.data.data[0] as IServiceCenter));
-      
+
       // Redirect to dashboard or home page
       navigate("/dashboard");
-      
+
       dispatch(setSuccessMessage('Login successfull'))
     },
     onError: (error: any) => {
@@ -105,31 +107,22 @@ const LoginView = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                {...register("email")}
+              <Input
+                name="email"
+                label="Email"
                 placeholder="Email"
-                className={`mt-1 block w-full px-3 py-2 border ${errors.email ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary`}
+                register={register}
+                errorMessage={errors.email?.message}
               />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-              )}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                {...register("password")}
+              <InputPasseord
+                name="password"
+                label="Password"
                 placeholder="Password"
-                className={`mt-1 block w-full px-3 py-2 border ${errors.password ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary`}
+                register={register}
+                errorMessage={errors.password?.message}
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
