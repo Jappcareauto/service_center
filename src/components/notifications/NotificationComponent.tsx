@@ -1,13 +1,18 @@
 import Notification2Icon from '@/components/icons/Notification2Icon'
 
-const NotificationComponent = () => {
+interface NotificationComponentProps {
+  title: string;
+  message: string;
+}
+
+const NotificationComponent: React.FC<NotificationComponentProps> = ({ title, message }) => {
   return (
     <div className='border border-borderColor rounded-2xl p-4'>
       <div className="flex items-center gap-x-2 text-primary">
         <Notification2Icon />
-        <h2 className="font-medium">Notification</h2>
+        <h2 className="font-medium">{title}</h2>
       </div>
-      <p className='mt-6'>New Appoinment scheduled, from James for a body shop repair</p>
+      <p className='mt-6'>{message}</p>
     </div>
   )
 }

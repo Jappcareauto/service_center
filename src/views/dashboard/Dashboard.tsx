@@ -36,14 +36,19 @@ const Dashboard: React.FC = () => {
   const [activeAppointment, setActiveAppointment] = useState<IAppointment | null>(null);
 
   // React Query for appointments
-  const { data: appointments, isLoading } = useQuery({
+  const { data: appointments, isLoading, error: appointmentsError } = useQuery({
     queryKey: ['appointments', activeStatus],
     queryFn: async () => {
-      const response = await httpClient.post("/appointment/list", {
-        status: activeStatus,
-      });
-      return response.data.data.data as IAppointment[];
-    }
+      try{
+        const response = await httpClient.post("/appointment/list", {
+          status: activeStatus,
+        });
+        return response.data.data.data as IAppointment[];
+      } catch (error) {
+        dispatch(setErrorMessage("Error fetching appointments"));
+        return [];
+      }
+    },
   });
   
 
@@ -148,6 +153,7 @@ const Dashboard: React.FC = () => {
           <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">
             <p className="text-2xl font-light">
               Vehicle
+              <button onClick={() => ModalEvents.open(ModalEventKey.OPEN_CALENDAR)}>Click me</button>
               <br />
               Reports
             </p>

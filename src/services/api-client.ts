@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const BASE_URL = "http://3.146.143.73:8555/api/v1"
+const BASE_URL = "https://bpi.jappcare.com/api/v1"
 
 const apiClient = axios.create({
     baseURL: BASE_URL,
