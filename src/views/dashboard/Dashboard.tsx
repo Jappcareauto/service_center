@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "@/hooks/hooks";
+// import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { setErrorMessage } from "@/redux/messagesSlice";
 import IMAGES from "@/assets/images";
@@ -23,14 +23,14 @@ interface IweeklyStatsData {
   value: number; 
 }
 
-interface IweeklyChartsData {
-  title: string,
-  data: IweeklyStatsData[]
-}
+// interface IweeklyChartsData {
+//   title: string,
+//   data: IweeklyStatsData[]
+// }
 
 const Dashboard: React.FC = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [activeStatus, setActiveStatus] = useState<AppointmentStatus>(AppointmentStatus.NOTSTARTED);
   const [currentFilterLabel, setCurrentFilterLabel] = useState<string>("Not Started");
   const [activeAppointment, setActiveAppointment] = useState<IAppointment | null>(null);

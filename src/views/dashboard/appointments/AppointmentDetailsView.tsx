@@ -1,6 +1,6 @@
 // import IMAGES from "@/assets/images";
 import Avatar from "@/components/Avatar";
-import PrimaryButton from "@/components/buttons/PrimaryButton";
+// import PrimaryButton from "@/components/buttons/PrimaryButton";
 import Calendar2Icon from "@/components/menu/icons/Calendar2Icon";
 import Expended2Icon from "@/components/menu/icons/Expended2Icon";
 import LocationIcon from "@/components/menu/icons/LocationIcon";
@@ -16,7 +16,7 @@ import { LoadingState } from "@/enums/LoadingState";
 import { FC, useState } from "react";
 import { IAppointment } from "@/types";
 import { formatDateToMedium } from "@/utils/dateFormat";
-import { AppointmentFilter } from "@/enums/AppointmentFIlter";
+// import { AppointmentFilter } from "@/enums/AppointmentFIlter";
 type Props = {
   loading: LoadingState;
   appointment: IAppointment;
