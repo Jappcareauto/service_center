@@ -43,7 +43,8 @@ const Dashboard: React.FC = () => {
         const response = await httpClient.post("/appointment/list", {
           status: activeStatus,
         });
-        return response.data.data.data as IAppointment[];
+        let data = response.data.data as IAppointment[];
+        return data;
       } catch (error) {
         dispatch(setErrorMessage("Error fetching appointments"));
         return [];
