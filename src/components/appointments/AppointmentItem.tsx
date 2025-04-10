@@ -12,13 +12,12 @@ import { format, parseISO } from 'date-fns';
 
 interface AppointmentItemProps {
   appointment: IAppointment;
-  onClick: (appointment: string) => void;
+  onClick: (appointment: IAppointment) => void;
 }
 
-const AppointmentItem: React.FC<AppointmentItemProps> = ({appointment}) => {
-  function handleSectActiveAppointment(appointment: IAppointment) {
-    // setActiveAppointment(appointment);
-    console.log("Appointment selected:", appointment);
+const AppointmentItem: React.FC<AppointmentItemProps> = ({appointment, onClick}) => {
+  function handleSelectActiveAppointment(appointment: IAppointment) {
+    onClick(appointment);
   }
 
   const formatedStatus = formatStatusText(appointment.status);
@@ -59,7 +58,7 @@ const AppointmentItem: React.FC<AppointmentItemProps> = ({appointment}) => {
         </div>
         <PrimaryButton
           onClick={() => {
-            handleSectActiveAppointment(appointment);
+            handleSelectActiveAppointment(appointment);
 
             ModalEvents.open(ModalEventKey.APPOINTMENT_DETAILS);
           }}

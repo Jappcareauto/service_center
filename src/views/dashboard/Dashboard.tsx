@@ -17,6 +17,8 @@ import { IAppointment } from '@/types';
 import { AppointmentStatus } from '@/enums/AppoointmentStatus';
 import { calculateRange } from '@/utils/calculStatsRange';
 import { StatsRange } from '@/enums/StatsRange';
+import AppointmentDetailsView from './appointments/AppointmentDetailsView';
+import { LoadingState } from '@/enums/LoadingState';
 
 interface IweeklyStatsData {
   name: string;  
@@ -79,7 +81,12 @@ const Dashboard: React.FC = () => {
   };
 
   const handleSectActiveAppointment = (appointment: IAppointment) => {
+    console.log(appointment)
+    console.log("setting it now")
     setActiveAppointment(appointment);
+    console.log("printing current active appointment")
+    console.log(activeAppointment)
+    ModalEvents.open(ModalEventKey.APPOINTMENT_DETAILS)
   };
 
   const filterLabels = ["Not Started", "In Progress", "Completed"];
@@ -138,6 +145,7 @@ const Dashboard: React.FC = () => {
               }}
             />
           </div>
+
           <div className="flex flex-col gap-y-4">
             <AppointmentList
               appointments={appointments || []}
@@ -145,6 +153,12 @@ const Dashboard: React.FC = () => {
               onSelect={handleSectActiveAppointment}
             />
           </div>
+
+          {activeAppointment && (
+            <AppointmentDetailsView 
+              appointment={activeAppointment}
+            />
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-y-6">

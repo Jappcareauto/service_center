@@ -82,6 +82,7 @@ export interface VehicleMedia  {
   type: string;
   source: string;
   items: VehicleMediaItem[];
+  mainItemUrl: string | null;
 }
 
 export interface Vehicle extends Audit {
@@ -97,14 +98,22 @@ export interface Vehicle extends Audit {
 
 export interface IAppointment extends Audit {
   date: string;
-  locationType: "HOME" | "OFFICE" | "OTHER";
+  locationType: "HOME" | "GARAGE" | "SERVICE_CENTER" | "CUSTOM" | "OFFICE" | "OTHER";
+  location: {
+    id: string | null;
+    name: string | null;
+    description: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  };
   note: string | null;
   serviceId: string;
   service?: Service;
-  status:AppointmentFilter;
+  status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED"; // Or use AppointmentFilter
   vehicleId: string;
   vehicle?: Vehicle;
   user?: IUser;
+  timeOfDay?: "MORNING" | "AFTERNOON" | "EVENING" | "NIGHT";
 }
 
 
