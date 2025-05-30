@@ -15,7 +15,10 @@
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
     "@fullcalendar/timegrid": "^6.1.15",
+<<<<<<< HEAD
     "@heroicons/react": "^2.2.0",
+=======
+>>>>>>> 41e39629ea7c6007168fc83d7820f4bc018cae16
     "@hookform/resolvers": "^3.9.1",
     "@react-google-maps/api": "^2.20.6",
     "@reduxjs/toolkit": "^2.5.0",
