@@ -1,9 +1,5 @@
 export const BASE_URL = import.meta.env.VITE_API_URL;
 
-export const isDevMode = import.meta.env.MODE === "development";
-
-export const isTestMode = import.meta.env.MODE === "test";
-
 export const URLS = {
   auth: {
     login: "/auth/login",
