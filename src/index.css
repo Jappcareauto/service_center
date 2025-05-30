@@ -10,6 +10,16 @@
   font-style: normal;
 }
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 @font-face {
   font-family: 'Plus Jakarta Sans';
   src: url('assets/fonts/PlusJakartaSans-Medium.woff2') format('woff2');
@@ -25,8 +35,6 @@
   /* Bold */
   font-style: normal;
 }
-
-
 
 * {
   margin: 0;
@@ -47,6 +55,37 @@ h1 {
 h2 {
   font-weight: 600;
   font-size: 1rem;
+}
+
+/* Hide scrollbar inside calendar cells */
+.ant-picker-cell .ant-picker-cell-inner {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+  overflow-y: auto;
+  padding: 0;
+  cursor: auto;
+}
+
+.ant-picker-cell .ant-picker-cell-inner::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Make calendar cells taller */
+.ant-picker-cell {
+  min-height: 220px !important; /* Increase as needed */
+  vertical-align: top;
+}
+
+/* Optional: Hide scrollbar but still scroll content */
+.ant-picker-cell .ant-picker-cell-inner {
+  max-height: 210px; /* Match or slightly less than cell height */
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.ant-picker-cell .ant-picker-cell-inner::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 

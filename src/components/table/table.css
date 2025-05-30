@@ -1,0 +1,12 @@
+.editable-table {
+    background: transparent;
+  }
+  
+  .editable-table .ant-table {
+    background: transparent;
+  }
+  
+  .editable-table .ant-table-thead > tr > th {
+    background: transparent;
+  }
+  

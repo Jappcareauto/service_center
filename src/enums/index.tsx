@@ -1,0 +1,54 @@
+export enum AppointmentStatus {
+  NOT_STARTED = "NOT_STARTED",
+  IN_PROGRESS = "IN_PROGRESS",
+  COMPLETED = "COMPLETED",
+}
+
+export enum InvoiceStatus {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  DECLINED = "DECLINES",
+  DRAFT = "DRAFT",
+}
+export enum PaymentStatus {
+  ALL = "ALL",
+  EARNINGS = "EARNINGS",
+  WITHDRAWALS = "WITHDRAWALS",
+}
+
+export enum ROLES {
+  ROLE_ADMIN = "ROLE_ADMIN",
+  ROLE_GARAGE_MANAGER = "ROLE_GARAGE_MANAGER",
+  ROLE_SERVICE_MANAGER = "ROLE_SERVICE_MANAGER",
+  ROLE_TECHNICIAN = "ROLE_TECHNICIAN",
+  ROLE_CUSTOMER = "ROLE_CUSTOMER",
+  ROLE_RECEPTIONIST = "ROLE_RECEPTIONIST",
+  ROLE_GUEST = "ROLE_GUEST",
+}
+export enum ChatStatus {
+  ALL = "ALL",
+  UNREAD = "UNREAD",
+}
+
+export enum MessageType {
+  BASIC = "BASIC",
+  VOICE = "VOICE",
+  INVOICE = "INVOICE",
+  IMAGE = "IMAGE",
+  TEXT = "TEXT",
+  ATTACHMENT_APPOINTMENT = "ATTACHMENT_APPOINTMENT",
+}
+
+export enum EmergencyStatus {
+  REQUESTED = "REQUESTED",
+  ACCEPTED = "ACCEPTED",
+  DECLINED = "DECLINED",
+  IN_PROGRESS = "IN_PROGRESS",
+}
+
+export enum ToastType {
+  SUCCESS = 'success',
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+}
