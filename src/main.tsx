@@ -1,23 +1,23 @@
-import { setupListeners } from '@reduxjs/toolkit/query'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { persistStore } from 'redux-persist'
-import { extraArgument } from './app/extraArgument.ts'
-import { createStore } from './app/store.ts'
-import './index.css'
-import { Provider } from './Provider.tsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "./App.tsx";
+import "./index.css";
+import store, { persistor } from "./redux/store.ts";
+import { ToastProvider } from './context/ToastContext.tsx';
 
-const store = createStore(
-  extraArgument
-)
-
-setupListeners(store.dispatch)
-
-const persistor = persistStore(store);
-
-
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Provider store={store} persistor={persistor} />
-  </StrictMode>,
-)
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ToastProvider>
+          <App />
+          <ToastContainer />
+        </ToastProvider>
+      </PersistGate>
+    </Provider>
+  </StrictMode>
+);

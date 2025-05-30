@@ -1,15 +1,14 @@
-import { RouterProvider } from "react-router-dom";
-import "./App.css";
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import Routing from "./routes/Routing";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from "react";
 
-import { createRouter } from "./app/routes/Router";
-import { AppStore } from "./app/store";
+const App = () => {
+  useEffect(() => {
+    AOS.init({ duration: 500, easing: "ease-in-sine", once: true });
+  }, []);
 
-const App: React.FC<{ store: AppStore }> = ({ store }) => {
-  const router = createRouter({ store });
-  return (
-      <RouterProvider router={router} />
-  );
+  return <Routing />;
 };
 
 export default App;

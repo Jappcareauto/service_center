@@ -1,6 +1,4 @@
-// @ts-nocheck
-
-const IMAGES = {
+const images = {
   login: new URL("./login.png", import.meta.url).href,
   avatar: new URL("./avatar.png", import.meta.url).href,
   avatar2: new URL("./avatar2.png", import.meta.url).href,
@@ -15,6 +13,7 @@ const IMAGES = {
   cover: new URL("./cover.jpg", import.meta.url).href,
   food: new URL("./food.png", import.meta.url).href,
   food2: new URL("./food2.png", import.meta.url).href,
+  logo: new URL("./logo.png", import.meta.url).href,
 };
 
-export default IMAGES;
+export default images;
