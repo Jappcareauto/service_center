@@ -16,7 +16,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
+        
+      - name: Print package.json
+        run: cat ${{ github.workspace }}/service_center/package.json
+        
+      - name: Validate package.json syntax
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+          jq . ${{ github.workspace }}/service_center/package.json
+          
       - name: Detect package manager
         id: detect-package-manager
         run: |
