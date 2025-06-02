@@ -36,7 +36,7 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
       ) : (
         <div className={twMerge(second ? "" : "text-white")}>
           <h1 className={twMerge("font-bold text-3xl", isSmall && "my-3")}>
-            {value}
+            {value ?? "0"}
           </h1>
           <p className={twMerge(second ? "text-grey4" : "", titleClassName)}>
             {title}

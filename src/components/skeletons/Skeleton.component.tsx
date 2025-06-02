@@ -1,4 +1,3 @@
-import React from "react";
 import { Skeleton as SkeletonComponent, SkeletonProps } from "antd";
 
 const Skeleton = ({...props}: SkeletonProps) => {

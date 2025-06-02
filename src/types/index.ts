@@ -2,11 +2,11 @@
 import { AppointmentStatus, InvoiceStatus, MessageType } from "@/enums";
 
 export interface GenericType {
-  id: string;
-  createdAt: Date;
-  updatedAt: string;
-  createdBy: string;
-  updatedBy: string;
+  id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 export interface GenericResponse {
   meta?: {
@@ -46,6 +46,11 @@ export interface UserPermission {
   itemId: string;
   itemType: string;
   expiration: string;
+}
+
+export interface LanguageType {
+  code: string;
+  name: string;
 }
 
 // export interface Location extends GenericType {
@@ -89,7 +94,7 @@ export interface Vehicle {
   media: VehicleMedia;
   registrationNumber: string;
   vin: string;
-  id: string
+  id: string;
 }
 export interface Garage {
   name: string;
@@ -155,7 +160,7 @@ export interface ServiceCenterResponse extends GenericResponse {
 }
 export interface UpdateServiceCenterImagesRequest extends GenericResponse {
   data: FormData | Record<string, any>;
-  id: string
+  id: string;
 }
 export interface ServiceCentersResponse extends GenericResponse {
   data: ServiceCenter[];
@@ -178,10 +183,10 @@ export interface Appointment extends GenericType {
   status?: AppointmentStatus;
   vehicleId?: string;
   timeOfDay?: string;
-  location: Location;
+  location?: Location;
   vehicle?: Vehicle;
   user?: User;
-  serviceCenter: ServiceCenter
+  serviceCenter?: ServiceCenter;
 }
 
 export interface LoginResponse extends GenericResponse {
@@ -411,6 +416,18 @@ export interface ServiceResponse extends GenericResponse {
   data: Service;
 }
 
+export interface ServiceCenterService extends GenericType {
+  serviceCenter: ServiceCenter;
+  service: Service;
+  price: number;
+  durationMinutes: number;
+  available: boolean;
+}
+
+export interface ServiceCenterServicesResponse extends GenericResponse {
+  data: ServiceCenterService[];
+}
+
 export interface ChatRoom extends Audit {
   id: string;
   name: string;
@@ -422,15 +439,13 @@ export interface Message {
   image?: string;
   reply?: string;
   isMe?: boolean;
-  type: MessageType;
-  senderId: string;
-  content: string | any;
-  chatRoomId: string;
-  timestamp: "2025-03-10T19:33:35.810371";
-  appointmentId: string;
-  chatRoomIdAsUuid: string;
-  senderIdAsUuid: string;
-  appointmentIdAsUuid: string;
+  type?: MessageType;
+  senderId?: string;
+  content?: string | any;
+  chatRoomId?: string;
+  id?: string;
+  timestamp?: string | Date;
+  appointmentId?: string;
 }
 
 export interface ChatRoomsResponse extends GenericResponse {
@@ -468,4 +483,15 @@ export interface InvoiceDataType {
   quantity: string;
   unitPrice: string;
   totalPrice: string;
+}
+
+export interface AppointmentChatRoom extends GenericType {
+  appointmentDTO: null;
+  id: string;
+  name: string;
+  participantIds: null;
+}
+
+export interface AppointmentChatRoomResponse extends GenericResponse {
+  data: AppointmentChatRoom;
 }

@@ -68,6 +68,11 @@ export const routes: route[] = [
     isProtected: true,
   },
   {
+    path: paths.downloadInvoice,
+    component: lazy(() => import("../pages/download-invoice/DownloadInvoice.page")),
+    isProtected: true,
+  },
+  {
     path: paths.invoiceDetails,
     component: lazy(
       () => import("../pages/invoice-details/InvoiceDetails.page")

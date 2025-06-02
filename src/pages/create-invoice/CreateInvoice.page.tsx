@@ -14,8 +14,7 @@ import {
 } from "@/redux/api";
 import { useAppSelector } from "@/redux/store";
 import { InvoiceDataType } from "@/types";
-import dayjs from "dayjs";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
@@ -34,41 +33,44 @@ const CreateInvoice = () => {
       skip: !appointment?.data?.createdBy,
     }
   );
-  const dateToday = dayjs();
-  const dateInThreeDays = dayjs().add(3, "day");
-  const [dueDate, setDueDate] = useState(dateInThreeDays);
-  const [issueDate, setIssueDate] = useState(dateToday);
+  const [dueDate, setDueDate] = useState("");
+  const [issueDate, setIssueDate] = useState("");
   const [items, setItems] = useState<InvoiceDataType[]>([]);
   const [total, setTotal] = useState(0);
 
   const handleCreateInvoice = () => {
-    const invoiceItems = items?.map((item) => {
-      return {
-        name: item.item,
-        price: item.totalPrice,
-        quantity: item.quantity,
+    if (!appointment?.data) {
+      console.error("No appointment data available");
+      return;
+    }
+    if (appointment?.data) {
+      const invoiceItems = items?.map((item) => {
+        return {
+          name: item.item,
+          price: item.totalPrice,
+          quantity: item.quantity,
+        };
+      });
+      const data = {
+        appointmentId: appointment?.data?.id as string,
+        vehicleId: appointment?.data?.vehicle?.id as string,
+        money: {
+          amount: total,
+          currency: "XAF",
+        },
+        issueDate,
+        dueDate,
+        billedFromUserId: user_info?.userId as string,
+        billedToUserId: appointment?.data?.createdBy as string,
+        items: invoiceItems as any,
       };
-    });
-    const data = {
-      appointmentId: appointment?.data?.id,
-      vehicleId: appointment?.data?.vehicle?.id,
-      money: {
-        amount: total,
-        currency: "XAF",
-      },
-      issueDate,
-      dueDate,
-      billedFromUserId: user_info?.userId,
-      billedToUserId: user?.data?.id,
-      items: invoiceItems as any,
-    };
-    console.log("data", data);
-    createInvoice(data)
-      .unwrap()
-      .then((res) => {
-        console.log("res", res);
-      })
-      .catch((err) => console.log("err", err));
+      createInvoice(data)
+        .unwrap()
+        .then((res) => {
+          console.log("res", res);
+        })
+        .catch((err) => console.log("err", err));
+    }
   };
 
   const getTotalPrice = (invoiceData: InvoiceDataType[]) => {
@@ -77,10 +79,14 @@ const CreateInvoice = () => {
       0
     );
     setTotal(totalSum);
-    return totalSum;
   };
 
   const disabled = !appointment?.data;
+
+  const handleAdd = useCallback((items: any[]) => {
+    setItems(items);
+    getTotalPrice(items);
+  }, []);
 
   return (
     <div className="flex gap-x-6">
@@ -88,7 +94,7 @@ const CreateInvoice = () => {
         <div className="mb-14 mt-4 justify-between flex">
           <div className="flex items-center gap-x-3">
             <InvoiceIcon />
-            <h2 className="font-medium">Appointments</h2>
+            <h2 className="font-medium">Invoice</h2>
           </div>
           <div
             className={twMerge(
@@ -101,10 +107,10 @@ const CreateInvoice = () => {
         <div className="flex-col flex gap-y-6">
           <div className="flex gap-x-7 justify-between">
             <Input
-              label="location type"
-              placeholder="location type"
+              label="Service center"
+              placeholder="service center"
               className="w-[100%]"
-              value={appointment?.data?.locationType}
+              value={appointment?.data?.serviceCenter?.name}
               disabled
             />
             <Input
@@ -147,7 +153,7 @@ const CreateInvoice = () => {
           </div>
           {appointment?.data && (
             <div className="flex flex-col">
-              <label className="text-sm mb-2">Service</label>
+              <label className="text-sm mb-2">Appointment</label>
               <Appointment
                 {...appointment?.data}
                 className="bg-transparent"
@@ -158,21 +164,21 @@ const CreateInvoice = () => {
               />
             </div>
           )}
-          <div className="p-5 border-grey3 border-2 rounded-xl ">
-            <EditableTable
-              onAdd={(items) => {
-                setItems(items);
-              }}
-              onDelete={(items) => {
-                setItems(items);
-              }}
-            />
+          <div>
+            <label className="text-sm mb-2">Purchased Items</label>
+            <div className="border-grey3 border-2 rounded-xl mt-2">
+              <EditableTable onChange={(values) => handleAdd(values)} />
+            </div>
           </div>
-          <InvoiceTotal total={items?.length > 0 ? getTotalPrice(items) : 0} />
+          <InvoiceTotal total={total} />
         </div>
         <div className="flex justify-end gap-x-4 mt-10">
-          <Button className="w-auto" variant="tertiary">
-            Save Draft
+          <Button
+            className="w-auto"
+            variant="tertiary"
+            onClick={() => navigate(`/download-invoice/asclknlksn`)}
+          >
+            Preview Invoice
           </Button>
           <Button
             className="w-auto"

@@ -1,5 +1,3 @@
-export const BASE_URL = import.meta.env.VITE_API_URL;
-
 export const URLS = {
   auth: {
     login: "/auth/login",
@@ -70,6 +68,9 @@ export const URLS = {
       `/chat-message/chatroom/${chatroomId}`,
     getChatroomPartcipants: (chatroomId: string) =>
       `/chat-participant/chatroom/${chatroomId}`,
+    chatroomUrl: (chatroomId: string) => `/chat/chatroom/${chatroomId}`,
+    getChatroomByAppointment: (appointmentId: string) =>
+      `/chatroom/appointment/${appointmentId}`,
   },
   service_Center: {
     getServiceCenters: "/service-center/list",
@@ -78,5 +79,6 @@ export const URLS = {
     updateServiceCenter: (id: string) => `/service-center/${id}/update`,
     addServiceCenterMedia: (id: string) =>
       `/service-center/add-media-to-service-center/${id}/update`,
+    getServiceCenterServices: (id: string) => `/service-centers/${id}/services`,
   },
 };

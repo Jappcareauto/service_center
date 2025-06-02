@@ -13,17 +13,23 @@ const Appointment = ({
   status,
   service,
   vehicle,
-  locationType,
+  location,
   date,
   onDetail,
   className,
+  active,
+  onClick
 }: AppointmentType) => {
   return (
     <div
       className={twMerge(
         "border border-borderColor rounded-[20px] bg-white p-4",
+        active && 'bg-primaryAccent shadow-lg border border-primaryAccent2',
+        onClick && 'cursor-pointer',
+        "hover:shadow-md transition-all duration-500",
         className
       )}
+      onClick={onClick}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center w-full gap-x-4 font-normal">
@@ -58,7 +64,7 @@ const Appointment = ({
           </div>
           <div className="flex items-center gap-x-2 text-grey4">
             <LocationIcon />
-            <p className="text-sm">{locationType}</p>
+            <p className="text-sm">{location?.name}</p>
           </div>
         </div>
         <Button

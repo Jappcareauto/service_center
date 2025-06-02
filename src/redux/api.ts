@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BASE_URL, URLS } from "@/config/urls";
+import { BASE_URL } from "@/config";
+import { URLS } from "@/config/urls";
 import {
+  AppointmentChatRoomResponse,
   AppointmentRequest,
   AppointmentResponse,
   AppointmentsResponse,
@@ -23,6 +25,7 @@ import {
   PaymentsResponse,
   ResetPasswordRequest,
   ServiceCenter,
+  ServiceCenterServicesResponse,
   ServiceCentersResponse,
   ServiceResponse,
   UpdateAppointmentRequest,
@@ -36,7 +39,6 @@ import {
   UserResponse,
   UsersResponse,
 } from "@/types";
-import RouteHanlder from "@/utils/RouteHanlder";
 import {
   BaseQueryFn,
   createApi,
@@ -72,42 +74,48 @@ const baseQueryWithReauth: BaseQueryFn<
   unknown,
   FetchBaseQueryError
 > = async (args, api, extraOptions) => {
-  let result = await baseQuery(args, api, extraOptions);
   const authState = (store.getState() as RootState).auth;
-  if (result.error?.status === "FETCH_ERROR") {
-    toast.error("Slow internet, please check your internet connection");
-    return;
-  }
-  if (result.error && result.error.status === 401) {
-    if (!authState.refreshToken || !authState.accessToken) return result;
 
-    // Update token to use refresh token
-    store.dispatch(setAccessToken(authState.refreshToken));
-    // Try to refresh the token
-    const refreshResult: any = await baseQuery(
-      {
-        url: "/auth/refresh-token/",
-        method: "POST",
-        body: {
-          refresh_token: authState.refreshToken,
-        },
-      },
-      api,
-      extraOptions
-    );
-    if (refreshResult.data) {
-      // Store the new tokens
-      store.dispatch(setAccessToken(refreshResult.data.data?.access_token));
-      store.dispatch(setRefreshToken(refreshResult.data.data?.refresh_token));
-      // Retry the original request
-      result = await baseQuery(args, api, extraOptions);
-    } else {
-      store.dispatch(logoutUser());
-      toast.error("session expired, please login");
-      RouteHanlder(`/login?redirect=${window.location.pathname}`);
-      return;
-    }
+  let result = await baseQuery(args, api, extraOptions);
+
+  if (result.error?.status === "FETCH_ERROR") {
+    toast.error("Slow internet, please check your connection.");
+    return result;
   }
+
+  if (result.error?.status !== 401) {
+    return result;
+  }
+  const { accessToken, refreshToken } = authState;
+  if (!accessToken || !refreshToken) {
+    return result;
+  }
+
+  const refreshResponse = (await baseQuery(
+    {
+      url: "/auth/refresh-token/",
+      method: "POST",
+      body: { refreshToken },
+    },
+    api,
+    extraOptions
+  )) as { data?: { data?: { accessToken: string; refreshToken: string } } };
+
+  if (
+    refreshResponse.data?.data?.accessToken &&
+    refreshResponse.data?.data?.refreshToken
+  ) {
+    store.dispatch(setAccessToken(refreshResponse.data.data.accessToken));
+    store.dispatch(setRefreshToken(refreshResponse.data.data.refreshToken));
+
+    result = await baseQuery(args, api, extraOptions);
+  } else {
+    store.dispatch(logoutUser());
+    toast.error("Session expired, please log in.");
+    window.location.href = `/login?redirect=${window.location.pathname}`;
+    return { error: { status: 401, data: "Unauthorized" } };
+  }
+
   return result;
 };
 
@@ -184,6 +192,19 @@ export const apiSlice = createApi({
       query: (id) => {
         return {
           url: URLS.appointment.getAppointment(id),
+          method: "GET",
+        };
+      },
+      providesTags: ["appointment"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    getChatroomByAppointment: builder.query<
+      AppointmentChatRoomResponse,
+      string
+    >({
+      query: (id) => {
+        return {
+          url: URLS.chat.getChatroomByAppointment(id),
           method: "GET",
         };
       },
@@ -627,6 +648,19 @@ export const apiSlice = createApi({
       invalidatesTags: ["service_center"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
+    getServiceCenterServices: builder.query<
+      ServiceCenterServicesResponse,
+      string
+    >({
+      query: (id) => {
+        return {
+          url: URLS.service_Center.getServiceCenterServices(id),
+          method: "GET",
+        };
+      },
+      providesTags: ["service_center"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
   }),
 });
 
@@ -676,5 +710,7 @@ export const {
   useGetServiceCentersMutation,
   useUpdateServiceCenterImageMutation,
   useUpdateServiceCenterMutation,
-  useAddServiceCenterMediaMutation
+  useAddServiceCenterMediaMutation,
+  useGetChatroomByAppointmentQuery,
+  useGetServiceCenterServicesQuery,
 } = apiSlice;

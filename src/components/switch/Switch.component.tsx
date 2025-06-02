@@ -2,11 +2,7 @@ import { Switch as AntdSwitch } from "antd";
 import { FC } from "react";
 import { AntdSwitchProps } from "./types";
 
-const Switch: FC<AntdSwitchProps> = ({
-  onToggle,
-}: {
-  onToggle?: (value: boolean) => void;
-}) => {
+const Switch: FC<AntdSwitchProps> = ({ onToggle }) => {
   const onChange = (checked: boolean) => {
     onToggle?.(checked);
   };

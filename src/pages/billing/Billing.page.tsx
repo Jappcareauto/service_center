@@ -1,16 +1,33 @@
 import InvoiceIcon from "@/assets/icons/InvoiceIcon";
 import Button from "@/components/button/Button.component";
+import Modal from "@/components/modals/Modal.component";
+import PlanCard from "@/components/plan-card/PlanCard.component";
 import Table from "@/components/table/Table.component";
-import { billingItems, getBillingColumns, paymentMethods } from "@/constants";
+import {
+  billingItems,
+  getBillingColumns,
+  paymentMethods,
+  plans,
+} from "@/constants";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Progress } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const Billing = () => {
   const handleViewDetails = () => {};
   const columns = getBillingColumns(handleViewDetails);
   const [active, setActive] = useState(0);
+
+  const [showPlans, setShowPlans] = useState(false);
+  const effectRef = useRef(false);
+
+  useEffect(() => {
+    // Prevent the effect from running on initial render
+    if (effectRef.current) return;
+    effectRef.current = true;
+    setShowPlans(true);
+  }, []);
 
   return (
     <div>
@@ -46,14 +63,16 @@ const Billing = () => {
             </div>
           </div>
           <div className="flex gap-x-5">
-            <button className="text-primary text-sm font-semibold">Upgrade</button>
+            <button className="text-primary text-sm font-semibold" onClick={() => setShowPlans(true)}>
+              Upgrade
+            </button>
             <button className="text-gray-600 text-sm">Cancel</button>
           </div>
         </div>
         <div className="w-[35%] bg-white border border-borderColor rounded-lg p-6 flex-row items-start justify-between">
           <p className=" text-gray-500 mb-1">Payment Methods</p>
           <div className="flex flex-col gap-y-3 mt-4 border border-gray-100 rounded-lg">
-            {paymentMethods.slice(0,2).map((item) => (
+            {paymentMethods.slice(0, 2).map((item) => (
               <button
                 className="p-3 flex items-center text-start z-30 border-b border-gray-100"
                 onClick={() => setActive(item.id)}
@@ -77,13 +96,32 @@ const Billing = () => {
             className="text-black clear-start w-[64%] border-gray-300 h-10 mt-5"
           >
             <PlusIcon className="w-4 h-4 mr-3 text-gray-500" />
-            <span className='text-sm text-gray-500'>Add Payment Method</span>
+            <span className="text-sm text-gray-500">Add Payment Method</span>
           </Button>
         </div>
       </div>
       <div>
         <Table data={billingItems} columns={columns} pageSize={7} />
       </div>
+      <Modal
+        open={showPlans}
+        onClose={() => setShowPlans(false)}
+        title="Choose a Plan"
+        onOk={() => setShowPlans(false)}
+        okText="Select"
+        footer={null}
+      >
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3'>
+          {plans.map((plan) => (
+          <PlanCard
+            key={plan.id}
+            name={plan.name}
+            price={plan.price}
+            features={plan.features}
+          />
+        ))}
+        </div>
+      </Modal>
     </div>
   );
 };

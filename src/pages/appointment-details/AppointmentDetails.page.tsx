@@ -4,7 +4,6 @@ import Avatar from "@/components/avatar/Avatar.component";
 import Button from "@/components/button/Button.component";
 import Invoice from "@/components/invoice/Invoice.component";
 import NoData from "@/components/no-data/NoData.component";
-import Skeleton from "@/components/skeletons/Skeleton.component";
 import { AppointmentStatus } from "@/enums";
 import {
   useGetAppointmentQuery,
@@ -14,8 +13,10 @@ import {
 } from "@/redux/api";
 import {
   setAppointment,
+  setAppointmentId,
   setInvoiceApp,
 } from "@/redux/features/appointment/appointmentSlice";
+import { useAppDispatch } from "@/redux/store";
 import { Appointment, VehicleMediaItem } from "@/types";
 import { getStatusStyles } from "@/utils";
 import { formatStatusText } from "@/utils/formatStatusText";
@@ -26,7 +27,6 @@ import {
 } from "@heroicons/react/24/solid";
 import { Image, Input } from "antd";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
@@ -48,7 +48,7 @@ const AppointmentDetails = () => {
     }
   );
 
-  console.log("user", user);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (invoice?.data) {
@@ -59,7 +59,7 @@ const AppointmentDetails = () => {
       dispatch(setAppointment(data?.data));
     }
   }, [invoice, data]);
-  const dispatch = useDispatch();
+
   return (
     <div className="pb-16">
       <button
@@ -76,16 +76,28 @@ const AppointmentDetails = () => {
               name={(user?.data?.name as string) ?? data?.data?.vehicle?.name}
               isName
             />
-            <div
-              className={twMerge(
-                "text-sm rounded-2xl px-3 first-letter:uppercase lowercase py-2 bg-primaryAccent whitespace-nowrap text-primary",
-                data?.data?.status
-                  ? getStatusStyles(data?.data?.status)
-                  : getStatusStyles(AppointmentStatus.NOT_STARTED)
-              )}
-            >
-              {data?.data?.status &&
-                formatStatusText(data?.data?.status as AppointmentStatus)}
+            <div className="flex space-x-5">
+              <div
+                className={twMerge(
+                  "text-sm rounded-2xl px-3 first-letter:uppercase lowercase py-2 bg-primaryAccent whitespace-nowrap text-primary",
+                  data?.data?.status
+                    ? getStatusStyles(data?.data?.status)
+                    : getStatusStyles(AppointmentStatus.NOT_STARTED)
+                )}
+              >
+                {data?.data?.status &&
+                  formatStatusText(data?.data?.status as AppointmentStatus)}
+              </div>
+              <Button
+                className="rounded-full w-auto h-[38px] text-sm"
+                variant="secondary"
+                onClick={() => {
+                  navigate(`/chat/${id}`);
+                  dispatch(setAppointmentId(data?.data?.id as string));
+                }}
+              >
+                Chat now!
+              </Button>
             </div>
           </div>
 
@@ -220,7 +232,11 @@ const AppointmentDetails = () => {
                 }}
               />
             ) : (
-              <NoData isLoading={invoiceLoading} title='No Invoice' message='No invoice available for this appointment!' />
+              <NoData
+                isLoading={invoiceLoading}
+                title="No Invoice"
+                message="No invoice available for this appointment!"
+              />
             )}
           </div>
         </div>

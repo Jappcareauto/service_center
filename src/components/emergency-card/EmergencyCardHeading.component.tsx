@@ -1,12 +1,11 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { BellIcon } from "@heroicons/react/24/solid";
-import React from "react";
 import Avatar from "../avatar/Avatar.component";
 import Button from "../button/Button.component";
 import { EmergencyCardProps } from "./types";
 
 const EmergencyCardHeading = ({
-  data: { name, car, issue, cost, distance },
+  data,
 }: EmergencyCardProps) => {
   return (
     <div id="top" className="bg-primaryAccent">
@@ -19,20 +18,20 @@ const EmergencyCardHeading = ({
         </div>
         <ChevronDownIcon className="w-6 h-6 text-gray-800" />
       </div>
-      <Avatar name={name} nameClassName="font-normal" />
+      <Avatar name={data?.name} nameClassName="font-normal" />
       <div className="justify-between items-center mt-3 flex flex-wrap">
         <div className="flex gap-x-3">
           <div className="border-r border-gray-300 pr-3">
-            <p className="font-medium">{car}</p>
+            <p className="font-medium">{data?.car}</p>
           </div>
           <div className="border-r border-gray-300 pr-3">
-            <p className="font-medium">{issue}</p>
+            <p className="font-medium">{data?.issue}</p>
           </div>
           <div className="border-r border-gray-300 pr-3">
-            <p className="font-medium">{cost}</p>
+            <p className="font-medium">{data?.cost}</p>
           </div>
           <div className="pr-3">
-            <p className="font-medium">{distance}</p>
+            <p className="font-medium">{data?.distance}</p>
           </div>
         </div>
         <div className="flex gap-x-3 z-50">

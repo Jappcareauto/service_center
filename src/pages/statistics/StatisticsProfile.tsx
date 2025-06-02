@@ -3,7 +3,7 @@ import Avatar from "@/components/avatar/Avatar.component";
 import DatePicker from "@/components/pickers/DatePicker.component";
 import Switch from "@/components/switch/Switch.component";
 import { StarIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const StatisticsProfile = () => {

@@ -1,6 +1,6 @@
 export interface StatisticsCardProps {
     icon: React.ReactElement;
-    value: string | number;
+    value: string | number | undefined;
     title: string;
     titleClassName?: string;
     badgeTitle: string;

@@ -6,6 +6,7 @@ import InvoiceIcon from "@/assets/icons/InvoiceIcon";
 import { PaymentIcon } from "@/assets/icons/PaymentIcon";
 import ProfileIcon from "@/assets/icons/ProfileIcon";
 import StatisticIcon from "@/assets/icons/StatisticIcon";
+import images from "@/assets/images";
 import Avatar from "@/components/avatar/Avatar.component";
 import {
   AppointmentStatus,
@@ -738,5 +739,53 @@ export const billingItems = [
     status: "Paid",
     date: "13 December 2024",
     method: "ORANGE MOMO",
+  },
+];
+
+export const serviceImage = {
+  VIN_DETECTION: {
+    image: images.s2,
+  },
+  GENERAL_MAINTAINANCE: {
+    image: images.s1,
+  },
+};
+
+export const plans = [
+  {
+    id: "basic",
+    name: "Basic Plan",
+    price: "5000 frs",
+    features: [
+      "Access to a comprehensive service center locator to find nearby facilities.",
+      "Personalized vehicle consultations to help you make informed decisions.",
+      "24/7 emergency services for peace of mind on the road.",
+      "Regular maintenance reminders to keep your vehicle in top shape.",
+      "Exclusive discounts on services and parts at partner locations.",
+      "Real-time tracking of your vehicle's health and performance.",
+      "User-friendly interface for easy navigation and management.",
+    ],
+  },
+  {
+    id: "premium",
+    name: "Premium Plan",
+    price: "10000 frs",
+    features: [
+      "All Basic Plan features included.",
+      "Priority support and faster emergency response.",
+      "Advanced diagnostics and predictive maintenance alerts.",
+      "Complimentary annual vehicle inspection.",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise Plan",
+    price: "20000 frs",
+    features: [
+      "All Premium Plan features included.",
+      "Fleet management dashboard and analytics.",
+      "Custom integrations with third-party tools.",
+      "Dedicated account manager and 24/7 enterprise support.",
+    ],
   },
 ];

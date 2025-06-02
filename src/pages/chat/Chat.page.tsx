@@ -1,37 +1,57 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ChatIcon from "@/assets/icons/ChatIcon";
 import SearchIcon from "@/assets/icons/SearchIcon";
+import Appointment from "@/components/appointment/Appointment.component";
+import { AppointmentType } from "@/components/appointment/types";
 import Avatar from "@/components/avatar/Avatar.component";
 import Button from "@/components/button/Button.component";
 import ChatInvoice from "@/components/chat-item/ChatInvoice.component";
 import ChatItem from "@/components/chat-item/ChatItem.component";
 import MessageComponent from "@/components/chat-item/Message.component";
+import Drawer from "@/components/drawer/Drawer.component";
 import FilterBar from "@/components/filter-bar/FilterBar.component";
 import Input from "@/components/inputs/Input.component";
+import NoData from "@/components/no-data/NoData.component";
 import Skeleton from "@/components/skeletons/Skeleton.component";
 import { ChatStatuses } from "@/constants";
 import { MessageType } from "@/enums";
 import {
   useGetAppointmentQuery,
+  useGetAppointmentsMutation,
   useGetInvoiceByAppointmentQuery,
+  useGetServiceCentersMutation,
   useGetUserQuery,
 } from "@/redux/api";
-import { paths } from "@/routes/paths";
+import { setAppointmentId } from "@/redux/features/appointment/appointmentSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Message } from "@/types";
 import {
   ChatBubbleLeftEllipsisIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 
 const Chat = () => {
+  const { user_info } = useAppSelector((state) => state.auth);
+  const { appointmentId } = useAppSelector((state) => state.appointment);
+
   const [active, setActive] = useState("");
-  const { appointmentId } = useParams();
+  // const { appointmentId } = useParams();
   const { data, isLoading } = useGetAppointmentQuery(appointmentId as string, {
     skip: !appointmentId,
   });
+  const [activeAppointment, setActiveAppointment] = useState(appointmentId);
+  const [getServiceCenters, { data: serviceCenter }] =
+    useGetServiceCentersMutation();
+  const [getAppointments] =
+    useGetAppointmentsMutation();
+  const [open, setOpen] = useState(false);
+  const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
+    []
+  );
+  const dispatch = useAppDispatch();
   const { data: invoice, isLoading: invoiceLoading } =
     useGetInvoiceByAppointmentQuery(appointmentId as string);
   const { data: user } = useGetUserQuery(
@@ -42,7 +62,7 @@ const Chat = () => {
   );
   const navigate = useNavigate();
   const [customers, setCustomers] = useState<any[]>([]);
-  
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -52,7 +72,6 @@ const Chat = () => {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]); // Scroll when messages change
-
   useEffect(() => {
     if (invoice?.data?.billedFromUserId) {
       if (user?.data) {
@@ -73,6 +92,18 @@ const Chat = () => {
     }
   }, [customers, invoice, user]);
 
+  useEffect(() => {
+    getAppointments({
+      ownerId: serviceCenter?.data?.[0]?.id,
+    })
+      .unwrap()
+      .then((res) => {
+        setAppointmentsList(res.data);
+      });
+    getServiceCenters({
+      ownerId: user_info?.userId,
+    });
+  }, []);
   const sendMessage = () => {
     if (!input.trim()) return;
 
@@ -133,11 +164,11 @@ const Chat = () => {
           ) : !invoice?.data ? (
             <div className="w-full justify-center items-center flex-col flex mt-[20%]">
               <ChatBubbleLeftEllipsisIcon className="text-gray-300 w-16" />
-              <p className="text-gray-400 mt-5">No chat session started</p>
+              <p className="text-gray-400 mt-2 text-sm">No chat session started</p>
               <Button
-                className="text-sm mt-3 px-8"
+                className="text-sm mt-3 px-8 text-primary bg-background font-bold hover:bg-primaryAccent"
                 variant="secondary"
-                onClick={() => navigate(paths.appointments)}
+                onClick={() => setOpen(true)}
               >
                 See Appointments
               </Button>
@@ -153,25 +184,65 @@ const Chat = () => {
                 timeOfDay={data?.data?.timeOfDay}
               />
               {messages.map((msg) => (
-                <MessageComponent key={msg.id} msg={msg} />
+                <MessageComponent key={msg?.id} msg={msg} />
               ))}
               <div ref={bottomRef} />
             </>
           )}
         </div>
-        <div className="py-3 px-6 fixed bottom-0 w-[58%] bg-background flex items-center gap-x-8">
+        <div className="py-3 px-6 fixed bottom-0 w-[55%] bg-background flex items-center gap-x-8">
           <Input
             placeholder="write your message..."
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
             onChange={(e) => setInput(e.target.value)}
             value={input}
           />
-          <button className="bg-primary rounded-full p-3 hover:opacity-80">
+          <button className="bg-primary rounded-full p-2 hover:opacity-80">
             <PaperAirplaneIcon className="w-6 h-6 text-white" />
           </button>
         </div>
       </div>
+      <Drawer
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+        title="Select Appointment"
+        width={window.innerWidth * 0.4}
+      >
+        <div className="flex flex-col space-y-4">
+          {appointmentsList && appointmentsList?.length > 0 ? (
+            appointmentsList?.map((appointment) => (
+              <Appointment
+                key={appointment.id}
+                onClick={() => {
+                  setActiveAppointment(appointment?.id);
+                  dispatch(setAppointmentId(appointment?.id));
+                  navigate(`/chat/${appointment?.id}`);
+                  setOpen(false);
+                }}
+                active={activeAppointment === appointment?.id}
+                {...appointment}
+              />
+            ))
+          ) : (
+            <NoData
+              title="No Appointments"
+              message="You haven’t scheduled any appointments yet."
+              isLoading={isLoading}
+              dataLength={appointmentsList?.length}
+            />
+          )}
+        </div>
+      </Drawer>
     </div>
+    // <>
+    //   {" "}
+    //   <div>
+    //     <h1>Chat</h1>
+    //     <Chatroom appointmentId={appointmentId} userId={user_info?.userId} />
+    //   </div>
+    // </>
   );
 };
 

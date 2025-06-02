@@ -2,7 +2,7 @@ import { Drawer as DrawerComponent } from "antd";
 import React from "react";
 import { DrawerType } from "./types";
 import Expended2Icon from "@/assets/icons/Expended2Icon";
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 const Drawer: React.FC<DrawerType> = ({
   children,
@@ -11,15 +11,16 @@ const Drawer: React.FC<DrawerType> = ({
   loading,
   title,
   onNavigate,
+  ...props
 }) => {
   return (
     <>
       <DrawerComponent
         closable
-        destroyOnClose
+        destroyOnHidden
         title={
           <div className="flex justify-between items-center">
-            <p className='ml-2 font-medium'>{title}</p>
+            <p className="ml-2 font-medium">{title}</p>
             {onNavigate && (
               <Expended2Icon className="cursor-pointer" onClick={onNavigate} />
             )}
@@ -30,7 +31,8 @@ const Drawer: React.FC<DrawerType> = ({
         loading={loading}
         onClose={onClose}
         width={window.innerWidth * 0.26}
-        closeIcon={<XMarkIcon className='text-black' />}
+        closeIcon={<XMarkIcon className="text-black" />}
+        {...props}
       >
         <div className="flex flex-col">{children}</div>
       </DrawerComponent>
