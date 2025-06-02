@@ -4,7 +4,7 @@ import { ClockIcon } from "@heroicons/react/24/solid";
 import Button from "../button/Button.component";
 import { Image } from "antd";
 import { Appointment } from "@/types";
-import { formatDateTime } from '@/utils/getInitials';
+import { formatDateTime } from "@/utils/getInitials";
 
 interface IProps extends Appointment {
   amount?: string;
@@ -12,7 +12,15 @@ interface IProps extends Appointment {
   onView?: () => void;
 }
 
-const ChatInvoice = ({ vehicle, service, amount, dueDate , onView, timeOfDay}: IProps) => {
+const ChatInvoice = ({
+  vehicle,
+  service,
+  amount,
+  dueDate,
+  onView,
+  timeOfDay,
+  note,
+}: IProps) => {
   return (
     <div className="flex flex-col gap-y-2 max-w-[400px] w-full  border border-borderColor  bg-white p-3 px-5 rounded-xl">
       <div className="w-full bg-white pb-0 rounded-3xl">
@@ -58,7 +66,7 @@ const ChatInvoice = ({ vehicle, service, amount, dueDate , onView, timeOfDay}: I
           <div className="">
             <p className="text-grey4 text-sm">Note</p>
             <p className="text-sm">
-              I would like to fix a dent in my front bumper
+              {note || "No additional notes provided for this appointment."}
             </p>
           </div>
         </div>

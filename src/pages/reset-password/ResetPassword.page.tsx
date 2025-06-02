@@ -17,7 +17,7 @@ const ResetPassword = () => {
   const email = searchParams.get("email");
   const navigate = useNavigate();
   const [onResetPassword, { isLoading }] = useResetPasswordMutation();
-  const [otp, setOtp] = useState<string>("");
+  const [, setOtp] = useState<string>("");
 
   useEffect(() => {
     if (!email) {

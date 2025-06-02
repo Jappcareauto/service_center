@@ -13,7 +13,6 @@ const Modal: React.FC<ModalType> = ({
     <>
       <ModalComponent
         closable
-        destroyOnClose
         open={open}
         loading={loading}
         destroyOnHidden

@@ -30,6 +30,7 @@ import {
   useGetAppointmentStatsByDateMutation,
   useGetEmergenciesMutation,
   useGetPaymentsMutation,
+  useGetServiceCentersMutation,
   useUpdateAppointmentStatusMutation,
 } from "@/redux/api";
 import {
@@ -43,17 +44,20 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
+import { useAppSelector } from "@/redux/store";
 
 const Dashboard = () => {
+  const { user_info } = useAppSelector((state) => state.auth);
+
   const [getAppointments, { isLoading }] = useGetAppointmentsMutation();
+  const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
+    {}
+  );
   const [getAppointmentStats, { isLoading: statsLoading }] =
     useGetAppointmentStatsByDateMutation();
   const [getEmergencies, { data: emergencies }] = useGetEmergenciesMutation();
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
-  const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
-    {}
-  );
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
     []
   );
@@ -82,10 +86,27 @@ const Dashboard = () => {
     handleAppointmentStats(startDate, endDate);
   }, []);
 
-  const getAppointmentsData = (status?: string) => {
+  const request = {
+    ownerId: user_info?.userId,
+  };
+  const [getServiceCenters] = useGetServiceCentersMutation();
+
+  useEffect(() => {
+    const { startDate, endDate } = getDefaultWeekDates();
+    handleAppointmentStats(startDate, endDate);
+    getServiceCenters(request)
+      .unwrap()
+      .then((res) => {
+        getAppointmentsData(AppointmentStatus.NOT_STARTED, res?.data?.[0]?.id);
+      });
+    getEmergencies({});
+  }, []);
+
+  const getAppointmentsData = (status?: string, serviceCenterId?: string) => {
     const submitData = status
       ? {
           status,
+          serviceCenterId,
         }
       : {};
     getAppointments(submitData)
@@ -139,7 +160,7 @@ const Dashboard = () => {
     if (appointment?.data?.status) {
       const data = getSubmitData(
         appointment?.data?.status,
-        appointment?.data?.id
+        appointment?.data?.id as string
       );
       updateStatus(data as any)
         .unwrap()
@@ -261,7 +282,7 @@ const Dashboard = () => {
                     {...appointmentsList?.[0]}
                     onDetail={() => {
                       setOpen(true);
-                      setId(appointmentsList?.[0]?.id);
+                      setId(appointmentsList?.[0]?.id as string);
                     }}
                   />
                 ) : (
@@ -291,7 +312,7 @@ const Dashboard = () => {
                         {...appointment}
                         onDetail={() => {
                           setOpen(true);
-                          setId(appointment.id);
+                          setId(appointment.id as string);
                         }}
                       />
                     ))
@@ -301,17 +322,15 @@ const Dashboard = () => {
                     title="No Appointments"
                     message="You haven’t scheduled any appointments yet."
                     isLoading={isLoading}
-                    dataLength={appointmentsList}
+                    dataLength={appointmentsList?.length}
                   />
                 )}
               </div>
             </div>
-            {/* <AppointmentList loading={loading} appointments={appointments} /> */}
           </div>
         </div>
       </div>
       <div className="flex flex-col flex-[30%] gap-y-6">
-        {/* <BarChart title="Appointments" data={appointmentWeeklyStats} /> */}
         <div>
           <BarChart
             data={weeklyStats}

@@ -35,7 +35,7 @@ const InvoiceTotal = ({ total, onTotal, disabled }: InvoiceTotalProps) => {
             <div className="flex gap-2 items-center">
               <h3>Tax</h3>
               <Input
-                className="max-w-16"
+                className="w-[40%]"
                 type="number"
                 placeholder="0%"
                 value={taxValue}

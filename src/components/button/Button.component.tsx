@@ -12,15 +12,15 @@ const Button: React.FC<ButtonProps> = ({
   rightIcon,
   ...props
 }) => {
-  const isInactive =props.disabled || isLoading
+  const isInactive = props.disabled || isLoading;
   return (
     <button
       {...props}
       className={twMerge(
-        "flex items-center justify-center h-[46px] px-6 transition-all duration-300 ease-in-out rounded-lg w-auto",
+        "flex items-center justify-center h-[40px] px-5 transition-all duration-300 ease-in-out rounded-lg w-auto",
         variantStyles[variant],
         className,
-        (isInactive) && "opacity-50 cursor-not-allowed bg-gray-500",
+        isInactive && "opacity-50 cursor-not-allowed bg-gray-500"
       )}
     >
       {isLoading ? (

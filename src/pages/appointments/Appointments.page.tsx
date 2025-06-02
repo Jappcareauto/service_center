@@ -27,8 +27,10 @@ import {
   useGetAppointmentQuery,
   useGetAppointmentsMutation,
   useGetAppointmentStatsByDateMutation,
+  useGetServiceCentersMutation,
   useUpdateAppointmentStatusMutation,
 } from "@/redux/api";
+import { useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
 import {
   Appointment as AppointmentType,
@@ -42,6 +44,7 @@ import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 
 const Appointments = () => {
+  const { user_info } = useAppSelector((state) => state.auth);
   const [getAppointments, { data, isLoading }] = useGetAppointmentsMutation();
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
@@ -66,10 +69,29 @@ const Appointments = () => {
   const [tableData, setTableData] = useState([]);
   const [weeklyStats, setWeeklyStats] = useState<BarChartItemType[]>([]);
 
-  const getAppointmentsData = (status?: AppointmentStatus) => {
+  const request = {
+    ownerId: user_info?.userId,
+  };
+  const [getServiceCenters] = useGetServiceCentersMutation();
+
+  useEffect(() => {
+    const { startDate, endDate } = getDefaultWeekDates();
+    handleAppointmentStats(startDate, endDate);
+    getServiceCenters(request)
+      .unwrap()
+      .then((res) => {
+        getAppointmentsData(AppointmentStatus.NOT_STARTED, res?.data?.[0]?.id);
+      });
+  }, []);
+
+  const getAppointmentsData = (
+    status?: AppointmentStatus,
+    serviceCenterId?: string
+  ) => {
     const submitData = status
       ? {
           status,
+          serviceCenterId,
         }
       : {};
     getAppointments(submitData)
@@ -94,11 +116,6 @@ const Appointments = () => {
         setTableData(filteredTableData as any);
       });
   };
-  useEffect(() => {
-    getAppointmentsData(AppointmentStatus.NOT_STARTED);
-    const { startDate, endDate } = getDefaultWeekDates();
-    handleAppointmentStats(startDate, endDate);
-  }, []);
 
   const onDelete = () => {
     if (!deleteId) return;
@@ -276,13 +293,13 @@ const Appointments = () => {
                     <Table data={tableData} columns={columns} />
                   ) : (
                     // Show the appointment list (or map) when isList is false
-                    appointmentsList?.map((appointment) => (
+                    appointmentsList?.map((app) => (
                       <Appointment
-                        key={appointment.id}
-                        {...appointment}
+                        key={app.id}
+                        {...app}
                         onDetail={() => {
                           setOpen(true);
-                          setId(appointment.id);
+                          setId(app.id as string);
                         }}
                       />
                     ))

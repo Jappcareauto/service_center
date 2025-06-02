@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ExpendedIcon from "@/assets/icons/ExpendedIcon";
-import Home2Icon from "@/assets/icons/Home2Icon";
 import LocationIcon from "@/assets/icons/LocationIcon";
-import OpenIcon from "@/assets/icons/OpenIcon";
 import StarIcon from "@/assets/icons/StarIcon";
 import images from "@/assets/images";
 import Avatar from "@/components/avatar/Avatar.component";
@@ -11,10 +8,12 @@ import Drawer from "@/components/drawer/Drawer.component";
 import EditProfile from "@/components/edit-profile/EditProfile.component";
 import Modal from "@/components/modals/Modal.component";
 import Skeleton from "@/components/skeletons/Skeleton.component";
+import { serviceImage } from "@/constants";
 import { useToast } from "@/context/ToastContext";
 import { ToastType } from "@/enums";
 import {
   useAddServiceCenterMediaMutation,
+  useGetServiceCenterServicesQuery,
   useGetServiceCentersMutation,
 } from "@/redux/api";
 import { useAppSelector } from "@/redux/store";
@@ -22,18 +21,22 @@ import { paths } from "@/routes/paths";
 import { Image } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 
 const Profile = () => {
   const [editOpen, setEditOpen] = useState(false);
   const { user_info } = useAppSelector((state) => state.auth);
-  const request = {
-    ownerId: user_info?.userId,
-  };
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [getServiceCenters, { data, isLoading }] =
     useGetServiceCentersMutation();
+  const { data: serviceCenterServices } = useGetServiceCenterServicesQuery(
+    data?.data?.[0]?.id as string,
+    {
+      skip: !data?.data?.[0]?.id,
+    }
+  );
   const [addMedia, { isLoading: addLoading }] =
     useAddServiceCenterMediaMutation();
   const { toast } = useToast();
@@ -59,7 +62,9 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    getServiceCenters(request);
+    getServiceCenters({
+      ownerId: user_info?.userId,
+    });
   }, []);
 
   const center = data?.data?.[0];
@@ -106,7 +111,7 @@ const Profile = () => {
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-y-6 overflow-y-auto h-[calc(100vh-80px)]">
+          <div className="flex flex-col gap-y-6">
             <img
               className="w-full h-[250px] rounded-[20px] object-cover"
               // need some check
@@ -154,16 +159,6 @@ const Profile = () => {
             <div className="flex flex-col gap-y-3">
               <h2 className="font-medium">Gallery</h2>
               <div className="flex flex-row overflow-x-auto w-full">
-                {/* {[images.car2, images.car2, images.car2].map((image, index) => {
-              return (
-                <img
-                  className="w-[150px] h-[150px] rounded-[20px] mr-3"
-                  key={"image-" + index}
-                  src={image}
-                  alt=""
-                />
-              );
-            })} */}
                 <div
                   onClick={handleAddClick}
                   className="w-[150px] h-[150px] rounded-[20px] bg-primaryAccent flex items-center justify-center cursor-pointer hover:bg-white hover:border hover:border-primary transition-all duration-500"
@@ -171,7 +166,6 @@ const Profile = () => {
                   <span className="text-primary text-2xl">+</span>
                 </div>
               </div>
-              {/* Hidden file input */}
               <input
                 type="file"
                 accept="image/*"
@@ -179,44 +173,35 @@ const Profile = () => {
                 onChange={handleFileChange}
                 className="hidden"
               />
-
-              {/* Preview Modal */}
             </div>
 
             <div className="flex flex-col gap-y-3">
               <h2 className="font-medium">Specialized Services</h2>
-              {/* <div className="flex flex-row overflow-x-auto w-full">
-            {servicesCenterState.servicesCenter?.map((item, index) => {
-              return (
-                <div className="w-[122px] h-[140px] rounded-2xl bg-primaryAccent mr-2 relative p-4 overflow-hidden">
-                  <h2 className="font-normal">{item?.title}</h2>
-                  <img
-                    src={item?.image}
-                    alt=""
-                    className={twMerge(
-                      "absolute -bottom-2 -right-0 object-contain"
-                    )}
-                  />
-                </div>
-              );
-            })}
-          </div> */}
-            </div>
-            <div>
-              <div className="bg-map bg-cover bg-center w-full h-[260px] rounded-xl p-2 relative flex items-center justify-center">
-                <div className="flex justify-end items-center gap-x-2 absolute right-2 top-2">
-                  <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                    <ExpendedIcon />
-                  </button>
-                  <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                    <OpenIcon />
-                  </button>
-                </div>
-                <div className="bg-primary w-10 h-10 flex items-center justify-center rounded-full text-white">
-                  <Home2Icon />
-                </div>
+              <div className="flex flex-row overflow-x-auto w-full">
+                {serviceCenterServices?.data?.map((item) => {
+                  return (
+                    <div
+                      className="w-[150px] h-[150px] rounded-2xl bg-primaryAccent mr-2 relative p-4 overflow-hidden"
+                      key={item.id}
+                    >
+                      <h2 className="font-normal">{item?.service?.title}</h2>
+                      <img
+                        src={
+                          serviceImage[
+                            item.service.title as keyof typeof serviceImage
+                          ].image
+                        }
+                        alt=""
+                        className={twMerge(
+                          "absolute -bottom-2 -right-0 object-contain"
+                        )}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
+            <>{/* <MapComponent /> */}</>
           </div>
         </>
       )}

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePicker } from "antd";
-import React, { FC } from "react";
+import { FC } from "react";
 import { DateRangePickerProps } from "./types";
 
 const { RangePicker } = DatePicker;

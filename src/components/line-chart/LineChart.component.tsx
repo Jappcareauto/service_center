@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -10,7 +11,6 @@ import {
   Tooltip,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import FilterBar from "../filter-bar/FilterBar.component";
 
 ChartJS.register(
   CategoryScale,
@@ -97,37 +97,7 @@ const LineChart = () => {
     },
   };
 
-  const filters = [
-    {
-      value: "revenue",
-      label: "Revenue",
-    },
-    {
-      value: "this_week",
-      label: "This Week",
-    },
-  ];
-
-  return (
-    <div className="w-full p-6 border border-borderColor rounded-3xl my-6">
-      <div className="flex justify-between items-center mb-2">
-        <div className="">
-          <div className="text-gray-500 text-sm">Total Revenue</div>
-          <div className="text-2xl font-bold">28,000 Frs</div>
-        </div>
-        <FilterBar
-          onFilter={() => {}}
-          filters={filters}
-          filterClassName={(isSelected) =>
-            isSelected ? "bg-primaryAccent text-primary" : "bg-grey3 text-black"
-          }
-        />
-      </div>
-      <div className="h-[400px]">
-        <Line data={data} options={options} />
-      </div>
-    </div>
-  );
+  return <Line data={data} options={options} />;
 };
 
 export default LineChart;

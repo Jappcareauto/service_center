@@ -1,6 +1,6 @@
 import { EmergencyCardProps } from "./types";
 
-const EmergencyCardBottom = ({ data: { note } }: EmergencyCardProps) => {
+const EmergencyCardBottom = ({ data }: EmergencyCardProps) => {
   return (
     <div
       id="bottom"
@@ -8,7 +8,7 @@ const EmergencyCardBottom = ({ data: { note } }: EmergencyCardProps) => {
     >
       <div className="w-[50%]">
         <p className="text-gray-400 font-light text-sm mb-2">Added Note</p>
-        <p>{note}</p>
+        <p>{data?.note}</p>
       </div>
       <div className="border border-borderColor h-44 bg-gray-100 rounded-xl w-[60%]">
         Map

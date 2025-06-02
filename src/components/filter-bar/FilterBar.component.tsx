@@ -14,6 +14,8 @@ interface OwnProps {
   hideLayoutButtons?: boolean;
   isList?: boolean;
   customButtons?: ReactNode;
+  defaultActiveFilter?: string;
+  className?: string;
 }
 const FilterBar: React.FC<OwnProps> = ({
   filterClassName,
@@ -24,14 +26,17 @@ const FilterBar: React.FC<OwnProps> = ({
   isList,
   customButtons,
   hideLayoutButtons = false,
+  defaultActiveFilter = "",
+  className = "",
 }) => {
-  const [activeItem, setActiveItem] = useState("");
+  const [activeItem, setActiveItem] = useState(defaultActiveFilter || filters[0].label || '');
 
   return (
     <div
       className={twMerge(
         "flex items-center justify-between",
-        (customButtons || !hideLayoutButtons) && "w-full"
+        (customButtons || !hideLayoutButtons) && "w-full",
+        className
       )}
     >
       <div className="flex items-center gap-x-5">

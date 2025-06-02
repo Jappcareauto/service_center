@@ -1,4 +1,4 @@
-import { LanguageType } from "@/types";
+import { LanguageType } from '@/types';
 import { createSlice } from "@reduxjs/toolkit";
 
 interface AppState {
