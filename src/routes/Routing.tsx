@@ -4,13 +4,15 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import ErrorPage from "@/pages/404/404.page";
 import { Suspense } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import ProtectedRoute from './RouteGuard';
+import ProtectedRoute from "./RouteGuard";
 import { routes } from "./routes";
+import AuthRedirectHandler from './AuthRedirectHandler';
 
 const Routing = () => {
   return (
     <Suspense fallback={<Fallback />}>
       <Router>
+        <AuthRedirectHandler />
         <Routes>
           {/* Auth routes */}
           {routes

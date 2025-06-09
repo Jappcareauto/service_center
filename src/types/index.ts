@@ -446,6 +446,11 @@ export interface Message {
   id?: string;
   timestamp?: string | Date;
   appointmentId?: string;
+  mediaUrl?: null;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
 }
 
 export interface ChatRoomsResponse extends GenericResponse {

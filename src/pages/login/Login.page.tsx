@@ -8,15 +8,17 @@ import {
   setRefreshToken,
   setUserInfo,
 } from "@/redux/features/auth/authSlice";
-import { useAppDispatch } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { LoginValidationSchema } from "../../schemas";
+import { useEffect } from "react";
 
 const Login = () => {
+  const { accessToken } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loginUser, { isLoading }] = useLoginUserMutation();
@@ -31,6 +33,14 @@ const Login = () => {
     formState: { errors },
   } = form;
 
+  useEffect(() => {
+    if (accessToken) {
+      const params = new URLSearchParams(location.search);
+      const redirect = params.get("redirect");
+      navigate(redirect || paths.dashboard, { replace: true });
+    }
+  }, [accessToken]);
+
   const onSubmit: SubmitHandler<LoginInput> = (data) => {
     loginUser(data)
       .unwrap()
@@ -42,7 +52,7 @@ const Login = () => {
         navigate(paths.dashboard);
       })
       .catch((err) => {
-        if (err?.data?.errors) {                
+        if (err?.data?.errors) {
           toast(ToastType.ERROR, err?.data?.errors);
         }
       });
@@ -52,7 +62,7 @@ const Login = () => {
   //   .then((response) => response.json())
   //   .then((data) => console.log(data[1].title))
   //   .catch((error) => console.error("Error fetching data:", error));
-    
+
   const disabled = isLoading || !form.formState.isValid;
   return (
     <main>

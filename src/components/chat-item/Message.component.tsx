@@ -3,13 +3,11 @@ import MessageInvoiceComponent from "./MessageInvoiceComponent.component";
 import { MessageType } from "@/enums";
 import { Message } from "@/types";
 
-interface OwnProps {
-  msg: Message;
+interface OwnProps extends Message {
   className?: string;
 }
 
-const MessageComponent: React.FC<OwnProps> = ({ className, msg }) => {
-  const { message, image, reply, isMe, type } = msg;
+const MessageComponent: React.FC<OwnProps> = ({ className, content, image, reply, isMe, type }) => {
 
   if (type === MessageType.INVOICE) {
     return (
@@ -44,7 +42,7 @@ const MessageComponent: React.FC<OwnProps> = ({ className, msg }) => {
             {reply}
           </p>
         )}
-        {message && <p className="p-2 text-sm">{message}</p>}
+        {content && <p className="p-2 text-sm">{content}</p>}
         {image && (
           <img
             src={image}

@@ -82,12 +82,11 @@ const baseQueryWithReauth: BaseQueryFn<
     toast.error("Slow internet, please check your connection.");
     return result;
   }
+  if (result.error?.status !== 401) return result;
 
-  if (result.error?.status !== 401) {
-    return result;
-  }
-  const { accessToken, refreshToken } = authState;
-  if (!accessToken || !refreshToken) {
+  const { refreshToken } = authState;
+  if (!refreshToken) {
+    store.dispatch(logoutUser());
     return result;
   }
 
@@ -112,7 +111,6 @@ const baseQueryWithReauth: BaseQueryFn<
   } else {
     store.dispatch(logoutUser());
     toast.error("Session expired, please log in.");
-    window.location.href = `/login?redirect=${window.location.pathname}`;
     return { error: { status: 401, data: "Unauthorized" } };
   }
 
