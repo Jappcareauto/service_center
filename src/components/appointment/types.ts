@@ -4,5 +4,6 @@ export interface AppointmentType extends Appointment {
   onDetail?: () => void;
   onClick?: () => void;
   className?: string;
-  active?: boolean
+  active?: boolean;
+  isSmall?: boolean
 }

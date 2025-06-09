@@ -36,7 +36,7 @@ import { twMerge } from "tailwind-merge";
 
 interface MenuItem {
   title: string;
-  icon: React.ReactElement;
+  icon: (active: boolean) => React.ReactElement;
   route: string;
 }
 
@@ -48,12 +48,16 @@ export interface DropdownType {
 export const menuItems: MenuItem[] = [
   {
     title: "Dashboard",
-    icon: <HomeIcon />,
+    icon: (active: boolean) => (
+      <HomeIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.dashboard,
   },
   {
     title: "Appointments",
-    icon: <CalendarIcon />,
+    icon: (active: boolean) => (
+      <CalendarIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.appointments,
   },
   // {
@@ -63,32 +67,44 @@ export const menuItems: MenuItem[] = [
   // },
   {
     title: "Chats",
-    icon: <ChatIcon />,
+    icon: (active: boolean) => (
+      <ChatIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.chat,
   },
   {
     title: "Statistics",
-    icon: <StatisticIcon />,
+    icon: (active: boolean) => (
+      <StatisticIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.statistics,
   },
   {
     title: "Invoices",
-    icon: <InvoiceIcon />,
+    icon: (active: boolean) => (
+      <InvoiceIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.invoices,
   },
   {
     title: "Payments",
-    icon: <PaymentIcon />,
+    icon: (active: boolean) => (
+      <PaymentIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.payments,
   },
   {
     title: "Profile",
-    icon: <ProfileIcon />,
+    icon: (active: boolean) => (
+      <ProfileIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.profile,
   },
   {
     title: "Plan and Billing",
-    icon: <InvoiceIcon />,
+    icon: (active: boolean) => (
+      <InvoiceIcon color={active ? "#FB7C37" : "#111111"} />
+    ),
     route: paths.billing,
   },
 ];
@@ -427,10 +443,10 @@ export const ChatStatuses: DropdownType[] = [
     label: "All",
     value: ChatStatus.ALL,
   },
-  {
-    label: "Unread",
-    value: ChatStatus.UNREAD,
-  },
+  // {
+  //   label: "Unread",
+  //   value: ChatStatus.UNREAD,
+  // },
 ];
 
 export const PaymentsStatuses: DropdownType[] = [

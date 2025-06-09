@@ -45,18 +45,18 @@ const SideMenu = () => {
       </button>
       <div className="flex flex-col gap-y-2">
         {menuItems.map((item, index) => {
-          const isSelected = location.pathname.includes(item.route);
+          const isSelected = location?.pathname?.includes(item?.route);
           return (
             <button
               onClick={() => navigate(item.route)}
-              key={"menu-item-" + index}
+              key={item.title}
               className={twMerge(
                 "flex gap-x-4 h-14 rounded-xl items-center px-5 font-light hover:bg-primaryAccent hover:text-primary",
                 isSelected ? "bg-primaryAccent text-primary" : "",
                 !index ? "mb-2" : ""
               )}
             >
-              {item.icon}
+              {item?.icon(isSelected)}
               <span className="text-textColor text-sm">{item.title}</span>
             </button>
           );

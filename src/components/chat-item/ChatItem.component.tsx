@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { twMerge } from "tailwind-merge";
 import Avatar from "../avatar/Avatar.component";
 
@@ -6,13 +7,16 @@ type Props = {
   numberOfUnreadMessage?: number;
   time?: string;
   name?: string;
+  label?: string;
   active?: boolean;
+  [x: string]: any
 };
 const ChatItem: React.FC<Props> = ({
   onClick,
-  name = "Loius",
+  name = "",
   numberOfUnreadMessage = 10,
-  time = "3:32 pm",
+  time = "",
+  label,
   active,
 }) => {
   return (
@@ -26,7 +30,7 @@ const ChatItem: React.FC<Props> = ({
       <Avatar
         className="w-11 h-11"
         name={name}
-        label="Last Sent Message akjsncalskcnalskc laksncalksnlknlknsc"
+        label={label}
         labelClassName="line-clamp-1"
       />
       <div className="flex">

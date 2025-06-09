@@ -1,6 +1,5 @@
- 
-import { ROLES } from '@/enums';
-import { User } from '@/types';
+import { ROLES } from "@/enums";
+import { User } from "@/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface AuthState {
@@ -10,6 +9,7 @@ interface AuthState {
   accessToken: string;
   role: ROLES;
   lastLogin: string;
+  shouldRedirect: boolean;
 }
 
 const initialState: AuthState = {
@@ -18,7 +18,8 @@ const initialState: AuthState = {
   refreshToken: "",
   accessToken: "",
   role: ROLES.ROLE_SERVICE_MANAGER,
-  lastLogin: ""
+  lastLogin: "",
+  shouldRedirect: false,
 };
 
 const authSlice = createSlice({
@@ -41,15 +42,25 @@ const authSlice = createSlice({
       state.accessToken = "";
       state.refreshToken = "";
       state.user = null;
+      state.shouldRedirect = true;
+      state.user_info = null;
     },
     setRole: (state, { payload }) => {
       state.role = payload;
     },
     setLastLogin: (state, { payload }) => {
       state.lastLogin = payload;
-    }
-  }
+    },
+  },
 });
 
-export const { setUser, setRefreshToken, setAccessToken, logoutUser, setRole, setLastLogin, setUserInfo } = authSlice.actions;
+export const {
+  setUser,
+  setRefreshToken,
+  setAccessToken,
+  logoutUser,
+  setRole,
+  setLastLogin,
+  setUserInfo,
+} = authSlice.actions;
 export default authSlice.reducer;

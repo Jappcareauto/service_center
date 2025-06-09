@@ -9,7 +9,7 @@ export function getInitials(name: string) {
     const initial = parts[i]?.charAt(0).toUpperCase();
     initials += initial;
   }
-  return initials?.substring(0, 4);
+  return initials?.substring(0, 2);
 }
 
 export const formatDateTime = (dateString: string): string => {
