@@ -1,6 +1,6 @@
 import { ROLES } from "@/enums";
 import { User } from "@/types";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
   user: User | null;
@@ -26,7 +26,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser: (state, { payload }) => {
+    setUser: (state, { payload }: PayloadAction<User>) => {
       state.user = payload;
     },
     setUserInfo: (state, { payload }) => {

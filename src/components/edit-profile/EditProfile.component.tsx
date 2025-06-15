@@ -42,12 +42,10 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
       updateImage(data)
         .unwrap()
         .then((res) => {
-          console.log(res);
           onRequested?.();
           toast(ToastType.SUCCESS, res?.meta?.message as string);
         })
         .catch((err) => {
-          console.log("err", err);
           if (err?.data?.errors) {
             toast(ToastType.ERROR, err?.data?.errors);
           } else if (err?.message) {
@@ -76,13 +74,10 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
       updateServiceCenter(data)
         .unwrap()
         .then((res) => {
-          console.log(res);
           toast(ToastType.SUCCESS, res?.meta?.message as string);
           onRequested?.();
         })
         .catch((err) => {
-          console.log("err", err);
-
           if (err?.data?.errors) {
             toast(ToastType.ERROR, err?.data?.errors);
           } else if (err?.message) {

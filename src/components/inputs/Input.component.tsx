@@ -9,6 +9,7 @@ export type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   errorMessage?: string;
   prefixIcon?: React.ReactElement;
+  suffixIcon?: React.ReactElement;
 };
 
 const Input: React.FC<CustomInputProps> = ({
@@ -18,6 +19,7 @@ const Input: React.FC<CustomInputProps> = ({
   className,
   label,
   prefixIcon,
+  suffixIcon,
   ...props
 }) => {
   return (
@@ -27,29 +29,37 @@ const Input: React.FC<CustomInputProps> = ({
           {label}
         </label>
       )}
-      {prefixIcon && (
-        <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-          {prefixIcon}
-        </div>
-      )}
-      <input
-        className={twMerge(
-          "h-11 rounded-lg w-full px-4 focus:placeholder-primary border focus:border-primary focus:outline-none",
-          "focus:bg-primaryAccent bg-white",
-          prefixIcon ? "pl-12" : "",
-          className
+      <div className="relative">
+        {prefixIcon && (
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+            {prefixIcon}
+          </div>
         )}
-        {...(register
-          ? register(name ?? "", {
-              onChange: props.onChange,
-            })
-          : {
-              onChange: props.onChange,
-              value: props.value,
-            })}
-        {...props}
-        // autoComplete="off"
-      />
+        <input
+          className={twMerge(
+            "h-11 rounded-lg w-full px-4 focus:placeholder-primary border focus:border-primary focus:outline-none",
+            "focus:bg-primaryAccent bg-white",
+            prefixIcon && "pl-14",
+            suffixIcon && "pr-14",
+            className
+          )}
+          {...(register
+            ? register(name ?? "", {
+                onChange: props.onChange,
+              })
+            : {
+                onChange: props.onChange,
+                value: props.value,
+              })}
+          {...props}
+          // autoComplete="off"
+        />
+        {suffixIcon && (
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+            {suffixIcon}
+          </div>
+        )}
+      </div>
       {errorMessage && (
         <p className="text-primary text-xs mt-1">{errorMessage}</p>
       )}

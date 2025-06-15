@@ -11,6 +11,7 @@ import Skeleton from "@/components/skeletons/Skeleton.component";
 import { serviceImage } from "@/constants";
 import { useToast } from "@/context/ToastContext";
 import { ToastType } from "@/enums";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import {
   useAddServiceCenterMediaMutation,
   useGetServiceCenterServicesQuery,
@@ -80,11 +81,9 @@ const Profile = () => {
       addMedia(req)
         .unwrap()
         .then((res) => {
-          console.log(res);
           toast(ToastType.SUCCESS, res?.meta?.message as string);
         })
         .catch((err) => {
-          console.log("err", err);
           if (err?.data?.errors) {
             toast(ToastType.ERROR, err?.data?.errors);
           } else if (err?.message) {
@@ -103,7 +102,8 @@ const Profile = () => {
   };
 
   return (
-    <div className="grid grid-cols-[auto_360px] gap-x-6">
+    <DashboardLayout showBack={false}>
+      <div className="grid grid-cols-[auto_360px] gap-x-6">
       {isLoading ? (
         <div className="flex-co space-y-8">
           <Skeleton paragraph={{ rows: 8 }} />
@@ -249,6 +249,7 @@ const Profile = () => {
         )}
       </Modal>
     </div>
+    </DashboardLayout>
   );
 };
 

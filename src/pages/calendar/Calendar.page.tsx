@@ -4,6 +4,7 @@ import CalendarCard from "@/components/calendars/CalendarCard.component";
 import CalendarFull from "@/components/calendars/CalendarFull.component";
 import BarChart from "@/components/charts/BarChart.component";
 import { dayMap, weekDays } from "@/constants";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import {
   useGetAppointmentsMutation,
   useGetAppointmentStatsByDateMutation,
@@ -45,7 +46,8 @@ const CalendarView = () => {
   }, []);
 
   return (
-    <div>
+    <DashboardLayout>
+      <div>
       <div className="flex w-full gap-x-8">
         <div className="w-full bg-primaryAccent rounded-xl p-4 flex flex-col justify-between">
           <div>
@@ -75,6 +77,7 @@ const CalendarView = () => {
         <CalendarFull data={data?.data as any} />
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

@@ -4,34 +4,53 @@ import Drawer from "@/components/drawer/Drawer.component";
 import NotificationItem from "@/components/notification-item/NotificationItem.component";
 import SideMenu from "@/components/side-menu/SideMenu";
 import { notificationItems } from "@/constants";
+import { paths } from "@/routes/paths";
+import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { Input } from "antd";
 import { SearchProps } from "antd/es/input";
 import { ReactNode, useState } from "react";
-
-const DashboardLayout = ({ children }: { children: ReactNode }) => {
+import { useNavigate } from "react-router-dom";
+interface Iprops {
+  onSearch?: (value: string) => void;
+  children: ReactNode;
+  showBack?: boolean;
+}
+const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const { Search } = Input;
-  const onSearch: SearchProps["onSearch"] = (value, _e, info) =>
-    console.log(info?.source, value);
+  const handleSearch: SearchProps["onSearch"] = (value) => {
+    onSearch?.(value);
+  };
 
   return (
     <div className="flex">
       <SideMenu />
       <div className="w-full pl-[260px]">
         <div className="h-[90px] w-full flex items-center justify-between px-[40px]">
-          <Search
-            placeholder="search appointment"
-            onSearch={onSearch}
-            style={{ width: 350 }}
-            size='large'
-          />
-          <div className='flex flex-row gap-x-6'>
+          <div className="flex space-x-8" style={{ width: 380 }}>
+            {showBack && (
+              <button
+                className="pr-3 hover:opacity-60"
+                onClick={() => navigate(-1)}
+              >
+                <ArrowLeftIcon className="w-5 text-gray-400" />
+              </button>
+            )}
+            <Search
+              placeholder="search appointment"
+              onSearch={handleSearch}
+              size="large"
+              width={"100%"}
+            />
+          </div>
+          <div className="flex flex-row gap-x-6">
             <NotificationIcon
               onClick={() => setOpen(true)}
               className="cursor-pointer text-grey2"
             />
             <SettingIcon
-              onClick={() => console.log("any")}
+              onClick={() => navigate(paths.profile)}
               className="cursor-pointer text-grey2"
             />
           </div>

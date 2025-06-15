@@ -7,6 +7,7 @@ import InvoiceBillingCard from "@/components/invoice-billing-card/InvoiceBilling
 import InvoiceTotal from "@/components/invoice-total/InvoiceTotal.component";
 import DatePicker from "@/components/pickers/DatePicker.component";
 import EditableTable from "@/components/table/EditableTable.component";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import {
   useCreateInvoiceMutation,
   useGetAppointmentQuery,
@@ -65,11 +66,6 @@ const UpdateInvoice = () => {
         items: invoiceItems as any,
       };
       createInvoice(data)
-        .unwrap()
-        .then((res) => {
-          console.log("res", res);
-        })
-        .catch((err) => console.log("err", err));
     }
   };
 
@@ -89,7 +85,8 @@ const UpdateInvoice = () => {
   }, []);
 
   return (
-    <div className="flex gap-x-6">
+    <DashboardLayout>
+      <div className="flex gap-x-6">
       <div className="pr-3 w-[65%] flex flex-col">
         <div className="mb-14 mt-4 justify-between flex">
           <div className="flex items-center gap-x-3">
@@ -192,6 +189,7 @@ const UpdateInvoice = () => {
       </div>
       {/* <div className={twMerge("flex flex-col flex-[30%] gap-y-6")}></div> */}
     </div>
+    </DashboardLayout>
   );
 };
 

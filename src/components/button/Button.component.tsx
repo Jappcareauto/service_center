@@ -20,7 +20,7 @@ const Button: React.FC<ButtonProps> = ({
         "flex items-center justify-center h-[40px] px-5 transition-all duration-300 ease-in-out rounded-lg w-auto",
         variantStyles[variant],
         className,
-        isInactive && "opacity-50 cursor-not-allowed bg-gray-500"
+        isInactive && variantStyles['disabled']
       )}
     >
       {isLoading ? (

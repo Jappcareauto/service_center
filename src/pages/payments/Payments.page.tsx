@@ -8,6 +8,7 @@ import Successful from "@/components/successful/Successful.component";
 import Table from "@/components/table/Table.component";
 import { getPaymentsColumns, PaymentsStatuses } from "@/constants";
 import { PaymentStatus } from "@/enums";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import { useGetPaymentsMutation } from "@/redux/api";
 import { formatAmount } from "@/utils";
 import { useEffect, useState } from "react";
@@ -33,13 +34,11 @@ const Payments = () => {
     getPayments(submitData)
       .unwrap()
       .then((res) => {
-        console.log(res.data);
         const totalAmount = res?.data?.reduce(
           (sum, payment) => sum + (payment.money?.amount || 0),
           0
         );
         const filteredTableData = res.data.map((item) => {
-          // console.log(item?.vehicle?.media)
           return {
             id: item.id,
             amount: item.amount,
@@ -60,7 +59,7 @@ const Payments = () => {
   const columns = getPaymentsColumns();
 
   return (
-    <div>
+    <DashboardLayout showBack={false}>
       <div className="flex items-center gap-x-3 mb-5">
         <PaymentIcon />
         <h2 className="font-medium">Payments</h2>
@@ -141,7 +140,7 @@ const Payments = () => {
       >
         <Successful />
       </Drawer>
-    </div>
+    </DashboardLayout>
   );
 };
 

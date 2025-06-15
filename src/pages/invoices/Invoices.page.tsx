@@ -5,6 +5,7 @@ import Table from "@/components/table/Table.component";
 import { getInvoicesColumns } from "@/constants";
 import { colors } from "@/constants/colors";
 import { InvoiceStatus } from "@/enums";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import { useGetInvoicesMutation } from "@/redux/api";
 import { Invoice } from "@/types";
 import { useEffect, useState } from "react";
@@ -67,7 +68,8 @@ const Invoices = () => {
   );
 
   return (
-    <div>
+    <DashboardLayout showBack={false}>
+      <div>
       {/* header */}
       <div className="space-y-5">
         <div className="flex gap-3 ">
@@ -107,6 +109,7 @@ const Invoices = () => {
         pageSize={5}
       />
     </div>
+    </DashboardLayout>
   );
 };
 

@@ -1,32 +1,18 @@
 import { twMerge } from "tailwind-merge";
-import MessageInvoiceComponent from "./MessageInvoiceComponent.component";
-import { MessageType } from "@/enums";
+// import MessageInvoiceComponent from "./MessageInvoiceComponent.component";
+// import { MessageType } from "@/enums";
 import { Message } from "@/types";
 
 interface OwnProps extends Message {
   className?: string;
 }
 
-const MessageComponent: React.FC<OwnProps> = ({ className, content, image, reply, isMe, type }) => {
-
-  if (type === MessageType.INVOICE) {
-    return (
-      <div
-        className={twMerge(
-          "flex w-full",
-          isMe ? "justify-end" : "justify-start",
-          className
-        )}
-      >
-        <MessageInvoiceComponent type="Pending" />
-      </div>
-    );
-  }
+const MessageComponent: React.FC<OwnProps> = ({ className, content, image, reply, isMe }) => {
 
   return (
     <div
       className={twMerge(
-        "flex w-full mb-4",
+        "flex w-full my-4",
         isMe ? "justify-end" : "justify-start",
         className
       )}
