@@ -9,7 +9,7 @@ type Props = {
   name?: string;
   label?: string;
   active?: boolean;
-  [x: string]: any
+  [x: string]: any;
 };
 const ChatItem: React.FC<Props> = ({
   onClick,
@@ -31,7 +31,7 @@ const ChatItem: React.FC<Props> = ({
         className="w-11 h-11"
         name={name}
         label={label}
-        labelClassName="line-clamp-1"
+        nameClassName="line-clamp-1"
       />
       <div className="flex">
         <div className="flex items-center gap-x-1.5">

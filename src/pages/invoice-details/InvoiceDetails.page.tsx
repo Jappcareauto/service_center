@@ -7,6 +7,7 @@ import InvoiceTableItems from "@/components/invoice-table-items/InvoiceTableItem
 import InvoiceTotal from "@/components/invoice-total/InvoiceTotal.component";
 import Skeleton from "@/components/skeletons/Skeleton.component";
 import { InvoiceStatus } from "@/enums";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import { useDownloadInvoiceQuery, useGetInvoiceReportQuery } from "@/redux/api";
 import { RootState, useAppSelector } from "@/redux/store";
 import { getStatusStyles } from "@/utils";
@@ -16,7 +17,7 @@ import { twMerge } from "tailwind-merge";
 const InvoiceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { appointment, invoiceApp } = useAppSelector(
+  const { appointment, invoice } = useAppSelector(
     (state: RootState) => state.appointment
   );
 
@@ -27,7 +28,8 @@ const InvoiceDetails = () => {
     skip: !id,
   });
   return (
-    <div className="w-[75%]">
+    <DashboardLayout>
+      <div className="w-[75%]">
       <div className=" flex gap-x-3 mb-7 mt-2">
         <InvoiceIcon />
         <h2>Invoice Details</h2>
@@ -39,12 +41,12 @@ const InvoiceDetails = () => {
             <div
               className={twMerge(
                 "rounded-full px-4 py-1 lowercase first-letter:uppercase",
-                invoiceApp?.status
-                  ? getStatusStyles(invoiceApp?.status, true)
+                invoice?.status
+                  ? getStatusStyles(invoice?.status, true)
                   : InvoiceStatus.DRAFT
               )}
             >
-              {invoiceApp?.status ? invoiceApp?.status : InvoiceStatus.DRAFT}
+              {invoice?.status ? invoice?.status : InvoiceStatus.DRAFT}
             </div>
             <div className="flex gap-x-4 items-center">
               <Button
@@ -137,8 +139,8 @@ const InvoiceDetails = () => {
             disabled={true}
           />
         )}
-        {(invoiceApp?.status === InvoiceStatus.PENDING ||
-          invoiceApp?.status === InvoiceStatus.DRAFT) && (
+        {(invoice?.status === InvoiceStatus.PENDING ||
+          invoice?.status === InvoiceStatus.DRAFT) && (
           <div className="flex justify-end gap-x-4 mt-10">
             <Button className="w-auto" variant="tertiary">
               Save Draft
@@ -153,6 +155,7 @@ const InvoiceDetails = () => {
         )}
       </div>
     </div>
+    </DashboardLayout>
   );
 };
 

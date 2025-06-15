@@ -68,7 +68,6 @@ const EditableTable: React.FC<IProps> = ({ onChange }) => {
           }
         : row
     );
-    console.log("updated", updated);
     setData(updated);
     setEditingKey(null);
     setFormState({});

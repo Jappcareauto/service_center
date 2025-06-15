@@ -1,15 +1,15 @@
-import { Appointment, Invoice } from "@/types";
+import { Appointment, Invoice, InvoiceData } from "@/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface AuthState {
   appointment: Appointment | null;
-  invoiceApp: Invoice | null;
+  invoice: Invoice | InvoiceData | null;
   appointmentId: string
 }
 
 const initialState: AuthState = {
   appointment: null,
-  invoiceApp: null,
+  invoice: null,
   appointmentId: ""
 };
 
@@ -23,11 +23,11 @@ const appointmentSlice = createSlice({
     setAppointmentId: (state, { payload }) => {
       state.appointmentId = payload;
     },
-    setInvoiceApp: (state, { payload }) => {
-      state.invoiceApp = payload;
+    setInvoice: (state, { payload }) => {
+      state.invoice = payload;
     },
   },
 });
 
-export const { setAppointment, setInvoiceApp, setAppointmentId } = appointmentSlice.actions;
+export const { setAppointment, setInvoice, setAppointmentId } = appointmentSlice.actions;
 export default appointmentSlice.reducer;

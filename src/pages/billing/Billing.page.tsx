@@ -9,6 +9,7 @@ import {
   paymentMethods,
   plans,
 } from "@/constants";
+import DashboardLayout from '@/layouts/DashboardLayout';
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Progress } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -30,7 +31,7 @@ const Billing = () => {
   }, []);
 
   return (
-    <div>
+    <DashboardLayout showBack={false}>
       <div className="mb-7 flex gap-x-3">
         <InvoiceIcon />
         <h2 className="font-medium">Plan & Billing</h2>
@@ -122,7 +123,7 @@ const Billing = () => {
         ))}
         </div>
       </Modal>
-    </div>
+    </DashboardLayout>
   );
 };
 

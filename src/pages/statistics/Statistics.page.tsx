@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import StatisticsProfile from "./StatisticsProfile";
 import StatComponent from "./StatsComponent";
+import DashboardLayout from '@/layouts/DashboardLayout';
 
 const Statistics = () => {
   const [open, setOpen] = useState(false);
@@ -104,7 +105,7 @@ const Statistics = () => {
   // };
 
   return (
-    <>
+    <DashboardLayout showBack={false}>
       {isLoading || serviceCentersLoading || paymentsLoading ? (
         <div className="flex-co space-y-8">
           <Skeleton paragraph={{ rows: 8 }} />
@@ -231,7 +232,7 @@ const Statistics = () => {
           </Drawer>
         </div>
       )}
-    </>
+    </DashboardLayout>
   );
 };
 

@@ -6,10 +6,7 @@ import StatisticIcon from "@/assets/icons/StatisticIcon";
 import AppointmentDetailModal from "@/components/appointment-detail-modal/AppointmentDetailModal.component";
 import Appointment from "@/components/appointment/Appointment.component";
 import BarChart from "@/components/charts/BarChart.component";
-import CustomCollapse from "@/components/collapsable/Collapsable.component";
 import Drawer from "@/components/drawer/Drawer.component";
-import EmergencyCardBottom from "@/components/emergency-card/EmergencyCardBottom.component";
-import EmergencyCardHeading from "@/components/emergency-card/EmergencyCardHeading.component";
 import FilterBar from "@/components/filter-bar/FilterBar.component";
 import Modal from "@/components/modals/Modal.component";
 import NoData from "@/components/no-data/NoData.component";
@@ -18,44 +15,44 @@ import Table from "@/components/table/Table.component";
 import {
   appointmentStatuses,
   dayMap,
-  emergencyItems,
   getAppointmentColumns,
   weekDays,
 } from "@/constants";
 import { AppointmentStatus } from "@/enums";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useDeleteAppointmentMutation,
   useGetAppointmentQuery,
   useGetAppointmentsMutation,
   useGetAppointmentStatsByDateMutation,
-  useGetEmergenciesMutation,
   useGetPaymentsMutation,
   useGetServiceCentersMutation,
+  useGetUserQuery,
   useUpdateAppointmentStatusMutation,
 } from "@/redux/api";
+import { setUser } from "@/redux/features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import {
   Appointment as AppointmentType,
   BarChartItemType,
   DateRange,
 } from "@/types";
 import { getDefaultWeekDates, getSubmitData } from "@/utils";
-import { CollapseProps } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
-import { useAppSelector } from "@/redux/store";
 
 const Dashboard = () => {
   const { user_info } = useAppSelector((state) => state.auth);
 
   const [getAppointments, { isLoading }] = useGetAppointmentsMutation();
+  const { data: user } = useGetUserQuery(user_info?.userId);
   const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
     {}
   );
   const [getAppointmentStats, { isLoading: statsLoading }] =
     useGetAppointmentStatsByDateMutation();
-  const [getEmergencies, { data: emergencies }] = useGetEmergenciesMutation();
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
@@ -64,6 +61,7 @@ const Dashboard = () => {
   const [updateStatus, { isLoading: updateStatusLoading }] =
     useUpdateAppointmentStatusMutation({});
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [id, setId] = useState("");
   const [deleteId, setDeleteId] = useState("");
   const {
@@ -81,32 +79,30 @@ const Dashboard = () => {
 
   useEffect(() => {
     getAppointmentsData(AppointmentStatus.NOT_STARTED);
-    getEmergencies({});
     const { startDate, endDate } = getDefaultWeekDates();
     handleAppointmentStats(startDate, endDate);
   }, []);
 
-  const request = {
-    ownerId: user_info?.userId,
-  };
-  const [getServiceCenters] = useGetServiceCentersMutation();
+  useEffect(() => {
+    if (user?.data) {
+      dispatch(setUser(user?.data));
+    }
+  }, [dispatch, user]);
+  const [getServiceCenters, { data: serviceCenter }] =
+    useGetServiceCentersMutation();
 
   useEffect(() => {
     const { startDate, endDate } = getDefaultWeekDates();
+    getServiceCenters({ ownerId: user_info?.userId });
     handleAppointmentStats(startDate, endDate);
-    getServiceCenters(request)
-      .unwrap()
-      .then((res) => {
-        getAppointmentsData(AppointmentStatus.NOT_STARTED, res?.data?.[0]?.id);
-      });
-    getEmergencies({});
+    getAppointmentsData(AppointmentStatus.NOT_STARTED);
   }, []);
 
-  const getAppointmentsData = (status?: string, serviceCenterId?: string) => {
+  const getAppointmentsData = (status?: string) => {
     const submitData = status
       ? {
           status,
-          serviceCenterId,
+          serviceCenterId: serviceCenter?.data?.[0]?.id,
         }
       : {};
     getAppointments(submitData)
@@ -114,7 +110,6 @@ const Dashboard = () => {
       .then((res) => {
         setAppointmentsList(res.data);
         const filteredTableData = res.data.map((item) => {
-          // console.log(item?.vehicle?.media)
           return {
             id: item.id,
             status: item.status ? item.status : "NOT_STARTED",
@@ -181,15 +176,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
-    setDeleteId(id);
-  };
-
-  const handleViewDetails = (id: string) => {
-    setId(id);
-    setOpen(true);
-  };
-
   const handleAppointmentStats = (startDate: string, endDate: string) => {
     const data = {
       startDate,
@@ -213,176 +199,189 @@ const Dashboard = () => {
       .catch((err) => console.log("err", err));
   };
 
+  const handleDelete = (id: string) => {
+    setDeleteId(id);
+  };
+
+  const handleViewDetails = (id: string) => {
+    setId(id);
+    setOpen(true);
+  };
+
   const columns = getAppointmentColumns(handleDelete, handleViewDetails);
 
-  const collapseItems: CollapseProps["items"] = emergencyItems.map((item) => ({
-    key: item.id,
-    label: <EmergencyCardHeading data={item} />,
-    children: <EmergencyCardBottom data={item} />,
-  }));
+  // const collapseItems: CollapseProps["items"] = emergencyItems.map((item) => ({
+  //   key: item.id,
+  //   label: <EmergencyCardHeading data={item} />,
+  //   children: <EmergencyCardBottom data={item} />,
+  // }));
 
   return (
-    <div className="flex gap-x-4">
-      <div className="pr-3 flex-[65%] flex flex-col">
-        <div className="mt-6  pr-5">
-          <div className="grid grid-cols-2 gap-x-6">
-            <div onClick={() => console.log("okay")}>
+    <DashboardLayout showBack={false}>
+      <div className="flex gap-x-4">
+        <div className="pr-3 flex-[65%] flex flex-col">
+          <div className="mt-6  pr-5">
+            <div className="grid grid-cols-2 gap-x-6">
+              <div>
+                <StatisticsCard
+                  title="Appointments"
+                  value={appointmentsList?.length}
+                  badgeTitle={"This week"}
+                  icon={<CalendarIcon className="text-white" />}
+                  isLoading={isLoading}
+                />
+              </div>
               <StatisticsCard
-                title="Appointments"
-                value={appointmentsList?.length}
-                badgeTitle={"This week"}
-                icon={<CalendarIcon className="text-white" />}
-                isLoading={isLoading}
+                title="Revenue"
+                value={revenue}
+                badgeTitle="This Week"
+                icon={<StatisticIcon className="text-primary" />}
+                second
+                isLoading={paymentsLoading}
               />
             </div>
-            <StatisticsCard
-              title="Revenue"
-              value={revenue}
-              badgeTitle="This Week"
-              icon={<StatisticIcon className="text-primary" />}
-              second
-              isLoading={paymentsLoading}
-            />
-          </div>
-          {emergencies?.data && emergencies?.data?.length > 0 && (
+            {/* {emergencies?.data && emergencies?.data?.length > 0 && (
             <div className="my-5">
               <CustomCollapse items={collapseItems} />
             </div>
-          )}
-          <div className="flex items-center gap-x-2 mt-6">
-            <CalendarIcon />
-            <h2 className="font-medium">Recent Appointments</h2>
-          </div>
-          <div className="mt-6">
-            <FilterBar
-              filters={appointmentStatuses}
-              onFilter={(filter) =>
-                getAppointmentsData(filter as AppointmentStatus)
-              }
-              onGrid={() => {
-                setIsList(false);
-              }}
-              onList={() => {
-                setIsList(true);
-              }}
-              isList={isList}
-            />
-          </div>
-          <div
-            className={twMerge(
-              "flex flex-col gap-y-8 mt-10",
-              isList && "gap-y-0 mt-5"
-            )}
-          >
-            {!isList && (
-              <div>
-                <p className="font-semibold mb-3">Up Next</p>
-                {appointmentsList?.length > 0 ? (
-                  <Appointment
-                    {...appointmentsList?.[0]}
-                    onDetail={() => {
-                      setOpen(true);
-                      setId(appointmentsList?.[0]?.id as string);
-                    }}
-                  />
-                ) : (
-                  <NoData
-                    title="No Appointments"
-                    message="You haven’t scheduled any appointments yet."
-                    isLoading={isLoading}
-                    dataLength={appointmentsList?.length}
-                  />
-                )}
-              </div>
-            )}
+          )} */}
+            <div className="flex items-center gap-x-2 mt-6">
+              <CalendarIcon />
+              <h2 className="font-medium">Recent Appointments</h2>
+            </div>
+            <div className="mt-6">
+              <FilterBar
+                filters={appointmentStatuses}
+                onFilter={(filter) =>
+                  getAppointmentsData(filter as AppointmentStatus)
+                }
+                onGrid={() => {
+                  setIsList(false);
+                }}
+                onList={() => {
+                  setIsList(true);
+                }}
+                isList={isList}
+              />
+            </div>
             <div
-              className={twMerge("flex flex-col gap-y-3", isList && "gap-y-0")}
+              className={twMerge(
+                "flex flex-col gap-y-8 mt-10",
+                isList && "gap-y-0 mt-5"
+              )}
             >
-              {!isList && <p className="font-semibold mb-3">Later</p>}
-              <div className="flex flex-col gap-y-5">
-                {appointmentsList?.length > 0 ? (
-                  isList ? (
-                    // Show the table when isList is true
-                    <Table data={tableData} columns={columns} />
+              {!isList && (
+                <div>
+                  <p className="font-semibold mb-3">Up Next</p>
+                  {appointmentsList?.length > 0 ? (
+                    <Appointment
+                      {...appointmentsList?.[0]}
+                      onDetail={() => {
+                        setOpen(true);
+                        setId(appointmentsList?.[0]?.id as string);
+                      }}
+                    />
                   ) : (
-                    // Show the appointment list (or map) when isList is false
-                    appointmentsList?.map((appointment) => (
-                      <Appointment
-                        key={appointment.id}
-                        {...appointment}
-                        onDetail={() => {
-                          setOpen(true);
-                          setId(appointment.id as string);
-                        }}
-                      />
-                    ))
-                  )
-                ) : (
-                  <NoData
-                    title="No Appointments"
-                    message="You haven’t scheduled any appointments yet."
-                    isLoading={isLoading}
-                    dataLength={appointmentsList?.length}
-                  />
+                    <NoData
+                      title="No Appointments"
+                      message="You haven’t scheduled any appointments yet."
+                      isLoading={isLoading}
+                      dataLength={appointmentsList?.length}
+                    />
+                  )}
+                </div>
+              )}
+              <div
+                className={twMerge(
+                  "flex flex-col gap-y-3",
+                  isList && "gap-y-0"
                 )}
+              >
+                {!isList && <p className="font-semibold mb-3">Later</p>}
+                <div className="flex flex-col gap-y-5">
+                  {appointmentsList?.length > 0 ? (
+                    isList ? (
+                      // Show the table when isList is true
+                      <Table data={tableData} columns={columns} />
+                    ) : (
+                      // Show the appointment list (or map) when isList is false
+                      appointmentsList?.map((appointment) => (
+                        <Appointment
+                          key={appointment.id}
+                          {...appointment}
+                          onDetail={() => {
+                            setOpen(true);
+                            setId(appointment.id as string);
+                          }}
+                        />
+                      ))
+                    )
+                  ) : (
+                    <NoData
+                      title="No Appointments"
+                      message="You haven’t scheduled any appointments yet."
+                      isLoading={isLoading}
+                      dataLength={appointmentsList?.length}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex flex-col flex-[30%] gap-y-6">
-        <div>
-          <BarChart
-            data={weeklyStats}
-            title="Weekly Appointments"
-            onSelect={(start, end) => handleAppointmentStats(start, end)}
-            isLoading={statsLoading}
-          />
-          <h2 className="font-medium text-base my-4">Service</h2>
-          <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">
-            <p className="text-2xl font-light">
-              Vehicle
-              <br />
-              Reports
-            </p>
-            <img
-              src={images.bgService}
-              alt=""
-              className="absolute bottom-0 right-2"
+        <div className="flex flex-col flex-[30%] gap-y-6">
+          <div>
+            <BarChart
+              data={weeklyStats}
+              title="Weekly Appointments"
+              onSelect={(start, end) => handleAppointmentStats(start, end)}
+              isLoading={statsLoading}
             />
+            <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">
+              <p className="text-2xl font-light">
+                Vehicle
+                <br />
+                Reports
+              </p>
+              <img
+                src={images.bgService}
+                alt=""
+                className="absolute bottom-0 right-2"
+              />
+            </div>
           </div>
         </div>
+        <Drawer
+          open={open}
+          onClose={() => {
+            setOpen(false);
+            setId("");
+          }}
+          title="Appointment Details"
+          loading={appointmentLoading}
+          onNavigate={() =>
+            appointment && navigate(`/appointment/${appointment?.data?.id}`)
+          }
+        >
+          <AppointmentDetailModal
+            {...appointment?.data}
+            onClick={handleUpdateStatus}
+            isLoading={updateStatusLoading}
+          />
+        </Drawer>
+        <Modal
+          open={deleteId?.length > 0}
+          onClose={() => setDeleteId("")}
+          title="Delete Appointment"
+          onOk={onDelete}
+          width={window.innerWidth * 0.3}
+          okText="Delete"
+          confirmLoading={deleteLoading}
+        >
+          <p>Are you sure you want to delete this appointment</p>
+        </Modal>
       </div>
-      <Drawer
-        open={open}
-        onClose={() => {
-          setOpen(false);
-          setId("");
-        }}
-        title="Appointment Details"
-        loading={appointmentLoading}
-        onNavigate={() =>
-          appointment && navigate(`/appointment/${appointment?.data?.id}`)
-        }
-      >
-        <AppointmentDetailModal
-          {...appointment?.data}
-          onClick={handleUpdateStatus}
-          isLoading={updateStatusLoading}
-        />
-      </Drawer>
-      <Modal
-        open={deleteId?.length > 0}
-        onClose={() => setDeleteId("")}
-        title="Delete Appointment"
-        onOk={onDelete}
-        width={window.innerWidth * 0.3}
-        okText="Delete"
-        confirmLoading={deleteLoading}
-      >
-        <p>Are you sure you want to delete this appointment</p>
-      </Modal>
-    </div>
+    </DashboardLayout>
   );
 };
 

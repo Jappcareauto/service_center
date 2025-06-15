@@ -7,13 +7,17 @@ import InvoiceBillingCard from "@/components/invoice-billing-card/InvoiceBilling
 import InvoiceTotal from "@/components/invoice-total/InvoiceTotal.component";
 import DatePicker from "@/components/pickers/DatePicker.component";
 import EditableTable from "@/components/table/EditableTable.component";
+import { useToast } from "@/context/ToastContext";
+import { ToastType } from "@/enums";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useCreateInvoiceMutation,
   useGetAppointmentQuery,
   useGetUserQuery,
 } from "@/redux/api";
-import { useAppSelector } from "@/redux/store";
-import { InvoiceDataType } from "@/types";
+import { setInvoice } from "@/redux/features/appointment/appointmentSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { InvoiceData, InvoiceDataType } from "@/types";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
@@ -22,6 +26,8 @@ const CreateInvoice = () => {
   const { id } = useParams();
   const { user_info, user: adminUser } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { toast } = useToast();
 
   const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
   const { data: appointment } = useGetAppointmentQuery(id as string, {
@@ -37,6 +43,7 @@ const CreateInvoice = () => {
   const [issueDate, setIssueDate] = useState("");
   const [items, setItems] = useState<InvoiceDataType[]>([]);
   const [total, setTotal] = useState(0);
+  const [fee, setFee] = useState(0);
 
   const handleCreateInvoice = () => {
     if (!appointment?.data) {
@@ -55,7 +62,7 @@ const CreateInvoice = () => {
         appointmentId: appointment?.data?.id as string,
         vehicleId: appointment?.data?.vehicle?.id as string,
         money: {
-          amount: total,
+          amount: total + fee,
           currency: "XAF",
         },
         issueDate,
@@ -66,10 +73,14 @@ const CreateInvoice = () => {
       };
       createInvoice(data)
         .unwrap()
-        .then((res) => {
-          console.log("res", res);
-        })
-        .catch((err) => console.log("err", err));
+        .then()
+        .catch((err) => {
+          if (err?.data?.errors) {
+            toast(ToastType.ERROR, err?.data?.errors);
+          } else {
+            toast(ToastType.ERROR, "Invoice creation failed!");
+          }
+        });
     }
   };
 
@@ -81,117 +92,164 @@ const CreateInvoice = () => {
     setTotal(totalSum);
   };
 
-  const disabled = !appointment?.data;
+  const disabled = !appointment?.data || !dueDate || !issueDate || isLoading;
 
   const handleAdd = useCallback((items: any[]) => {
     setItems(items);
     getTotalPrice(items);
   }, []);
+  const appData = appointment?.data;
+  const handlePreviewInvoice = () => {
+    const invoiceItems = items?.map((item) => {
+      return {
+        name: item.item,
+        price: item.totalPrice,
+        quantity: item.quantity,
+      };
+    });
+    const invoiceData: InvoiceData = {
+      billedTo: {
+        name: user?.data?.name,
+        email: user?.data?.email,
+        location: user?.data?.location?.name,
+        phone: user?.data?.phones && user?.data?.phones?.[0]?.number,
+      },
+      billedFrom: {
+        name: adminUser?.name,
+        email: adminUser?.email,
+        location: appData?.location?.name,
+        phone: adminUser?.phone,
+      },
+      vehicle: {
+        make: appData?.vehicle?.detail?.make,
+        model: appData?.vehicle?.detail?.model,
+        trim: appData?.vehicle?.detail?.trim,
+        year: appData?.vehicle?.detail?.year,
+        vin: appData?.vehicle?.vin as string,
+        regNumber: appData?.vehicle?.registrationNumber as string,
+      },
+      issueDate,
+      dueDate,
+      items: invoiceItems,
+      total: total + fee,
+      subTotal: total + fee,
+      tax: 0,
+    };
+    dispatch(setInvoice(invoiceData));
+    navigate(`/download-invoice`);
+  };
+
+  const handleFee = useCallback((f: number) => {
+    setFee(f);
+  }, []);
 
   return (
-    <div className="flex gap-x-6">
-      <div className="pr-3 w-[65%] flex flex-col">
-        <div className="mb-14 mt-4 justify-between flex">
-          <div className="flex items-center gap-x-3">
-            <InvoiceIcon />
-            <h2 className="font-medium">Invoice</h2>
+    <DashboardLayout>
+      <div className="flex gap-x-6">
+        <div className="pr-3 w-[65%] flex flex-col">
+          <div className="mb-14 mt-4 justify-between flex">
+            <div className="flex items-center gap-x-3">
+              <InvoiceIcon />
+              <h2 className="font-medium">Invoice</h2>
+            </div>
+            <div
+              className={twMerge(
+                "bg-redAccent text-red border border-primaryAccent text-sm rounded-2xl px-4 py-1 lowercase first-letter:uppercase whitespace-nowrap 2"
+              )}
+            >
+              Unpaid
+            </div>
           </div>
-          <div
-            className={twMerge(
-              "bg-redAccent text-red border border-primaryAccent text-sm rounded-2xl px-4 py-1 lowercase first-letter:uppercase whitespace-nowrap 2"
+          <div className="flex-col flex gap-y-6">
+            <div className="flex gap-x-7 justify-between">
+              <Input
+                label="Service center"
+                placeholder="service center"
+                className="w-[100%]"
+                value={appointment?.data?.serviceCenter?.name}
+                disabled
+              />
+              <Input
+                label="Vehicle"
+                placeholder="Vehicle"
+                className="w-[100%]"
+                value={appointment?.data?.vehicle?.name}
+                disabled
+              />
+            </div>
+            <div className="flex gap-x-7 justify-between">
+              <DatePicker
+                label="Date Issued"
+                onSelect={(value) => setIssueDate(value as any)}
+              />
+              <DatePicker
+                label="Due Date"
+                onSelect={(value) => setDueDate(value as any)}
+              />
+            </div>
+            <div className="flex justify-between space-x-8">
+              <div className="flex flex-col w-full">
+                <label className="text-sm mb-2">Billed From</label>
+                <InvoiceBillingCard
+                  profileImageUrl={adminUser?.profileImageUrl}
+                  name={adminUser?.name}
+                  email={adminUser?.email}
+                  location={adminUser?.location}
+                />
+              </div>
+              <div className="flex flex-col w-full">
+                <label className="text-sm mb-2">Billed To</label>
+                <InvoiceBillingCard
+                  profileImageUrl={user?.data?.profileImageUrl}
+                  name={user?.data?.name}
+                  email={user?.data?.email}
+                  location={user?.data?.location}
+                />
+              </div>
+            </div>
+            {appointment?.data && (
+              <div className="flex flex-col">
+                <label className="text-sm mb-2">Appointment</label>
+                <Appointment
+                  {...appointment?.data}
+                  className="bg-transparent"
+                  onDetail={() =>
+                    appointment &&
+                    navigate(`/appointment/${appointment?.data?.id}`)
+                  }
+                />
+              </div>
             )}
-          >
-            Unpaid
+            <div>
+              <label className="text-sm mb-2">Purchased Items</label>
+              <div className="border-grey3 border-2 rounded-xl mt-2">
+                <EditableTable onChange={(values) => handleAdd(values)} />
+              </div>
+            </div>
+            <InvoiceTotal total={total + fee} onFee={(f) => handleFee(f)} />
+          </div>
+          <div className="flex justify-end gap-x-4 mt-10">
+            <Button
+              className="w-auto"
+              variant="tertiary"
+              onClick={handlePreviewInvoice}
+              disabled={disabled}
+            >
+              Preview Invoice
+            </Button>
+            <Button
+              className="w-auto"
+              onClick={handleCreateInvoice}
+              isLoading={isLoading}
+              disabled={disabled}
+            >
+              Send to Client
+            </Button>
           </div>
         </div>
-        <div className="flex-col flex gap-y-6">
-          <div className="flex gap-x-7 justify-between">
-            <Input
-              label="Service center"
-              placeholder="service center"
-              className="w-[100%]"
-              value={appointment?.data?.serviceCenter?.name}
-              disabled
-            />
-            <Input
-              label="Vehicle"
-              placeholder="Vehicle"
-              className="w-[100%]"
-              value={appointment?.data?.vehicle?.name}
-              disabled
-            />
-          </div>
-          <div className="flex gap-x-7 justify-between">
-            <DatePicker
-              label="Date Issued"
-              onSelect={(value) => setIssueDate(value as any)}
-            />
-            <DatePicker
-              label="Due Date"
-              onSelect={(value) => setDueDate(value as any)}
-            />
-          </div>
-          <div className="flex justify-between space-x-8">
-            <div className="flex flex-col w-full">
-              <label className="text-sm mb-2">Billed From</label>
-              <InvoiceBillingCard
-                profileImageUrl={adminUser?.profileImageUrl}
-                name={adminUser?.name}
-                email={adminUser?.email}
-                location={adminUser?.location}
-              />
-            </div>
-            <div className="flex flex-col w-full">
-              <label className="text-sm mb-2">Billed To</label>
-              <InvoiceBillingCard
-                profileImageUrl={user?.data?.profileImageUrl}
-                name={user?.data?.name}
-                email={user?.data?.email}
-                location={user?.data?.location}
-              />
-            </div>
-          </div>
-          {appointment?.data && (
-            <div className="flex flex-col">
-              <label className="text-sm mb-2">Appointment</label>
-              <Appointment
-                {...appointment?.data}
-                className="bg-transparent"
-                onDetail={() =>
-                  appointment &&
-                  navigate(`/appointment/${appointment?.data?.id}`)
-                }
-              />
-            </div>
-          )}
-          <div>
-            <label className="text-sm mb-2">Purchased Items</label>
-            <div className="border-grey3 border-2 rounded-xl mt-2">
-              <EditableTable onChange={(values) => handleAdd(values)} />
-            </div>
-          </div>
-          <InvoiceTotal total={total} />
-        </div>
-        <div className="flex justify-end gap-x-4 mt-10">
-          <Button
-            className="w-auto"
-            variant="tertiary"
-            onClick={() => navigate(`/download-invoice/asclknlksn`)}
-          >
-            Preview Invoice
-          </Button>
-          <Button
-            className="w-auto"
-            onClick={handleCreateInvoice}
-            isLoading={isLoading}
-            disabled={disabled}
-          >
-            Send to Client
-          </Button>
-        </div>
+        {/* <div className={twMerge("flex flex-col flex-[30%] gap-y-6")}></div> */}
       </div>
-      {/* <div className={twMerge("flex flex-col flex-[30%] gap-y-6")}></div> */}
-    </div>
+    </DashboardLayout>
   );
 };
 

@@ -46,7 +46,6 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
-import { toast } from "react-toastify";
 import {
   logoutUser,
   setAccessToken,
@@ -61,7 +60,6 @@ const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   prepareHeaders: (headers, { getState }) => {
     const accessToken = (getState() as RootState).auth.accessToken;
-    // console.log(accessToken);
     if (accessToken) {
       headers.set("authorization", `Bearer ${accessToken}`);
     }
@@ -79,7 +77,6 @@ const baseQueryWithReauth: BaseQueryFn<
   let result = await baseQuery(args, api, extraOptions);
 
   if (result.error?.status === "FETCH_ERROR") {
-    toast.error("Slow internet, please check your connection.");
     return result;
   }
   if (result.error?.status !== 401) return result;
@@ -110,7 +107,6 @@ const baseQueryWithReauth: BaseQueryFn<
     result = await baseQuery(args, api, extraOptions);
   } else {
     store.dispatch(logoutUser());
-    toast.error("Session expired, please log in.");
     return { error: { status: 401, data: "Unauthorized" } };
   }
 
@@ -203,6 +199,19 @@ export const apiSlice = createApi({
       query: (id) => {
         return {
           url: URLS.chat.getChatroomByAppointment(id),
+          method: "GET",
+        };
+      },
+      providesTags: ["appointment"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    getAppointmentByChatroom: builder.query<
+      AppointmentResponse,
+      string
+    >({
+      query: (id) => {
+        return {
+          url: URLS.chat.getAppointmentByChatroom(id),
           method: "GET",
         };
       },
@@ -710,5 +719,6 @@ export const {
   useUpdateServiceCenterMutation,
   useAddServiceCenterMediaMutation,
   useGetChatroomByAppointmentQuery,
+  useGetAppointmentByChatroomQuery,
   useGetServiceCenterServicesQuery,
 } = apiSlice;

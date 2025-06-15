@@ -187,6 +187,7 @@ export interface Appointment extends GenericType {
   vehicle?: Vehicle;
   user?: User;
   serviceCenter?: ServiceCenter;
+  chatRoom?: ChatRoom
 }
 
 export interface LoginResponse extends GenericResponse {
@@ -500,3 +501,37 @@ export interface AppointmentChatRoom extends GenericType {
 export interface AppointmentChatRoomResponse extends GenericResponse {
   data: AppointmentChatRoom;
 }
+
+export interface InvoiceData {
+  billedTo: {
+    name?: string;
+    email?: string;
+    location?: string;
+    phone?: string;
+  };
+  billedFrom: {
+    name?: string;
+    email?: string;
+    location?: string;
+    phone?: string;
+  };
+  vehicle: {
+    make?: string;
+    model?: string;
+    trim?: string;
+    year?: string;
+    vin: string;
+    regNumber: string;
+  };
+  issueDate: string;
+  dueDate: string;
+  items: {
+    name: string;
+    quantity: string;
+    price: string;
+  }[];
+  total: number;
+  subTotal: number;
+  tax: number;
+}
+
