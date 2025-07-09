@@ -26,8 +26,8 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
   return (
     <div className="flex">
       <SideMenu />
-      <div className="w-full pl-[260px]">
-        <div className="h-[90px] w-full flex items-center justify-between px-[40px]">
+      <div className="w-full pl-[250px]">
+        <div className="h-[90px] bg-background z-50 w-[calc(100vw-274px)] fixed float-right flex items-center justify-between px-[40px] ml-5">
           <div className="flex space-x-8" style={{ width: 380 }}>
             {showBack && (
               <button
@@ -55,7 +55,7 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
             />
           </div>
         </div>
-        <div className="overflow-y-auto h-[calc(100vh-72px)] px-[40px] pb-9">
+        <div className="overflow-y-auto h-[calc(100vh-10px)] px-[38px] pt-[90px] pb-9">
           {children}
         </div>
       </div>

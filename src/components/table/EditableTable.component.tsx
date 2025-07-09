@@ -173,9 +173,9 @@ const EditableTable: React.FC<IProps> = ({ onChange }) => {
                           </button>
                           <button
                             onClick={cancelEdit}
-                            className="text-red-500 border mt-2 border-red rounded-md p-1"
+                            className="bg-red-600-500 border mt-2 border-red rounded-md p-1"
                           >
-                            <XMarkIcon className="w-5 h-5 text-red" />
+                            <XMarkIcon className="w-5 h-5 bg-red-600" />
                           </button>
                         </td>
                       </>
@@ -195,7 +195,7 @@ const EditableTable: React.FC<IProps> = ({ onChange }) => {
                           </button>
                           <button
                             onClick={() => deleteRow(row.key)}
-                            className="text-red p-1"
+                            className="bg-red-600 p-1"
                           >
                             <TrashIcon className="w-5 h-5" />
                           </button>

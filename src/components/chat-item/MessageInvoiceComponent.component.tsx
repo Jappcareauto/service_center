@@ -40,7 +40,7 @@ const MessageInvoiceComponent: React.FC<OwnProps> = ({ type }) => {
             <div
               className={twMerge(
                 "text-sm rounded-2xl px-3 py-2 bg-grey3 whitespace-nowrap font-medium top-0 right-0 absolute",
-                type === "Pending" ? "text-red bg-redAccent" : ""
+                type === "Pending" ? "bg-red-600 bg-redAccent" : ""
               )}
             >
               {type}

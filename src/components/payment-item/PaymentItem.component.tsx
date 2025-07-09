@@ -32,7 +32,7 @@ export const PaymentItem = ({ type }: any) => {
               `  ${
                 type === PaymentType.Earning
                   ? "bg-greenAccent text-green"
-                  : "text-red bg-primaryAccent"
+                  : "bg-red-600 bg-primaryAccent"
               }  h-[30px] px-2 flex justify-center items-center rounded-full `
             )}
           >

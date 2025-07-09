@@ -11,6 +11,7 @@ export default {
       colors: {
         primary: "#FB7C37",
         primaryAccent: "#FFEDE6",
+        primaryAccentLight: "#fff5f1",
         primaryAccent2: "#FFB693",
         grey: "#797676",
         grey2: "#242424",
@@ -23,7 +24,6 @@ export default {
         background: "#FFF8F6",
         // green: '#006D35',
         greenAccent: '#C4FFCD',
-        red: '#F1351B',
         redAccent: '#FFEDE9',
         greenAccent: '#C4FFCD',
       },

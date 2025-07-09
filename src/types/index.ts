@@ -1,6 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppointmentStatus, InvoiceStatus, MessageType } from "@/enums";
 
+export const IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+  "image/bmp",
+  "image/svg+xml",
+];
+
+export const AUDIO_TYPES = [
+  "audio/mpeg",    // mp3
+  "audio/wav",
+  "audio/ogg",
+  "audio/webm",
+  "audio/mp4",
+  "audio/aac",
+  "audio/x-aac",
+  "audio/x-wav",
+  "audio/x-m4a",
+  "audio/x-ms-wma",
+];
+
+
 export interface GenericType {
   id?: string;
   createdAt?: string;
@@ -187,7 +211,7 @@ export interface Appointment extends GenericType {
   vehicle?: Vehicle;
   user?: User;
   serviceCenter?: ServiceCenter;
-  chatRoom?: ChatRoom
+  chatRoom?: ChatRoom;
 }
 
 export interface LoginResponse extends GenericResponse {
@@ -447,7 +471,7 @@ export interface Message {
   id?: string;
   timestamp?: string | Date;
   appointmentId?: string;
-  mediaUrl?: null;
+  mediaUrls?: UploadedFile[];
   createdAt?: string;
   updatedAt?: string;
   createdBy?: string;
@@ -470,6 +494,14 @@ export interface CreateChatRoomRequest {
   participantUserIds: string[];
   participantUserIdsAsUuids?: string[];
   idAsUuid?: string;
+}
+export interface UploadedFile {
+  url: string;
+  type: string;
+  name: string;
+}
+export interface UploadChatFilesResponse extends GenericResponse {
+  data: UploadedFile[];
 }
 
 export interface ChatRoomParticipantsResponse extends GenericResponse {
@@ -534,4 +566,3 @@ export interface InvoiceData {
   subTotal: number;
   tax: number;
 }
-

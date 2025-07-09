@@ -245,7 +245,7 @@ export const getAppointmentColumns = (
     render: (_: any, record: any) => (
       <div className="flex items-center gap-x-4">
         <TrashIcon
-          className="text-red-500 cursor-pointer hover:text-red-700"
+          className="bg-red-600-500 cursor-pointer hover:bg-red-600-700"
           onClick={() => handleDelete(record.id)}
         />
         <ArrowRightIcon
@@ -360,7 +360,7 @@ export const getInvoicesColumns = (
             className="cursor-pointer"
           />
           <TrashIcon
-            className="text-red-500 hover:text-red-700 cursor-pointer"
+            className="bg-red-600-500 hover:bg-red-600-700 cursor-pointer"
             onClick={() => handleDelete(record.id)}
           />
           <ArrowRightIcon
@@ -601,7 +601,7 @@ export const getPaymentsColumns = () => [
         {status === PaymentStatus.EARNINGS ? (
           <ArrowDownLeftIcon className="w-4 h-5 text-green-700" />
         ) : (
-          <ArrowUpRightIcon className="text-red" />
+          <ArrowUpRightIcon className="bg-red-600" />
         )}
       </div>
     ),
