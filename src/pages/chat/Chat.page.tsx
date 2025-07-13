@@ -165,32 +165,6 @@ const Chat = () => {
     fileInputRef.current?.click();
   };
 
-  const handleSendMessage = async () => {
-    setSending(true);
-
-    const fileIds =
-      selectedFiles.length > 0 ? await handleUploadFiles(selectedFiles) : [];
-
-    const payload: any = {
-      senderId: user_info?.userId,
-      content: message ? message : "NO_TEXT",
-      chatRoomId: roomId,
-      type: fileIds.length > 0 ? "IMAGE" : "TEXT",
-      ...(fileIds.length > 0 && { fileIds }),
-    };
-
-    if (stompClientRef.current?.connected) {
-      stompClientRef.current.send(
-        "/app/chat/message",
-        {},
-        JSON.stringify(payload)
-      );
-      setMessage("");
-      setSelectedFiles([]);
-      setSending(false);
-    }
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
@@ -258,6 +232,32 @@ const Chat = () => {
     lottieRef.current?.stop();
     mediaRecorder?.stop();
     setIsRecording(false);
+  };
+
+  const handleSendMessage = async () => {
+    setSending(true);
+
+    const fileIds =
+      selectedFiles.length > 0 ? await handleUploadFiles(selectedFiles) : [];
+
+    const payload: any = {
+      senderId: user_info?.userId,
+      content: message ? message : "NO_TEXT",
+      chatRoomId: roomId,
+      type: fileIds.length > 0 ? "IMAGE" : "TEXT",
+      ...(fileIds.length > 0 && { fileIds }),
+    };
+
+    if (stompClientRef.current?.connected) {
+      stompClientRef.current.send(
+        "/app/chat/message",
+        {},
+        JSON.stringify(payload)
+      );
+      setMessage("");
+      setSelectedFiles([]);
+      setSending(false);
+    }
   };
 
   const isSending = sending || filesUploading;
@@ -431,11 +431,7 @@ const Chat = () => {
                         className="w-10 flex justify-center items-center rounded-md h-9 hover:bg-white transition-all duration-300"
                         onClick={startRecording}
                         type="button"
-                        disabled={
-                          isSending ||
-                          filesUploading ||
-                          !navigator.mediaDevices?.getUserMedia
-                        }
+                        disabled={isSending || filesUploading}
                       >
                         <MicrophoneIcon className="w-5 h-5 text-grey2" />
                       </button>

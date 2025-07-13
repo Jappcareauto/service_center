@@ -27,8 +27,7 @@ import {
   useGetAppointmentStatsByDateMutation,
   useGetPaymentsMutation,
   useGetServiceCentersMutation,
-  useGetUserQuery,
-  useUpdateAppointmentStatusMutation,
+  useGetUserQuery
 } from "@/redux/api";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -37,7 +36,7 @@ import {
   BarChartItemType,
   DateRange,
 } from "@/types";
-import { getDefaultWeekDates, getSubmitData } from "@/utils";
+import { getDefaultWeekDates } from "@/utils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -58,8 +57,6 @@ const Dashboard = () => {
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
     []
   );
-  const [updateStatus, { isLoading: updateStatusLoading }] =
-    useUpdateAppointmentStatusMutation({});
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [id, setId] = useState("");
@@ -67,7 +64,6 @@ const Dashboard = () => {
   const {
     data: appointment,
     isLoading: appointmentLoading,
-    refetch,
   } = useGetAppointmentQuery(id, {
     skip: !id,
   });
@@ -150,30 +146,6 @@ const Dashboard = () => {
         }
         toast.error("Oops an error occcured!");
       });
-  };
-  const handleUpdateStatus = () => {
-    if (appointment?.data?.status) {
-      const data = getSubmitData(
-        appointment?.data?.status,
-        appointment?.data?.id as string
-      );
-      updateStatus(data as any)
-        .unwrap()
-        .then((res) => {
-          toast.success(
-            res?.meta?.message ?? "Appointment Status Successully Updated"
-          );
-          refetch();
-          setId("");
-        })
-        .catch((err) => {
-          if (err?.data?.errors) {
-            toast.error(err?.data?.errors);
-            return;
-          }
-          toast.error("Oops an error occcured!");
-        });
-    }
   };
 
   const handleAppointmentStats = (startDate: string, endDate: string) => {
@@ -363,11 +335,7 @@ const Dashboard = () => {
             appointment && navigate(`/appointment/${appointment?.data?.id}`)
           }
         >
-          <AppointmentDetailModal
-            {...appointment?.data}
-            onClick={handleUpdateStatus}
-            isLoading={updateStatusLoading}
-          />
+          <AppointmentDetailModal {...appointment?.data} />
         </Drawer>
         <Modal
           open={deleteId?.length > 0}
