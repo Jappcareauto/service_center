@@ -4,9 +4,12 @@ import Avatar from "@/components/avatar/Avatar.component";
 import Button from "@/components/button/Button.component";
 import Invoice from "@/components/invoice/Invoice.component";
 import NoData from "@/components/no-data/NoData.component";
-import { AppointmentStatus } from "@/enums";
+import { useToast } from "@/context/ToastContext";
+import { AppointmentStatus, ToastType } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
+  useDiagnosisMadeMutation,
+  useDiagnosisToMakeMutation,
   useGetAppointmentQuery,
   useGetInvoiceByAppointmentQuery,
   useGetServiceQuery,
@@ -17,7 +20,7 @@ import {
   setAppointmentId,
   setInvoice,
 } from "@/redux/features/appointment/appointmentSlice";
-import { setChatroomId } from '@/redux/features/chat/chatSlice';
+import { setChatroomId } from "@/redux/features/chat/chatSlice";
 import { useAppDispatch } from "@/redux/store";
 import { Appointment, VehicleMediaItem } from "@/types";
 import { getStatusStyles } from "@/utils";
@@ -28,12 +31,13 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import { Image, Input } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
 const AppointmentDetails = () => {
   const { id } = useParams();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const { data, isLoading } = useGetAppointmentQuery(id as string, {
     skip: !id,
@@ -50,6 +54,18 @@ const AppointmentDetails = () => {
     }
   );
 
+  const [onDiagnosisToMake, { isLoading: diagnosisToMakeLoading }] =
+    useDiagnosisToMakeMutation();
+  const [onDiagnosisMade, { isLoading: diagnosisMadeLoading }] =
+    useDiagnosisMadeMutation();
+
+  const [diagnosisToMake, setDiagnosisToMake] = useState(
+    data?.data?.diagnosesToMake || ""
+  );
+  const [diagnosisMade, setDiagnosisMade] = useState(
+    data?.data?.diagnosesMade || ""
+  );
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -59,7 +75,49 @@ const AppointmentDetails = () => {
     if (data?.data) {
       dispatch(setAppointment(data?.data));
     }
+    if(data?.data?.diagnosesMade) {
+      setDiagnosisMade(data?.data?.diagnosesMade)
+    }
+    if(data?.data?.diagnosesToMake) {
+      setDiagnosisToMake(data?.data?.diagnosesToMake)
+    }
   }, [invoice, data]);
+
+  const handleDiagnosisToMake = () => {
+    if (diagnosisToMake.trim() === "") return;
+    const data = {
+      diagnosesToMake: diagnosisToMake,
+      id: id as string,
+    };
+    onDiagnosisToMake(data)
+      .unwrap()
+      .then(() => {
+        setDiagnosisToMake("");
+        toast(ToastType.SUCCESS, "Diagnosis to make updated successfully");
+      })
+      .catch((error) => {
+        console.error("Error updating diagnosis to make:", error);
+        toast(ToastType.ERROR, "Error updating diagnosis to make:");
+      });
+  };
+
+  const handleDiagnosisMade = () => {
+    if (diagnosisMade.trim() === "") return;
+    const data = {
+      diagnosesMade: diagnosisMade,
+      id: id as string,
+    };
+    onDiagnosisMade(data)
+      .unwrap()
+      .then(() => {
+        setDiagnosisMade("");
+        toast(ToastType.SUCCESS, "Diagnosis made updated successfully");
+      })
+      .catch((error) => {
+        console.error("Error updating diagnosis made:", error);
+        toast(ToastType.ERROR, "Error updating diagnosis made:");
+      });
+  };
 
   return (
     <DashboardLayout>
@@ -192,30 +250,78 @@ const AppointmentDetails = () => {
                 </div>
               )}
           </div>
-          <div className="flex w-[28%] bg-white px-5 pt-16 fixed top-0 right-0 h-screen box-border drop-shadow-2xl flex-col overflow-y-auto pb-7 z-50">
+          <div className="flex w-[28%] bg-white px-5 pt-7 fixed top-0 right-0 h-screen box-border drop-shadow-2xl flex-col overflow-y-auto pb-7 z-50">
             <p className="font-semibold text-gray-600 mb-5">
               Appointment Results
             </p>
             <div className="flex flex-col gap-y-6">
               <div>
-                <p className="mb-2 text-sm">Diagnosis & Repairs to be made</p>
+                <p className="mb-2 text-sm">Diagnosis to make</p>
                 <Input.TextArea
                   rows={5}
                   placeholder="Summarize what was the issue on the vehicle and the repairs to be made."
+                  value={diagnosisToMake}
+                  onChange={(e) => setDiagnosisToMake(e.target.value)}
                 />
+                <div className="flex justify-end mt-4">
+                  <Button
+                    className="rounded-full text-sm float-right self-end w-auto"
+                    variant="primary"
+                    onClick={handleDiagnosisToMake}
+                    isLoading={diagnosisToMakeLoading}
+                    disabled={!diagnosisToMake.trim() || diagnosisToMakeLoading}
+                  >
+                    Confirm
+                  </Button>
+                </div>
               </div>
-              <div>
-                <p className="mb-2 text-sm">Repairs made</p>
-                <Input.TextArea
-                  rows={5}
-                  placeholder="Summarize what was done on the vehicle"
-                />
-              </div>
+              {data?.data?.status !== AppointmentStatus.NOT_STARTED && (
+                <div>
+                  <p className="mb-2 text-sm">Diagnosis made</p>
+                  <Input.TextArea
+                    rows={5}
+                    placeholder="Summarize what was done on the vehicle"
+                    value={diagnosisMade}
+                    onChange={(e) => setDiagnosisMade(e.target.value)}
+                  />
+                  <div className="flex justify-end mt-4">
+                    <Button
+                      className="rounded-full text-sm float-right self-end w-auto px-7"
+                      variant="primary"
+                      onClick={handleDiagnosisMade}
+                      isLoading={diagnosisMadeLoading}
+                      disabled={!diagnosisMade.trim() || diagnosisMadeLoading}
+                    >
+                      Update
+                    </Button>
+                  </div>
+                </div>
+              )}
               <div className="w-full">
                 <p className="mb-2 text-sm">Invoice</p>
+                {user?.data && invoice?.data ? (
+                  <Invoice
+                    name={user?.data?.name}
+                    email={user?.data?.email}
+                    invoiceNumber={invoice?.data?.number}
+                    issueDate={invoice?.data?.issueDate}
+                    money={invoice?.data?.money}
+                    service={service?.data?.title}
+                    onClick={() => {
+                      navigate(`/invoice/${invoice?.data?.id}`);
+                      dispatch(setAppointment(data?.data as Appointment));
+                    }}
+                  />
+                ) : (
+                  <NoData
+                    isLoading={invoiceLoading}
+                    title="No Invoice"
+                    message="No invoice available for this appointment!"
+                  />
+                )}
                 {!invoice?.data && (
                   <Button
-                    className="rounded-full text-sm float-right self-end w-auto px-7"
+                    className="rounded-full text-sm float-right self-end w-auto px-7 mt-2"
                     variant="tertiary"
                     onClick={() =>
                       navigate(`/create-invoice/${data?.data?.id}`)
@@ -225,26 +331,6 @@ const AppointmentDetails = () => {
                   </Button>
                 )}
               </div>
-              {user?.data && invoice?.data ? (
-                <Invoice
-                  name={user?.data?.name}
-                  email={user?.data?.email}
-                  invoiceNumber={invoice?.data?.number}
-                  issueDate={invoice?.data?.issueDate}
-                  money={invoice?.data?.money}
-                  service={service?.data?.title}
-                  onClick={() => {
-                    navigate(`/invoice/${invoice?.data?.id}`);
-                    dispatch(setAppointment(data?.data as Appointment));
-                  }}
-                />
-              ) : (
-                <NoData
-                  isLoading={invoiceLoading}
-                  title="No Invoice"
-                  message="No invoice available for this appointment!"
-                />
-              )}
             </div>
           </div>
         </div>

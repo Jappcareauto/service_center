@@ -212,6 +212,17 @@ export interface Appointment extends GenericType {
   user?: User;
   serviceCenter?: ServiceCenter;
   chatRoom?: ChatRoom;
+  diagnosesToMake?: string;
+  diagnosesMade?: string;
+}
+
+export interface DiagnosisToMakeRequest {
+  id: string;
+  diagnosesToMake: string
+}
+export interface DiagnosisMadeRequest {
+  id: string;
+  diagnosesMade: string;
 }
 
 export interface LoginResponse extends GenericResponse {

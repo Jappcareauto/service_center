@@ -29,7 +29,6 @@ import {
   useGetAppointmentsMutation,
   useGetAppointmentStatsByDateMutation,
   useGetServiceCentersMutation,
-  useUpdateAppointmentStatusMutation,
 } from "@/redux/api";
 import { useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
@@ -38,7 +37,7 @@ import {
   BarChartItemType,
   DateRange,
 } from "@/types";
-import { getDefaultWeekDates, getSubmitData } from "@/utils";
+import { getDefaultWeekDates } from "@/utils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -49,8 +48,6 @@ const Appointments = () => {
   const [getAppointments, { data, isLoading }] = useGetAppointmentsMutation();
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
-  const [updateAppointmentStatus, { isLoading: updateStatusLoading }] =
-    useUpdateAppointmentStatusMutation();
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
     []
   );
@@ -163,28 +160,6 @@ const Appointments = () => {
         }
       })
       .catch((err) => console.log("err", err));
-  };
-
-  const handleUpdateAppointmentStatus = () => {
-    if (!appointment?.data?.id || !appointment?.data?.status) return;
-    const data = getSubmitData(
-      appointment?.data?.status,
-      appointment?.data?.id
-    );
-    updateAppointmentStatus(data as any)
-      .unwrap()
-      .then((res) => {
-        toast.success(
-          res?.meta?.message ?? "Appointment Status Successully Updated"
-        );
-      })
-      .catch((err) => {
-        if (err?.data?.errors) {
-          toast.error(err?.data?.errors);
-          return;
-        }
-        toast.error("Oops an error occcured!");
-      });
   };
 
   return (
@@ -363,12 +338,9 @@ const Appointments = () => {
           onNavigate={() =>
             appointment && navigate(`/appointment/${appointment?.data?.id}`)
           }
+          width={window.innerWidth * 0.27}
         >
-          <AppointmentDetailModal
-            onClick={handleUpdateAppointmentStatus}
-            isLoading={updateStatusLoading}
-            {...appointment?.data}
-          />
+          <AppointmentDetailModal {...appointment?.data} />
         </Drawer>
         <Modal
           open={deleteId?.length > 0}

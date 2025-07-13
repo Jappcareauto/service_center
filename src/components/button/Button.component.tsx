@@ -1,6 +1,7 @@
+import { LoadingOutlined } from '@ant-design/icons';
+import { Spin } from 'antd';
 import React from "react";
 import { twMerge } from "tailwind-merge";
-import Loader from "../loader/Loader";
 import { ButtonProps, variantStyles } from "./types";
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,11 +21,11 @@ const Button: React.FC<ButtonProps> = ({
         "flex items-center justify-center h-[40px] px-5 transition-all duration-300 ease-in-out rounded-lg w-auto",
         variantStyles[variant],
         className,
-        isInactive && variantStyles['disabled']
+        isInactive && variantStyles["disabled"]
       )}
     >
       {isLoading ? (
-        <Loader />
+        <Spin indicator={<LoadingOutlined className="text-white" spin />} />
       ) : (
         <>
           {leftIcon && <span className="mr-2">{leftIcon}</span>}

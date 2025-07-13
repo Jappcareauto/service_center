@@ -119,7 +119,7 @@ const Chat = () => {
         `/topic/chatroom/${roomId}`,
         (messageOutput: IMessage) => {
           const newMessage: Message = JSON.parse(messageOutput.body);
-
+          console.log("New message received:", newMessage);
           setMessages((prevMessages) => {
             const exists = prevMessages.some((m) => m.id === newMessage.id);
             if (exists) return prevMessages;
@@ -165,35 +165,6 @@ const Chat = () => {
     fileInputRef.current?.click();
   };
 
-  const handleSendMessage = async () => {
-    setSending(true);
-    console.log("selectedFiles", selectedFiles);
-
-    const fileIds =
-      selectedFiles.length > 0 ? await handleUploadFiles(selectedFiles) : [];
-
-    const payload: any = {
-      senderId: user_info?.userId,
-      content: message,
-      chatRoomId: roomId,
-      type: fileIds.length > 0 ? "IMAGE" : "TEXT",
-      ...(fileIds.length > 0 && { fileIds }),
-    };
-
-    console.log("payload", payload);
-
-    if (stompClientRef.current?.connected) {
-      stompClientRef.current.send(
-        "/app/chat/message",
-        {},
-        JSON.stringify(payload)
-      );
-      setMessage("");
-      setSelectedFiles([]);
-      setSending(false);
-    }
-  };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
@@ -236,7 +207,7 @@ const Chat = () => {
 
       const payload: any = {
         senderId: user_info?.userId,
-        content: message,
+        content: message ? message : "NO_TEXT",
         chatRoomId: roomId,
         type: "AUDIO",
         ...(fileIds.length > 0 && { fileIds }),
@@ -261,6 +232,32 @@ const Chat = () => {
     lottieRef.current?.stop();
     mediaRecorder?.stop();
     setIsRecording(false);
+  };
+
+  const handleSendMessage = async () => {
+    setSending(true);
+
+    const fileIds =
+      selectedFiles.length > 0 ? await handleUploadFiles(selectedFiles) : [];
+
+    const payload: any = {
+      senderId: user_info?.userId,
+      content: message ? message : "NO_TEXT",
+      chatRoomId: roomId,
+      type: fileIds.length > 0 ? "IMAGE" : "TEXT",
+      ...(fileIds.length > 0 && { fileIds }),
+    };
+
+    if (stompClientRef.current?.connected) {
+      stompClientRef.current.send(
+        "/app/chat/message",
+        {},
+        JSON.stringify(payload)
+      );
+      setMessage("");
+      setSelectedFiles([]);
+      setSending(false);
+    }
   };
 
   const isSending = sending || filesUploading;
@@ -336,40 +333,41 @@ const Chat = () => {
                 <Skeleton paragraph={{ rows: 4 }} />
               </>
             ) : (
-              <>
-                <ChatInvoice
-                  vehicle={appointment?.data?.vehicle}
-                  amount={
-                    invoice?.data?.money &&
-                    `${invoice?.data?.money?.amount} ${invoice?.data?.money?.currency}`
-                  }
-                  dueDate={invoice?.data?.dueDate}
-                  service={appointment?.data?.service}
-                  onView={() =>
-                    navigate(`/appointment/${appointment?.data?.id}`)
-                  }
-                  timeOfDay={appointment?.data?.timeOfDay}
-                  onInvoice={() =>
-                    navigate(`/create-invoice/${appointment?.data?.id}`)
-                  }
-                  hasInvoice={invoice?.data !== undefined}
-                  location={appointment?.data?.location?.name}
-                  description={
-                    appointment?.data?.serviceCenter?.location?.description
-                  }
-                />
-                {messages?.map((msg, index) => (
-                  <MessageComponent
-                    key={`${msg?.id} ${index}`}
-                    content={msg?.content}
-                    image={msg.image}
-                    reply={msg.reply}
-                    isMe={msg?.createdBy === user_info?.userId}
-                    mediaUrls={msg?.mediaUrls}
-                    // type={msg.type}
+              appointment?.data && (
+                <>
+                  <ChatInvoice
+                    vehicle={appointment?.data?.vehicle}
+                    amount={
+                      invoice?.data?.money &&
+                      `${invoice?.data?.money?.amount} ${invoice?.data?.money?.currency}`
+                    }
+                    dueDate={invoice?.data?.dueDate}
+                    service={appointment?.data?.service}
+                    onView={() =>
+                      navigate(`/appointment/${appointment?.data?.id}`)
+                    }
+                    timeOfDay={appointment?.data?.timeOfDay}
+                    onInvoice={() =>
+                      navigate(`/create-invoice/${appointment?.data?.id}`)
+                    }
+                    hasInvoice={invoice?.data !== undefined}
+                    location={appointment?.data?.location?.name}
+                    description={
+                      appointment?.data?.serviceCenter?.location?.description
+                    }
                   />
-                ))}
-              </>
+                  {messages?.map((msg, index) => (
+                    <MessageComponent
+                      key={`${msg?.id} ${index}`}
+                      content={msg.content === "NO_TEXT" ? "" : msg?.content}
+                      image={msg.image}
+                      reply={msg.reply}
+                      isMe={msg?.createdBy === user_info?.userId}
+                      mediaUrls={msg?.mediaUrls}
+                    />
+                  ))}
+                </>
+              )
             )}
             <div ref={bottomRef} />
           </div>
@@ -433,11 +431,7 @@ const Chat = () => {
                         className="w-10 flex justify-center items-center rounded-md h-9 hover:bg-white transition-all duration-300"
                         onClick={startRecording}
                         type="button"
-                        disabled={
-                          isSending ||
-                          filesUploading ||
-                          !navigator.mediaDevices?.getUserMedia
-                        }
+                        disabled={isSending || filesUploading}
                       >
                         <MicrophoneIcon className="w-5 h-5 text-grey2" />
                       </button>

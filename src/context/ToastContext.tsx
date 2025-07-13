@@ -1,6 +1,7 @@
 // src/context/ToastContext.tsx
 import { Alert } from 'antd';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import ReactDOM from 'react-dom';
 
 type AlertType = 'success' | 'info' | 'warning' | 'error';
 
@@ -26,10 +27,19 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
   return (
     <ToastContext.Provider value={{ toast }}>
-      {children}
-      <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 1000 }}>
-        {toasts.map((toast) => (
-          <div key={toast.id} style={{ marginBottom: 8 }}>
+    {children}
+    {ReactDOM.createPortal(
+      <div
+        style={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          zIndex: 9999,
+          pointerEvents: 'none',
+        }}
+      >
+        {toasts?.map((toast) => (
+          <div key={toast.id} style={{ marginBottom: 8, pointerEvents: 'auto' }}>
             <Alert
               message={toast.message}
               type={toast.type}
@@ -41,8 +51,10 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
             />
           </div>
         ))}
-      </div>
-    </ToastContext.Provider>
+      </div>,
+      document.body
+    )}
+  </ToastContext.Provider>
   );
 };
 

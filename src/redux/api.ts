@@ -14,6 +14,8 @@ import {
   ChatRoomsResponse,
   CreateChatRoomRequest,
   CreateInvoiceRequest,
+  DiagnosisMadeRequest,
+  DiagnosisToMakeRequest,
   ForgotPasswordRequest,
   GenericResponse,
   GetInvoicesRequest,
@@ -293,6 +295,28 @@ export const apiSlice = createApi({
         return {
           url: URLS.appointment.acceptAppointment(id),
           method: "PUT",
+        };
+      },
+      invalidatesTags: ["appointment"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    diagnosisToMake: builder.mutation<GenericResponse, DiagnosisToMakeRequest>({
+      query: (data) => {
+        return {
+          url: URLS.appointment.diagnosisToMake,
+          method: "PUT",
+          body: data,
+        };
+      },
+      invalidatesTags: ["appointment"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    diagnosisMade: builder.mutation<GenericResponse, DiagnosisMadeRequest>({
+      query: (data) => {
+        return {
+          url: URLS.appointment.diagnosisMade,
+          method: "PUT",
+          body: data,
         };
       },
       invalidatesTags: ["appointment"],
@@ -697,6 +721,8 @@ export const {
   useUpdateAppointmentMutation,
   useUpdateAppointmentStatusMutation,
   useGetAppointmentStatsByDateMutation,
+  useDiagnosisMadeMutation,
+  useDiagnosisToMakeMutation,
   useGetEmergenciesMutation,
   useGetEmergencyQuery,
   useCreateEmergencyMutation,

@@ -1,20 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Calendar2Icon from "@/assets/icons/Calendar2Icon";
 import LocationIcon from "@/assets/icons/LocationIcon";
+import { AppointmentStatus, ToastType } from "@/enums";
 import { VehicleMediaItem } from "@/types";
+import { getStatusStyles } from "@/utils";
 import {
   formatDateTime,
   formatStatusText,
   getInitials,
 } from "@/utils/getInitials";
+import { Image } from "antd";
+import { twMerge } from "tailwind-merge";
 import Avatar from "../avatar/Avatar.component";
 import Button from "../button/Button.component";
-import { AppointmentDetailModalProps } from "./types";
 import NoData from "../no-data/NoData.component";
-import { getButtonLabel, getStatusStyles } from "@/utils";
-import { AppointmentStatus } from "@/enums";
-import { twMerge } from "tailwind-merge";
-import { Image } from "antd";
+import { AppointmentDetailModalProps } from "./types";
+import { useToast } from "@/context/ToastContext";
+import {
+  useAcceptAppointmentMutation,
+  useCompleteAppointmentMutation,
+  useDeclineAppointmentMutation,
+} from "@/redux/api";
+import { useCallback } from 'react';
 
 const AppointmentDetailModal = ({
   vehicle,
@@ -22,11 +28,80 @@ const AppointmentDetailModal = ({
   date,
   service,
   locationType,
-  isLoading,
-  isComplete,
-  onClick,
   timeOfDay,
-}: AppointmentDetailModalProps | any) => {
+  id,
+}: AppointmentDetailModalProps) => {
+  const { toast } = useToast();
+
+  const [acceptAppointment, { isLoading: acceptLoading }] =
+    useAcceptAppointmentMutation();
+  const [declineAppointment, { isLoading: declineLoading }] =
+    useDeclineAppointmentMutation();
+  const [completeAppointment, { isLoading: completeLoading }] =
+    useCompleteAppointmentMutation();
+
+  const handleAcceptAppointment = useCallback(() => {
+    if (!id) return;
+    acceptAppointment(id as string)
+      .unwrap()
+      .then((res) => {
+        toast(
+          ToastType.SUCCESS,
+          res?.meta?.message ?? "Appointment Accepted Successully"
+        );
+      })
+      .catch((err) => {
+        console.error("myerr", err);
+        if (err?.data?.errors) {
+          toast(ToastType.ERROR, err?.data?.errors);
+          return;
+        }
+        toast(ToastType.ERROR, "Oops an error occcured!");
+      });
+  }, [id, acceptAppointment]);
+
+  const handleDeclineAppointment = useCallback(() => {
+    if (!id) return;
+    declineAppointment(id as string)
+      .unwrap()
+      .then((res) => {
+        toast(
+          ToastType.SUCCESS,
+          res?.meta?.message ?? "Appointment Declined Successully"
+        );
+      })
+      .catch((err) => {
+        console.error("myerr", err);
+
+        if (err?.data?.errors) {
+          toast(ToastType.ERROR, err?.data?.errors);
+          return;
+        }
+        toast(ToastType.ERROR, "Oops an error occcured!");
+      });
+  }, [id, declineAppointment]);
+
+const handleCompleteAppointment = useCallback(() => {
+  if (!id) return;
+  completeAppointment(id as string)
+    .unwrap()
+    .then((res) => {
+      toast(
+        ToastType.SUCCESS,
+        res?.meta?.message ?? "Appointment Completed Successfully"
+      );
+    })
+    .catch((err) => {
+      console.error("myerr", err);
+      if (err?.data?.errors) {
+        toast(ToastType.ERROR, err?.data?.errors);
+        return;
+      }
+      toast(ToastType.ERROR, "Oops an error occurred!");
+    });
+}, [id, completeAppointment]);
+
+
   return (
     <>
       <div className="pb-16">
@@ -42,9 +117,13 @@ const AppointmentDetailModal = ({
             </p>
           </div>
           {vehicle?.media?.mainItemUrl && (
-            <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full min-h-[190px] p-4">
+            <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full p-2">
               {/* vehicle image */}
-              <Image src={vehicle?.media?.mainItemUrl} alt={vehicle?.name} />
+              <Image
+                src={vehicle?.media?.mainItemUrl}
+                alt={vehicle?.name}
+                height={200}
+              />
             </div>
           )}
           <div className="flex justify-between items-center">
@@ -92,7 +171,7 @@ const AppointmentDetailModal = ({
           </div>
           <p>{vehicle?.description}</p>
         </div>
-        {vehicle?.media?.items?.length > 0 && (
+        {vehicle?.media?.items && vehicle?.media?.items?.length > 0 && (
           <div className="flex flex-col gap-y-3 mt-2">
             <h2 className="font-medium">Images</h2>
             <div className="flex flex-row overflow-x-auto w-full gap-x-5">
@@ -114,17 +193,42 @@ const AppointmentDetailModal = ({
             </div>
           </div>
         )}
-        <div className="w-full mt-8 absolute bottom-0 bg-white py-3 flex">
+        <div className="w-[90%] mt-10 absolute bottom-0 bg-white py-4 pt-9 flex justify-between box-border">
+          <div className="flex space-x-4">
+            <Button
+              disabled={
+                acceptLoading ||
+                status === AppointmentStatus.COMPLETED ||
+                status === AppointmentStatus.IN_PROGRESS
+              }
+              isLoading={acceptLoading}
+              onClick={handleAcceptAppointment}
+            >
+              {"Accept"}
+            </Button>
+            <Button
+              disabled={
+                declineLoading || status === AppointmentStatus.COMPLETED
+              }
+              isLoading={declineLoading}
+              className={
+                "bg-red-50 border text-red-500 border-red-500 hover:bg-white"
+              }
+              onClick={handleDeclineAppointment}
+            >
+              {"Decline"}
+            </Button>
+          </div>
           <Button
-            disabled={isLoading ?? status === AppointmentStatus.COMPLETED}
-            isLoading={isLoading}
-            className={`w-[90%] ${
-              isComplete &&
-              "bg-primaryAccent border text-primary border-primaryAccent2"
-            } `}
-            onClick={onClick}
+            disabled={
+              completeLoading || status === AppointmentStatus.IN_PROGRESS || 
+              status === AppointmentStatus.NOT_STARTED
+            }
+            isLoading={completeLoading}
+            onClick={handleCompleteAppointment}
+            variant="secondary"
           >
-            {status ? getButtonLabel(status) : "Mark as in progress"}
+            {"Mark Complete"}
           </Button>
         </div>
       </div>
