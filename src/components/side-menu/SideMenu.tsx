@@ -89,7 +89,7 @@ const SideMenu = () => {
             />
           </svg>
         </div>
-        <h4 className="text-red ">Log Out</h4>
+        <h4 className="text-red-500 ">Log Out</h4>
       </div>
     </div>
   );

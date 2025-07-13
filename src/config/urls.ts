@@ -73,6 +73,7 @@ export const URLS = {
       `/chatroom/appointment/${appointmentId}`,
     getAppointmentByChatroom: (chatroomId: string) =>
       `/appointment/chat-room/${chatroomId}`,
+    uploadChatFiles: "/file/chat-upload-multiple",
   },
   service_Center: {
     getServiceCenters: "/service-center/list",

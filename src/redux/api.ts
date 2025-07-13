@@ -35,9 +35,10 @@ import {
   UpdateInvoiceRequest,
   UpdatePasswordAdmin,
   UpdateServiceCenterImagesRequest,
+  UploadChatFilesResponse,
   User,
   UserResponse,
-  UsersResponse,
+  UsersResponse
 } from "@/types";
 import {
   BaseQueryFn,
@@ -601,6 +602,16 @@ export const apiSlice = createApi({
       },
       providesTags: ["user"],
     }),
+    uploadChatFiles: builder.mutation<UploadChatFilesResponse, FormData>({
+      query: (data) => {
+        return {
+          url: URLS.chat.uploadChatFiles,
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
     getServiceCenters: builder.mutation<
       ServiceCentersResponse,
       ServiceCenter | Record<string, any>
@@ -720,5 +731,6 @@ export const {
   useAddServiceCenterMediaMutation,
   useGetChatroomByAppointmentQuery,
   useGetAppointmentByChatroomQuery,
+  useUploadChatFilesMutation,
   useGetServiceCenterServicesQuery,
 } = apiSlice;

@@ -95,7 +95,7 @@ const UpdateInvoice = () => {
           </div>
           <div
             className={twMerge(
-              "bg-redAccent text-red border border-primaryAccent text-sm rounded-2xl px-4 py-1 lowercase first-letter:uppercase whitespace-nowrap 2"
+              "bg-redAccent bg-red-600 border border-primaryAccent text-sm rounded-2xl px-4 py-1 lowercase first-letter:uppercase whitespace-nowrap 2"
             )}
           >
             Unpaid

@@ -16,7 +16,7 @@ const Invoice = ({
     <div className="rounded-xl p-4 border border-borderColor">
       <div className="flex justify-between items-center">
         <p className="text-grey4">Billed to</p>
-        <div className="bg-redAccent px-4 text-red p-2 rounded-2xl text-sm">
+        <div className="bg-redAccent px-4 bg-red-600 p-2 rounded-2xl text-sm">
           Pending
         </div>
       </div>

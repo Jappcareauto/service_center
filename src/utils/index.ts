@@ -23,15 +23,15 @@ export const getStatusStyles = (
       return "bg-gray-100 text-gray-500 text-sm";
     case isInvoice ? InvoiceStatus.PENDING : AppointmentStatus.IN_PROGRESS:
       return `bg-primaryAccent text-primary px-3 text-sm ${
-        isInvoice && "bg-redAccent text-red"
+        isInvoice && "bg-redAccent bg-red-600"
       }`;
     case isInvoice ? InvoiceStatus.PAID : AppointmentStatus.COMPLETED:
       return `bg-green-100 text-green-700 text-sm ${
         isInvoice && " bg-green-100 text-green-700"
       }`;
     case InvoiceStatus.DECLINED:
-      return `bg-red text-white text-sm ${
-        isInvoice && "bg-redAccent text-red"
+      return `bg-red-500 text-white text-sm ${
+        isInvoice && "bg-redAccent bg-red-600"
       }`;
     default:
       return "bg-gray-100 text-gray-500 text-sm";
@@ -45,7 +45,7 @@ export const getPaymentStatusStyles = (status: PaymentStatus) => {
     case PaymentStatus.EARNINGS:
       return `text-xs bg-green-200 text-green-800`;
     case PaymentStatus.WITHDRAWALS:
-      return `bg-red text-white text-xs bg-redAccent text-red`;
+      return `bg-red-500 text-white text-xs bg-redAccent bg-red-600`;
     default:
       return "bg-gray-100 text-gray-500 text-xs";
   }
@@ -96,7 +96,7 @@ export const getBillingStatusStyles = (status: "Paid" | "Pending") => {
     case "Paid":
       return `text-xs bg-green-200 text-green-800`;
     case "Pending":
-      return `bg-red text-white text-xs bg-redAccent text-red`;
+      return `bg-red-500 text-white text-xs bg-redAccent bg-red-600`;
     default:
       return "bg-gray-100 text-gray-500 text-xs";
   }

@@ -38,7 +38,7 @@ const Input: React.FC<CustomInputProps> = ({
         <input
           className={twMerge(
             "h-11 rounded-lg w-full px-4 focus:placeholder-primary border focus:border-primary focus:outline-none",
-            "focus:bg-primaryAccent bg-white",
+            "focus:bg-primaryAccentLight bg-white",
             prefixIcon && "pl-14",
             suffixIcon && "pr-14",
             className
