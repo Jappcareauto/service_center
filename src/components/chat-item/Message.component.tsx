@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 // import { MessageType } from "@/enums";
 import { AUDIO_TYPES, IMAGE_TYPES, Message } from "@/types";
 import CustomAudioPlayer from "../custom-audio-player/CustomAudioPlayer.component";
+import { Image } from 'antd';
 
 interface OwnProps extends Message {
   className?: string;
@@ -42,11 +43,12 @@ const MessageComponent: React.FC<OwnProps> = ({
             {mediaUrls.map((file, index) => {
               if (IMAGE_TYPES.includes(file?.type)) {
                 return (
-                  <img
+                  <Image
                     key={file?.url + index}
                     src={file?.url}
                     alt={file?.name}
-                    className="w-full max-w-[330px] rounded-xl max-h-[200px] object-cover"
+                    className="w-full max-w-[330px] rounded-xl max-h-[200px] object-cover hover:bg-red-400"
+                    
                   />
                 );
               }

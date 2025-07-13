@@ -27,6 +27,8 @@ export const URLS = {
     completeAppointment: (id: string) => `/appointment/${id}/status/complete`,
     acceptAppointment: (id: string) => `/appointment/${id}/status/accept`,
     getAppointmentStatsByDate: `/appointment/stats`,
+    diagnosisToMake: `/appointment/update-diagnosis-to-make`,
+    diagnosisMade: '/appointment/update-diagnosis-made',
   },
   payment: {
     getPayments: "/payment/list",

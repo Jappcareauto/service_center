@@ -119,7 +119,7 @@ const Chat = () => {
         `/topic/chatroom/${roomId}`,
         (messageOutput: IMessage) => {
           const newMessage: Message = JSON.parse(messageOutput.body);
-
+          console.log("New message received:", newMessage);
           setMessages((prevMessages) => {
             const exists = prevMessages.some((m) => m.id === newMessage.id);
             if (exists) return prevMessages;
@@ -167,20 +167,17 @@ const Chat = () => {
 
   const handleSendMessage = async () => {
     setSending(true);
-    console.log("selectedFiles", selectedFiles);
 
     const fileIds =
       selectedFiles.length > 0 ? await handleUploadFiles(selectedFiles) : [];
 
     const payload: any = {
       senderId: user_info?.userId,
-      content: message,
+      content: message ? message : "NO_TEXT",
       chatRoomId: roomId,
       type: fileIds.length > 0 ? "IMAGE" : "TEXT",
       ...(fileIds.length > 0 && { fileIds }),
     };
-
-    console.log("payload", payload);
 
     if (stompClientRef.current?.connected) {
       stompClientRef.current.send(
@@ -236,7 +233,7 @@ const Chat = () => {
 
       const payload: any = {
         senderId: user_info?.userId,
-        content: message,
+        content: message ? message : "NO_TEXT",
         chatRoomId: roomId,
         type: "AUDIO",
         ...(fileIds.length > 0 && { fileIds }),
@@ -336,40 +333,41 @@ const Chat = () => {
                 <Skeleton paragraph={{ rows: 4 }} />
               </>
             ) : (
-              <>
-                <ChatInvoice
-                  vehicle={appointment?.data?.vehicle}
-                  amount={
-                    invoice?.data?.money &&
-                    `${invoice?.data?.money?.amount} ${invoice?.data?.money?.currency}`
-                  }
-                  dueDate={invoice?.data?.dueDate}
-                  service={appointment?.data?.service}
-                  onView={() =>
-                    navigate(`/appointment/${appointment?.data?.id}`)
-                  }
-                  timeOfDay={appointment?.data?.timeOfDay}
-                  onInvoice={() =>
-                    navigate(`/create-invoice/${appointment?.data?.id}`)
-                  }
-                  hasInvoice={invoice?.data !== undefined}
-                  location={appointment?.data?.location?.name}
-                  description={
-                    appointment?.data?.serviceCenter?.location?.description
-                  }
-                />
-                {messages?.map((msg, index) => (
-                  <MessageComponent
-                    key={`${msg?.id} ${index}`}
-                    content={msg?.content}
-                    image={msg.image}
-                    reply={msg.reply}
-                    isMe={msg?.createdBy === user_info?.userId}
-                    mediaUrls={msg?.mediaUrls}
-                    // type={msg.type}
+              appointment?.data && (
+                <>
+                  <ChatInvoice
+                    vehicle={appointment?.data?.vehicle}
+                    amount={
+                      invoice?.data?.money &&
+                      `${invoice?.data?.money?.amount} ${invoice?.data?.money?.currency}`
+                    }
+                    dueDate={invoice?.data?.dueDate}
+                    service={appointment?.data?.service}
+                    onView={() =>
+                      navigate(`/appointment/${appointment?.data?.id}`)
+                    }
+                    timeOfDay={appointment?.data?.timeOfDay}
+                    onInvoice={() =>
+                      navigate(`/create-invoice/${appointment?.data?.id}`)
+                    }
+                    hasInvoice={invoice?.data !== undefined}
+                    location={appointment?.data?.location?.name}
+                    description={
+                      appointment?.data?.serviceCenter?.location?.description
+                    }
                   />
-                ))}
-              </>
+                  {messages?.map((msg, index) => (
+                    <MessageComponent
+                      key={`${msg?.id} ${index}`}
+                      content={msg.content === "NO_TEXT" ? "" : msg?.content}
+                      image={msg.image}
+                      reply={msg.reply}
+                      isMe={msg?.createdBy === user_info?.userId}
+                      mediaUrls={msg?.mediaUrls}
+                    />
+                  ))}
+                </>
+              )
             )}
             <div ref={bottomRef} />
           </div>

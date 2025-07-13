@@ -34,7 +34,7 @@ const SideMenu = () => {
     dispatch(apiSlice.util.resetApiState());
   };
   return (
-    <div className="w-[270px] border-r border-r-borderColor h-screen fixed left-0 top-0 no-scrollbar overflow-y-auto px-4 pt-6">
+    <div className="w-[270px] border-r border-r-borderColor h-screen fixed left-0 top-0 no-scrollbar overflow-y-auto px-4 py-6">
       <p className="mb-4">Good Morning</p>
       <button className="flex items-center p-3 border border-borderColor rounded-2xl w-full gap-x-4 mb-6 font-medium" onClick={() => navigate(paths.profile)}>
         {isLoading ? (
@@ -68,15 +68,15 @@ const SideMenu = () => {
       >
         <div className="">
           <svg
-            width="24"
-            height="24"
+            width="22"
+            height="22"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
               d="M14 3.09502C13.543 3.03241 13.0755 3 12.6 3C7.29807 3 3 7.02944 3 12C3 16.9706 7.29807 21 12.6 21C13.0755 21 13.543 20.9676 14 20.905"
-              stroke="#F1351B"
+              stroke="#ff6d5a"
               strokeWidth="1.5"
               strokeLinecap="round"
             />
