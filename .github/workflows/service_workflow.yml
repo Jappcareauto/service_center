@@ -89,8 +89,8 @@ jobs:
         run: |
           cd ~/jappcare
           sudo docker-compose pull service-center
-          sudo docker-compose up -d service-center
-
+          sudo docker-compose up -d --force-recreate service-center
+          
       - name: Verify Containers
         run: |
           sudo docker ps
