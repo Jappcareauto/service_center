@@ -14,6 +14,7 @@ export default defineConfig({
     global: "window",
   },
   server: {
+    allowedHosts: ["admin.jappcare.com", "servicecenter.jappcare.com"],
     proxy: {
       "/ws": {
         target: "https://bpi.jappcare.com",
