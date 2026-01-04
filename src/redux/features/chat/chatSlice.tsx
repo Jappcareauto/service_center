@@ -1,11 +1,14 @@
+import { User } from '@/types';
 import { createSlice } from "@reduxjs/toolkit";
 
 interface AuthState {
   chatroomId: string;
+  receiver: User | null
 }
 
 const initialState: AuthState = {
   chatroomId: "",
+  receiver: null
 };
 
 const chatSlice = createSlice({
@@ -15,8 +18,11 @@ const chatSlice = createSlice({
     setChatroomId: (state, { payload }) => {
       state.chatroomId = payload;
     },
+    setReceiver: (state, { payload }) => {
+      state.receiver = payload;
+    },
   },
 });
 
-export const { setChatroomId } = chatSlice.actions;
+export const { setChatroomId, setReceiver } = chatSlice.actions;
 export default chatSlice.reducer;

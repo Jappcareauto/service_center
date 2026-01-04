@@ -18,34 +18,42 @@ import Input from "../inputs/Input.component";
 
 interface IProps extends ServiceCenter {
   onRequested?: () => void;
+  serviceCenterId: string;
 }
 
-const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
+const EditProfile: FC<IProps> = ({
+  onRequested,
+  serviceCenterId,
+  ...props
+}) => {
+  // console.log('props', props)
   const [updateServiceCenter, { isLoading }] = useUpdateServiceCenterMutation();
   const [updateImage, { isLoading: imageUpdateLoading }] =
     useUpdateServiceCenterImageMutation();
   const { toast } = useToast();
   const [name, setName] = useState(props.name ?? "");
+  const [description, setDescription] = useState(props?.description ?? "");
   const [locName, setLocName] = useState(props?.location?.name ?? "");
   const [locDescription, setLocDescription] = useState(
     props.location?.description ?? ""
   );
 
   const handleUpdateImage = (file: any) => {
-    if (props.id) {
+    if (serviceCenterId) {
       const formData = new FormData();
       formData.append("file", file);
       const data = {
-        id: props.id,
+        id: serviceCenterId,
         data: formData,
       };
       updateImage(data)
         .unwrap()
         .then((res) => {
-          onRequested?.();
           toast(ToastType.SUCCESS, res?.meta?.message as string);
+          onRequested?.();
         })
         .catch((err) => {
+          console.log("err", err);
           if (err?.data?.errors) {
             toast(ToastType.ERROR, err?.data?.errors);
           } else if (err?.message) {
@@ -57,33 +65,46 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
     }
   };
   const handleUpdateServiceCenter = () => {
-    if (props.id) {
-      const updatedData = {
-        ...props,
-        name,
-        location: {
-          ...props.location,
-          name: locName,
-          description: locDescription,
-        },
-      };
-      const data = {
-        id: props.id,
+    if (serviceCenterId) {
+      const updatedData:any = {};
+      if (name) updatedData.name = name ?? props?.name;
+      if (description !== (props.description ?? ""))
+        updatedData.description = description;
+      const locationChanges:any = {};
+      if (locName !== (props.location?.name ?? ""))
+        locationChanges.name = locName;
+      if (locDescription !== (props.location?.description ?? ""))
+        locationChanges.description = locDescription;
+      if (Object.keys(locationChanges).length > 0) {
+        updatedData.location = locationChanges;
+      }
+      if (Object.keys(updatedData).length === 0) {
+        console.log("No changes detected.");
+        return; 
+      }
+      const payload = {
+        id: serviceCenterId,
         data: updatedData,
       };
-      updateServiceCenter(data)
+      
+      console.log("Payload being sent:", payload);
+      updateServiceCenter(payload)
         .unwrap()
         .then((res) => {
+          console.log("res update", res);
           toast(ToastType.SUCCESS, res?.meta?.message as string);
           onRequested?.();
         })
         .catch((err) => {
-          if (err?.data?.errors) {
-            toast(ToastType.ERROR, err?.data?.errors);
-          } else if (err?.message) {
-            toast(ToastType.ERROR, err?.message);
+          const validationErrors = err?.data?.errors;
+          if (validationErrors) {
+            Object.values(validationErrors).forEach((errorMessage) => {
+              toast(ToastType.ERROR, errorMessage as string);
+            });
+          } else if (err?.data?.message || err?.message) {
+            toast(ToastType.ERROR, err?.data?.message || err?.message);
           } else {
-            toast(ToastType.ERROR, "update failed!");
+            toast(ToastType.ERROR, "Update failed!");
           }
         });
     }
@@ -96,7 +117,8 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
           <Avatar
             parentClassName="w-[120px] h-[120px]"
             className="border-[4px] p-1"
-            profileImageUrl={props.imageUrl ? props.imageUrl : images.logo}
+            profileImageUrl={images.logo}
+            // profileImageUrl={props.imageUrl ? props.imageUrl : images.logo}
             id="profile"
             allowUpload
             onSelect={(file) => {
@@ -105,9 +127,6 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
             isLoading={imageUpdateLoading}
             showEdit={true}
           />
-          {/* <button className="absolute bottom-1 right-1 rounded-full flex items-center justify-center bg-primary w-9 h-9">
-            <EditIcon />
-          </button> */}
         </div>
       </div>
       <div className="flex flex-col gap-y-5 mt-5">
@@ -124,6 +143,8 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
           <AntdInput.TextArea
             rows={5}
             placeholder="Our vehicle service center in Yaoundé, Cameroon offers professional automotive care tailored to keep your car running smoothly and reliably"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           />
         </div>
         <div>
@@ -154,7 +175,7 @@ const EditProfile: FC<IProps> = ({ onRequested, ...props }) => {
           </Button>
         </div>
         <div>
-        {/* <MapWithMarker /> */}
+          {/* <MapWithMarker /> */}
           <div className="bg-map bg-cover bg-center w-full h-[260px] rounded-xl p-2 relative flex items-center justify-center">
             <div className="flex justify-end items-center gap-x-2 absolute right-2 top-2">
               <button className="w-8 h-8 bg-white rounded-full flex items-center justify-center">

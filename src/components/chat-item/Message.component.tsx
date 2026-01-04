@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 // import { MessageType } from "@/enums";
 import { AUDIO_TYPES, IMAGE_TYPES, Message } from "@/types";
 import CustomAudioPlayer from "../custom-audio-player/CustomAudioPlayer.component";
-import { Image } from 'antd';
+import { Image } from "antd";
 
 interface OwnProps extends Message {
   className?: string;
@@ -15,6 +15,7 @@ const MessageComponent: React.FC<OwnProps> = ({
   mediaUrls,
   reply,
   isMe,
+  status,
 }) => {
   return (
     <div
@@ -36,7 +37,7 @@ const MessageComponent: React.FC<OwnProps> = ({
           </p>
         )}
 
-        {content && <p className="p-2 text-sm">{content}</p>}
+        {content && <p className="p-2 text-sm">{content} </p>}
 
         {mediaUrls && mediaUrls.length > 0 && (
           <div className="flex flex-col gap-2 p-1">
@@ -48,7 +49,6 @@ const MessageComponent: React.FC<OwnProps> = ({
                     src={file?.url}
                     alt={file?.name}
                     className="w-full max-w-[330px] rounded-xl max-h-[200px] object-cover hover:bg-red-400"
-                    
                   />
                 );
               }
@@ -69,6 +69,13 @@ const MessageComponent: React.FC<OwnProps> = ({
             })}
           </div>
         )}
+        <p className="text-xs text-gray-300 text-right relative px-2 pb-1 pt-2">
+          {status === "READ"
+            ? "✓✓ Read"
+            : status === "DELIVERED"
+            ? "✓✓ Delivered"
+            : "✓ Sent"}
+        </p>
       </div>
     </div>
   );

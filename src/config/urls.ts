@@ -1,3 +1,5 @@
+import { AppointmentStatus } from "@/enums";
+
 export const URLS = {
   auth: {
     login: "/auth/login",
@@ -16,7 +18,15 @@ export const URLS = {
     updatePasswordAdmin: (id: string) => `/user/${id}/update-password`,
   },
   appointment: {
-    getAppointments: "/appointment/list",
+    getAppointments: (
+      status?: AppointmentStatus,
+      page?: number,
+      limit?: number,
+      search?: string
+    ) =>
+      `/appointment/list?status=${status ?? ""}&page=${page ?? ""}&limit=${
+        limit ?? ""
+      }&search=${search ?? ""}`,
     getAppointmentStats: "/appointment/stats",
     getAppointment: (id: string) => `/appointment/${id}`,
     createAppointment: "/appointment",
@@ -28,7 +38,7 @@ export const URLS = {
     acceptAppointment: (id: string) => `/appointment/${id}/status/accept`,
     getAppointmentStatsByDate: `/appointment/stats`,
     diagnosisToMake: `/appointment/update-diagnosis-to-make`,
-    diagnosisMade: '/appointment/update-diagnosis-made',
+    diagnosisMade: "/appointment/update-diagnosis-made",
   },
   payment: {
     getPayments: "/payment/list",
@@ -79,11 +89,13 @@ export const URLS = {
   },
   service_Center: {
     getServiceCenters: "/service-center/list",
+    getServiceCenter: (id: string) => `/service-center/${id}`, 
     updateServiceCenterImage: (id: string) =>
       `/service-center/${id}/update-image`,
-    updateServiceCenter: (id: string) => `/service-center/${id}/update`,
+    updateServiceCenter: (id: string) => `/service-center/${id}`,
     addServiceCenterMedia: (id: string) =>
       `/service-center/add-media-to-service-center/${id}/update`,
     getServiceCenterServices: (id: string) => `/service-centers/${id}/services`,
+    getChatContacts: "/service-center/chat-contacts",
   },
 };

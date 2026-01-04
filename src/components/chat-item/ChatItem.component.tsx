@@ -7,7 +7,7 @@ type Props = {
   numberOfUnreadMessage?: number;
   time?: string;
   name?: string;
-  label?: string;
+  lastMessage?: string;
   active?: boolean;
   [x: string]: any;
 };
@@ -16,7 +16,7 @@ const ChatItem: React.FC<Props> = ({
   name = "",
   numberOfUnreadMessage = 10,
   time = "",
-  label,
+  lastMessage,
   active,
 }) => {
   return (
@@ -43,9 +43,9 @@ const ChatItem: React.FC<Props> = ({
           <p className="text-sm font-semibold text-textColor line-clamp-1 whitespace-nowrap overflow-hidden text-ellipsis">
             {name}
           </p>
-          {label && (
+          {lastMessage && (
             <p className="text-xs text-grey4 whitespace-nowrap line-clamp-1 overflow-hidden text-ellipsis">
-              {label}
+              {lastMessage}
             </p>
           )}
         </div>

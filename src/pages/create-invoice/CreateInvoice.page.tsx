@@ -24,10 +24,11 @@ import { twMerge } from "tailwind-merge";
 
 const CreateInvoice = () => {
   const { id } = useParams();
-  const { user_info, user: adminUser } = useAppSelector((state) => state.auth);
+  const { user_info, user: adminUser, accessToken } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { toast } = useToast();
+  console.log(accessToken)
 
   const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
   const { data: appointment } = useGetAppointmentQuery(id as string, {
@@ -71,6 +72,7 @@ const CreateInvoice = () => {
         billedToUserId: appointment?.data?.createdBy as string,
         items: invoiceItems as any,
       };
+      console.log("invoice data", data);
       createInvoice(data)
         .unwrap()
         .then()
@@ -91,8 +93,15 @@ const CreateInvoice = () => {
     );
     setTotal(totalSum);
   };
-
-  const disabled = !appointment?.data || !dueDate || !issueDate || isLoading;
+  const disabled =
+    !appointment?.data ||
+    !dueDate ||
+    !issueDate ||
+    isLoading 
+    // ||
+    // !items?.length ||
+    // total <= 0 ||
+    // appointment?.data?.status !== "COMPLETED";
 
   const handleAdd = useCallback((items: any[]) => {
     setItems(items);
@@ -154,7 +163,7 @@ const CreateInvoice = () => {
             </div>
             <div
               className={twMerge(
-                "bg-redAccent bg-red-600 border border-primaryAccent text-sm rounded-2xl px-4 py-1 lowercase first-letter:uppercase whitespace-nowrap 2"
+                "bg-redAccent text-red-500 border border-primaryAccent text-sm rounded-2xl px-4 py-1 lowercase first-letter:uppercase whitespace-nowrap 2"
               )}
             >
               Unpaid

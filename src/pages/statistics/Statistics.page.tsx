@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CalendarIcon from "@/assets/icons/CalendarIcon";
 import LocationIcon from "@/assets/icons/LocationIcon";
 import StarIcon from "@/assets/icons/StarIcon";
@@ -7,10 +8,10 @@ import Avatar from "@/components/avatar/Avatar.component";
 import Button from "@/components/button/Button.component";
 import Drawer from "@/components/drawer/Drawer.component";
 import LineChart from "@/components/line-chart/LineChart.component";
-import Skeleton from '@/components/skeletons/Skeleton.component';
+import Skeleton from "@/components/skeletons/Skeleton.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
 import {
-  useGetAppointmentsMutation,
+  useGetAppointmentsQuery,
   useGetPaymentsMutation,
   useGetServiceCentersMutation,
 } from "@/redux/api";
@@ -20,7 +21,9 @@ import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import StatisticsProfile from "./StatisticsProfile";
 import StatComponent from "./StatsComponent";
-import DashboardLayout from '@/layouts/DashboardLayout';
+import DashboardLayout from "@/layouts/DashboardLayout";
+import { useAutoFetch } from "@/hooks/useAutoFetch";
+import { AppointmentStatus } from "@/enums";
 
 const Statistics = () => {
   const [open, setOpen] = useState(false);
@@ -34,54 +37,40 @@ const Statistics = () => {
     AppointmentType[]
   >([]);
 
-  const [getAppointments, { data: appointments, isLoading }] =
-    useGetAppointmentsMutation();
+  const { data: appointments, isLoading } = useGetAppointmentsQuery(undefined);
   const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
     {}
   );
 
-  const [getServiceCenters, { data, isLoading: serviceCentersLoading }] =
-    useGetServiceCentersMutation();
+  const { result: data, isLoading: serviceCentersLoading } = useAutoFetch(
+    useGetServiceCentersMutation as any,
+    {
+      ownerId: user_info?.userId,
+    }
+  );
 
-  const getAppointmentsData = (status?: string) => {
-    const submitData = status
-      ? {
-          status,
-          serviceCenterId: data?.data?.[0]?.id,
-        }
-      : {};
-    getAppointments(submitData)
-      .unwrap()
-      .then((res) => {
-        //       const NOT_STARTED = "NOT_STARTED",
-        // IN_PROGRESS = "IN_PROGRESS",
-        // COMPLETED = "COMPLETED",
-        const allAppoinments = res?.data?.filter(
-          (appointment: AppointmentType) =>
-            appointment.status === "NOT_STARTED" ||
-            appointment.status === "IN_PROGRESS" ||
-            appointment.status === "COMPLETED"
-        );
-        setAllAppointments(allAppoinments);
-        const inProgressAppointments = allAppoinments.filter(
-          (appointment: AppointmentType) => appointment.status === "IN_PROGRESS"
-        );
-        setInProgressAppointments(inProgressAppointments);
-        const completedAppointments = allAppoinments.filter(
-          (appointment: AppointmentType) => appointment.status === "COMPLETED"
-        );
-        setCompletedAppointments(completedAppointments);
-      });
+  const getAppointmentsData = () => {
+    if (!appointments?.data) return;
+
+    const allAppoinments = appointments?.data?.filter(
+      (appointment: AppointmentType) =>
+        appointment.status === AppointmentStatus.NOT_STARTED ||
+        appointment.status === AppointmentStatus.IN_PROGRESS ||
+        appointment.status === AppointmentStatus.COMPLETED
+    );
+    setAllAppointments(allAppoinments);
+    const inProgressAppointments = allAppoinments.filter(
+      (appointment: AppointmentType) => appointment.status === AppointmentStatus.IN_PROGRESS
+    );
+    setInProgressAppointments(inProgressAppointments);
+    const completedAppointments = allAppoinments.filter(
+      (appointment: AppointmentType) => appointment.status === AppointmentStatus.COMPLETED
+    );
+    setCompletedAppointments(completedAppointments);
   };
 
   useEffect(() => {
-    getServiceCenters({
-      ownerId: user_info?.userId,
-    })
-      .unwrap()
-      .then(() => {
-        getAppointmentsData("");
-      });
+    getAppointmentsData();
     getPayments({})
       .unwrap()
       .then((res) => {
@@ -94,15 +83,7 @@ const Statistics = () => {
   }, []);
 
   const center = data?.data?.[0];
-
-  // const getPaymentsData = (status?: PaymentStatus) => {
-  //   const submitData = status
-  //     ? {
-  //         status,
-  //       }
-  //     : {};
-  //   getPayments(submitData);
-  // };
+  console.log("center", center);
 
   return (
     <DashboardLayout showBack={false}>
@@ -119,7 +100,7 @@ const Statistics = () => {
             <Button
               onClick={() => setOpen(true)}
               className=" h-10 rounded-full font-normaltext-sm"
-              variant='tertiary'
+              variant="tertiary"
             >
               View Profile
             </Button>

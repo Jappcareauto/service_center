@@ -32,67 +32,68 @@ const FilterBar: React.FC<OwnProps> = ({
   const [activeItem, setActiveItem] = useState(defaultActiveFilter || filters[0].label || '');
 
   return (
-    <div
-      className={twMerge(
-        "flex items-center justify-between",
-        (customButtons || !hideLayoutButtons) && "w-full",
-        className
-      )}
-    >
-      <div className="flex items-center gap-x-5">
-        {filters.map((item, index) => {
-          const isSelected = item.label === activeItem;
-          return (
-            <div
-              key={"filter-bar-item-" + index}
-              onClick={() => {
-                setActiveItem(item.label);
-                onFilter(item.value);
-              }}
-              className={twMerge(
-                "rounded-full h-9 px-5 flex items-center first-letter:uppercase  justify-center cursor-pointer",
-                isSelected
-                  ? "bg-primary text-white"
-                  : "bg-primaryAccent text-black",
-                filterClassName?.(isSelected)
-              )}
-            >
-              {item.label}
-            </div>
-          );
-        })}
-      </div>
-      <div>
-        {customButtons
-          ? customButtons
-          : !hideLayoutButtons && (
-              <div className="flex gap-x-2">
-                <button
-                  onClick={() => {
-                    onGrid?.();
-                  }}
-                  className={twMerge(
-                    "w-11 h-11 rounded-full flex items-center justify-center",
-                    isList ? "bg-primaryAccent" : "bg-primary text-white"
-                  )}
-                >
-                  <GridIcon />
-                </button>
-                <button
-                  onClick={() => {
-                    onList?.();
-                  }}
-                  className={twMerge(
-                    "w-11 h-11 rounded-full flex items-center justify-center",
-                    !isList ? "bg-primaryAccent" : "bg-primary text-white"
-                  )}
-                >
-                  <ListIcon />
-                </button>
-              </div>
+   <div
+  className={twMerge(
+    "flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full",
+    className
+  )}
+>
+  {/* Filters */}
+  <div className="flex items-center gap-3 overflow-x-auto sm:overflow-visible no-scrollbar">
+    {filters.map((item, index) => {
+      const isSelected = item.label === activeItem;
+      return (
+        <div
+          key={"filter-bar-item-" + index}
+          onClick={() => {
+            setActiveItem(item.label);
+            onFilter(item.value);
+          }}
+          className={twMerge(
+            "whitespace-nowrap rounded-full h-9 px-5 flex items-center justify-center cursor-pointer first-letter:uppercase",
+            isSelected
+              ? "bg-primary text-white"
+              : "bg-primaryAccent text-black",
+            filterClassName?.(isSelected)
+          )}
+        >
+          {item.label}
+        </div>
+      );
+    })}
+  </div>
+
+  {/* Layout Buttons */}
+  <div className="flex gap-2 shrink-0">
+    {customButtons ? (
+      customButtons
+    ) : (
+      !hideLayoutButtons && (
+        <>
+          <button
+            onClick={() => onGrid?.()}
+            className={twMerge(
+              "w-10 h-10 rounded-full flex items-center justify-center",
+              isList ? "bg-primaryAccent" : "bg-primary text-white"
             )}
-      </div>
-    </div>
+          >
+            <GridIcon />
+          </button>
+          <button
+            onClick={() => onList?.()}
+            className={twMerge(
+              "w-10 h-10 rounded-full flex items-center justify-center",
+              !isList ? "bg-primaryAccent" : "bg-primary text-white"
+            )}
+          >
+            <ListIcon />
+          </button>
+        </>
+      )
+    )}
+  </div>
+</div>
+
   );
 };
 

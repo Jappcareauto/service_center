@@ -9,6 +9,7 @@ interface AuthState {
   accessToken: string;
   role: ROLES;
   lastLogin: string;
+  serviceCenterId: string;
   shouldRedirect: boolean;
 }
 
@@ -19,6 +20,7 @@ const initialState: AuthState = {
   accessToken: "",
   role: ROLES.ROLE_SERVICE_MANAGER,
   lastLogin: "",
+  serviceCenterId: "",
   shouldRedirect: false,
 };
 
@@ -51,6 +53,9 @@ const authSlice = createSlice({
     setLastLogin: (state, { payload }) => {
       state.lastLogin = payload;
     },
+    setServiceCenterId: (state, { payload }) => {
+      state.serviceCenterId = payload;
+    },
   },
 });
 
@@ -62,5 +67,7 @@ export const {
   setRole,
   setLastLogin,
   setUserInfo,
+  setServiceCenterId
 } = authSlice.actions;
+
 export default authSlice.reducer;
