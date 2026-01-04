@@ -119,6 +119,8 @@ const AppointmentDetails = () => {
       });
   };
 
+  console.log('data?.data', data?.data?.chatRoom)
+
   return (
     <DashboardLayout>
       <div className="pb-16">
@@ -130,7 +132,7 @@ const AppointmentDetails = () => {
           <p className="font-semibold text-gray-600">Appointment Details</p>
         </button>
         <div className="flex">
-          <div className="flex flex-col gap-y-3 w-[70%] pr-20">
+          <div className="flex flex-col gap-y-3 w-[76%] pr-20">
             <div className="flex justify-between items-center mb-4">
               <Avatar
                 name={(user?.data?.name as string) ?? data?.data?.vehicle?.name}
@@ -250,7 +252,7 @@ const AppointmentDetails = () => {
                 </div>
               )}
           </div>
-          <div className="flex w-[28%] bg-white px-5 pt-7 fixed top-0 right-0 h-screen box-border drop-shadow-2xl flex-col overflow-y-auto pb-7 z-50">
+          <div className="flex w-[24%] bg-white px-5 pt-7 fixed top-0 right-0 h-screen box-border drop-shadow-2xl flex-col overflow-y-auto pb-7 z-50">
             <p className="font-semibold text-gray-600 mb-5">
               Appointment Results
             </p>

@@ -5,38 +5,25 @@ import CalendarIcon from "@/assets/icons/CalendarIcon";
 import StatisticIcon from "@/assets/icons/StatisticIcon";
 import AppointmentDetailModal from "@/components/appointment-detail-modal/AppointmentDetailModal.component";
 import Appointment from "@/components/appointment/Appointment.component";
-import BarChart from "@/components/charts/BarChart.component";
 import Drawer from "@/components/drawer/Drawer.component";
 import FilterBar from "@/components/filter-bar/FilterBar.component";
 import Modal from "@/components/modals/Modal.component";
 import NoData from "@/components/no-data/NoData.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
 import Table from "@/components/table/Table.component";
-import {
-  appointmentStatuses,
-  dayMap,
-  getAppointmentColumns,
-  weekDays,
-} from "@/constants";
+import { appointmentStatuses, getAppointmentColumns } from "@/constants";
 import { AppointmentStatus } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useDeleteAppointmentMutation,
   useGetAppointmentQuery,
-  useGetAppointmentsMutation,
-  useGetAppointmentStatsByDateMutation,
+  useGetAppointmentsQuery,
   useGetPaymentsMutation,
-  useGetServiceCentersMutation,
-  useGetUserQuery
+  useGetUserQuery,
 } from "@/redux/api";
 import { setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import {
-  Appointment as AppointmentType,
-  BarChartItemType,
-  DateRange,
-} from "@/types";
-import { getDefaultWeekDates } from "@/utils";
+import { Appointment as AppointmentType } from "@/types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -44,14 +31,14 @@ import { twMerge } from "tailwind-merge";
 
 const Dashboard = () => {
   const { user_info } = useAppSelector((state) => state.auth);
-
-  const [getAppointments, { isLoading }] = useGetAppointmentsMutation();
+  const [status, setStatus] = useState<AppointmentStatus>(AppointmentStatus.ALL);
+  const { data, isLoading } = useGetAppointmentsQuery({
+    status,
+  });
   const { data: user } = useGetUserQuery(user_info?.userId);
   const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
     {}
   );
-  const [getAppointmentStats, { isLoading: statsLoading }] =
-    useGetAppointmentStatsByDateMutation();
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
@@ -61,74 +48,49 @@ const Dashboard = () => {
   const dispatch = useAppDispatch();
   const [id, setId] = useState("");
   const [deleteId, setDeleteId] = useState("");
-  const {
-    data: appointment,
-    isLoading: appointmentLoading,
-  } = useGetAppointmentQuery(id, {
-    skip: !id,
-  });
+  const { data: appointment, isLoading: appointmentLoading } =
+    useGetAppointmentQuery(id, {
+      skip: !id,
+    });
   const [revenue, setRevenue] = useState("");
   const [open, setOpen] = useState(false);
   const [isList, setIsList] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const [weeklyStats, setWeeklyStats] = useState<BarChartItemType[]>([]);
-
-  useEffect(() => {
-    getAppointmentsData(AppointmentStatus.NOT_STARTED);
-    const { startDate, endDate } = getDefaultWeekDates();
-    handleAppointmentStats(startDate, endDate);
-  }, []);
 
   useEffect(() => {
     if (user?.data) {
       dispatch(setUser(user?.data));
     }
   }, [dispatch, user]);
-  const [getServiceCenters, { data: serviceCenter }] =
-    useGetServiceCentersMutation();
 
   useEffect(() => {
-    const { startDate, endDate } = getDefaultWeekDates();
-    getServiceCenters({ ownerId: user_info?.userId });
-    handleAppointmentStats(startDate, endDate);
-    getAppointmentsData(AppointmentStatus.NOT_STARTED);
-  }, []);
-
-  const getAppointmentsData = (status?: string) => {
-    const submitData = status
-      ? {
-          status,
-          serviceCenterId: serviceCenter?.data?.[0]?.id,
-        }
-      : {};
-    getAppointments(submitData)
-      .unwrap()
-      .then((res) => {
-        setAppointmentsList(res.data);
-        const filteredTableData = res.data.map((item) => {
-          return {
-            id: item.id,
-            status: item.status ? item.status : "NOT_STARTED",
-            date: item.date,
-            locationType: item.locationType,
-            serviceTitle: item?.service?.title,
-            vehicleName: item?.vehicle?.name,
-            image: item?.vehicle?.media?.mainItemUrl,
-          };
+    // console.log("data", data);
+    if (data && data?.data) {
+      setAppointmentsList(data?.data);
+      const filteredTableData = data?.data.map((item) => {
+        return {
+          id: item.id,
+          status: item.status ? item.status : "NOT_STARTED",
+          date: item.date,
+          locationType: item.locationType,
+          serviceTitle: item?.service?.title,
+          vehicleName: item?.vehicle?.name,
+          image: item?.vehicle?.media?.mainItemUrl,
+        };
+      });
+      setTableData(filteredTableData as any);
+      getPayments({})
+        .unwrap()
+        .then((res) => {
+          // setPaymentsList(res.data);
+          const totalAmount = res?.data?.reduce(
+            (sum, payment) => sum + (payment.money?.amount || 0),
+            0
+          );
+          setRevenue(`${totalAmount.toString()} XAF`);
         });
-        setTableData(filteredTableData as any);
-      });
-    getPayments({})
-      .unwrap()
-      .then((res) => {
-        // setPaymentsList(res.data);
-        const totalAmount = res?.data?.reduce(
-          (sum, payment) => sum + (payment.money?.amount || 0),
-          0
-        );
-        setRevenue(`${totalAmount.toString()} XAF`);
-      });
-  };
+    }
+  }, [data, getPayments]);
 
   const onDelete = () => {
     if (!deleteId) return;
@@ -136,7 +98,6 @@ const Dashboard = () => {
       .unwrap()
       .then((res) => {
         toast.success(res?.meta?.message ?? "Appointment Deleted Successully");
-        getAppointmentsData();
         setDeleteId("");
       })
       .catch((err) => {
@@ -146,29 +107,6 @@ const Dashboard = () => {
         }
         toast.error("Oops an error occcured!");
       });
-  };
-
-  const handleAppointmentStats = (startDate: string, endDate: string) => {
-    const data = {
-      startDate,
-      endDate,
-      range: "WEEK" as DateRange,
-    };
-    getAppointmentStats(data)
-      .unwrap()
-      .then((res) => {
-        if (res?.data.currentStats) {
-          const formattedStats = weekDays.map((day: string) => ({
-            name: dayMap[day as keyof typeof dayMap],
-            value:
-              res?.data.currentStats[
-                day as keyof typeof res.data.currentStats
-              ] || 0,
-          }));
-          setWeeklyStats(formattedStats);
-        }
-      })
-      .catch((err) => console.log("err", err));
   };
 
   const handleDelete = (id: string) => {
@@ -190,19 +128,19 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout showBack={false}>
-      <div className="flex gap-x-4">
-        <div className="pr-3 flex-[65%] flex flex-col">
-          <div className="mt-6  pr-5">
-            <div className="grid grid-cols-2 gap-x-6">
-              <div>
-                <StatisticsCard
-                  title="Appointments"
-                  value={appointmentsList?.length}
-                  badgeTitle={"This week"}
-                  icon={<CalendarIcon className="text-white" />}
-                  isLoading={isLoading}
-                />
-              </div>
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left Section */}
+        <div className="lg:flex-[65%] flex flex-col">
+          <div className="lg:pr-5">
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <StatisticsCard
+                title="Appointments"
+                value={appointmentsList?.length}
+                badgeTitle={"This week"}
+                icon={<CalendarIcon color="#fff" />}
+                isLoading={isLoading}
+              />
               <StatisticsCard
                 title="Revenue"
                 value={revenue}
@@ -212,30 +150,25 @@ const Dashboard = () => {
                 isLoading={paymentsLoading}
               />
             </div>
-            {/* {emergencies?.data && emergencies?.data?.length > 0 && (
-            <div className="my-5">
-              <CustomCollapse items={collapseItems} />
-            </div>
-          )} */}
-            <div className="flex items-center gap-x-2 mt-6">
+
+            {/* Recent Appointments */}
+            <div className="flex items-center gap-2 mt-6">
               <CalendarIcon />
               <h2 className="font-medium">Recent Appointments</h2>
             </div>
             <div className="mt-6">
               <FilterBar
                 filters={appointmentStatuses}
-                onFilter={(filter) =>
-                  getAppointmentsData(filter as AppointmentStatus)
-                }
-                onGrid={() => {
-                  setIsList(false);
+                onFilter={(filter) => {
+                  setStatus(filter as AppointmentStatus);
                 }}
-                onList={() => {
-                  setIsList(true);
-                }}
+                onGrid={() => setIsList(false)}
+                onList={() => setIsList(true)}
                 isList={isList}
               />
             </div>
+
+            {/* Appointments List */}
             <div
               className={twMerge(
                 "flex flex-col gap-y-8 mt-10",
@@ -263,6 +196,7 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
+
               <div
                 className={twMerge(
                   "flex flex-col gap-y-3",
@@ -273,10 +207,8 @@ const Dashboard = () => {
                 <div className="flex flex-col gap-y-5">
                   {appointmentsList?.length > 0 ? (
                     isList ? (
-                      // Show the table when isList is true
                       <Table data={tableData} columns={columns} />
                     ) : (
-                      // Show the appointment list (or map) when isList is false
                       appointmentsList?.map((appointment) => (
                         <Appointment
                           key={appointment.id}
@@ -301,28 +233,30 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-[30%] gap-y-6">
-          <div>
-            <BarChart
-              data={weeklyStats}
-              title="Weekly Appointments"
-              onSelect={(start, end) => handleAppointmentStats(start, end)}
-              isLoading={statsLoading}
+
+        {/* Right Section */}
+        <div className="lg:flex-[30%] flex flex-col gap-y-6 w-full">
+          {/* <BarChart
+            data={weeklyStats}
+            title="Weekly Appointments"
+            onSelect={(start, end) => handleAppointmentStats(start, end)}
+            isLoading={statsLoading}
+          /> */}
+          <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">
+            <p className="text-2xl font-light">
+              Vehicle
+              <br />
+              Reports
+            </p>
+            <img
+              src={images.bgService}
+              alt=""
+              className="absolute bottom-0 right-2"
             />
-            <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">
-              <p className="text-2xl font-light">
-                Vehicle
-                <br />
-                Reports
-              </p>
-              <img
-                src={images.bgService}
-                alt=""
-                className="absolute bottom-0 right-2"
-              />
-            </div>
           </div>
         </div>
+
+        {/* Drawer + Modal */}
         <Drawer
           open={open}
           onClose={() => {
@@ -334,6 +268,7 @@ const Dashboard = () => {
           onNavigate={() =>
             appointment && navigate(`/appointment/${appointment?.data?.id}`)
           }
+          className="w-full sm:w-[500px] md:w-[600px] lg:w-[700px]"
         >
           <AppointmentDetailModal {...appointment?.data} />
         </Drawer>
@@ -342,7 +277,7 @@ const Dashboard = () => {
           onClose={() => setDeleteId("")}
           title="Delete Appointment"
           onOk={onDelete}
-          width={window.innerWidth * 0.3}
+          width={window.innerWidth < 768 ? "90%" : window.innerWidth * 0.3}
           okText="Delete"
           confirmLoading={deleteLoading}
         >

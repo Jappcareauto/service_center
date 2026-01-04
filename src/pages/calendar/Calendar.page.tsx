@@ -4,16 +4,16 @@ import CalendarCard from "@/components/calendars/CalendarCard.component";
 import CalendarFull from "@/components/calendars/CalendarFull.component";
 import BarChart from "@/components/charts/BarChart.component";
 import { dayMap, weekDays } from "@/constants";
-import DashboardLayout from '@/layouts/DashboardLayout';
+import DashboardLayout from "@/layouts/DashboardLayout";
 import {
-  useGetAppointmentsMutation,
+  useGetAppointmentsQuery,
   useGetAppointmentStatsByDateMutation,
 } from "@/redux/api";
 import { BarChartItemType, DateRange } from "@/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const CalendarView = () => {
-  const [getAppointments, { data }] = useGetAppointmentsMutation();
+  const { data, isLoading } = useGetAppointmentsQuery(undefined);
   const [weeklyStats, setWeeklyStats] = useState<BarChartItemType[]>([]);
   const [getAppointmentStats, { isLoading: statsLoading }] =
     useGetAppointmentStatsByDateMutation();
@@ -41,42 +41,43 @@ const CalendarView = () => {
       .catch((err) => console.log("err", err));
   };
 
-  useEffect(() => {
-    getAppointments({});
-  }, []);
-
   return (
     <DashboardLayout>
       <div>
-      <div className="flex w-full gap-x-8">
-        <div className="w-full bg-primaryAccent rounded-xl p-4 flex flex-col justify-between">
-          <div>
-            <BarChart
-              data={weeklyStats}
-              title="Weekly Appointments"
-              onSelect={(start, end) => handleAppointmentStats(start, end)}
-              isLoading={statsLoading}
-              className="h-[170px]"
-            />
+        <div className="flex w-full gap-x-8">
+          <div className="w-full bg-primaryAccent rounded-xl p-4 flex flex-col justify-between">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : (
+              <div>
+                <BarChart
+                  data={weeklyStats}
+                  title="Weekly Appointments"
+                  onSelect={(start, end) => handleAppointmentStats(start, end)}
+                  isLoading={statsLoading}
+                  className="h-[170px]"
+                />
+              </div>
+            )}
+
+            <div className="flex justify-between items-center">
+              <h3>Calendar</h3>
+              <Button className=" rounded-full bg-background text-primary ">
+                Week
+              </Button>
+            </div>
           </div>
-          <div className="flex justify-between items-center">
-            <h3>Calendar</h3>
-            <Button className=" rounded-full bg-background text-primary ">
-              Week
-            </Button>
-          </div>
+          <CalendarCard
+            fullscreen={false}
+            wrapperStyle={{
+              width: 650,
+            }}
+          />
         </div>
-        <CalendarCard
-          fullscreen={false}
-          wrapperStyle={{
-            width: 650,
-          }}
-        />
+        <div className="mt-8">
+          <CalendarFull data={data?.data as any} />
+        </div>
       </div>
-      <div className="mt-8">
-        <CalendarFull data={data?.data as any} />
-      </div>
-    </div>
     </DashboardLayout>
   );
 };

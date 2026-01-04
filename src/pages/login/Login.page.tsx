@@ -6,6 +6,7 @@ import { useLoginUserMutation } from "@/redux/api";
 import {
   setAccessToken,
   setRefreshToken,
+  setServiceCenterId,
   setUserInfo,
 } from "@/redux/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -45,15 +46,18 @@ const Login = () => {
     loginUser(data)
       .unwrap()
       .then((res) => {
+        console.log('res', res?.data)
         dispatch(setUserInfo(res?.data?.authorities));
         dispatch(setAccessToken(res.data.accessToken));
         dispatch(setRefreshToken(res.data.refreshToken));
+        dispatch(setServiceCenterId(res.data.serviceCenterId));
         toast(ToastType.SUCCESS, "Logged in");
         navigate(paths.dashboard);
       })
       .catch((err) => {
-        if (err?.data?.errors) {
-          toast(ToastType.ERROR, err?.data?.errors);
+        console.log('err', err)
+        if (err?.data?.error) {
+          toast(ToastType.ERROR, err?.data?.error);
         }
       });
   };

@@ -111,6 +111,10 @@ export const menuItems: MenuItem[] = [
 
 export const appointmentStatuses: DropdownType[] = [
   {
+    label: "All",
+    value: AppointmentStatus.ALL,
+  },
+  {
     label: "Not Started",
     value: AppointmentStatus.NOT_STARTED,
   },
@@ -121,6 +125,10 @@ export const appointmentStatuses: DropdownType[] = [
   {
     label: "Completed",
     value: AppointmentStatus.COMPLETED,
+  },
+  {
+    label: "Canceled",
+    value: AppointmentStatus.CANCELLED,
   },
 ];
 

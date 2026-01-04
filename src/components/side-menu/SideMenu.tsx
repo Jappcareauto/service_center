@@ -33,17 +33,24 @@ const SideMenu = () => {
     navigate(paths.index);
     dispatch(apiSlice.util.resetApiState());
   };
+
   return (
-    <div className="w-[270px] border-r border-r-borderColor h-screen fixed left-0 top-0 no-scrollbar overflow-y-auto px-4 py-6">
-      <p className="mb-4">Good Morning</p>
-      <button className="flex items-center p-3 border border-borderColor rounded-2xl w-full gap-x-4 mb-6 font-medium" onClick={() => navigate(paths.profile)}>
+    <div className="bg-white border-r border-r-borderColor h-screen fixed left-0 overflow-y-auto no-scrollbar px-3 py-6 w-[60px] sm:w-[70px] md:w-[250px] transition-all duration-300 z-50">
+      {/* Greeting & Avatar only visible on md+ */}
+      <p className="mb-4 hidden md:block">Good Morning</p>
+      <button
+        className="items-center p-3 border border-borderColor rounded-2xl w-full gap-x-4 mb-6 font-medium hidden md:flex"
+        onClick={() => navigate(paths.profile)}
+      >
         {isLoading ? (
           <Loader />
         ) : (
           <Avatar name={data?.data?.name} className="w-9 h-9" />
         )}
       </button>
-      <div className="flex flex-col gap-y-2">
+
+      {/* Menu */}
+      <div className="flex flex-col gap-y-2 pb-11">
         {menuItems.map((item, index) => {
           const isSelected = location?.pathname?.includes(item?.route);
           return (
@@ -51,22 +58,27 @@ const SideMenu = () => {
               onClick={() => navigate(item.route)}
               key={item.title}
               className={twMerge(
-                "flex gap-x-4 h-14 rounded-xl items-center px-5 font-light hover:bg-primaryAccent hover:text-primary",
+                "flex items-center h-14 rounded-xl px-2 md:px-5 font-light hover:bg-primaryAccent hover:text-primary gap-x-0 md:gap-x-4 justify-center md:justify-start",
                 isSelected ? "bg-primaryAccent text-primary" : "",
                 !index ? "mb-2" : ""
               )}
             >
               {item?.icon(isSelected)}
-              <span className="text-textColor text-sm">{item.title}</span>
+              {/* Hide text on small screens */}
+              <span className="hidden md:block text-sm text-textColor">
+                {item.title}
+              </span>
             </button>
           );
         })}
       </div>
+
+      {/* Logout */}
       <div
         onClick={handleLogout}
-        className="flex mt-10 h-[50px] gap-x-4 hover:cursor-pointer rounded-xl items-center px-2 hover:bg-redAccent "
+        className="flex items-center justify-center md:justify-center gap-x-4 mt-10 h-[50px] hover:cursor-pointer rounded-xl px-2 hover:bg-red-50 fixed bottom-3 w-[14.5%] transition-all duration-300 bg-white"
       >
-        <div className="">
+        <div>
           <svg
             width="22"
             height="22"
@@ -89,7 +101,7 @@ const SideMenu = () => {
             />
           </svg>
         </div>
-        <h4 className="text-red-500 ">Log Out</h4>
+        <h4 className="hidden md:block text-red-500">Logout</h4>
       </div>
     </div>
   );

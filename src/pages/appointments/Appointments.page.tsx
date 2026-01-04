@@ -26,26 +26,25 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useDeleteAppointmentMutation,
   useGetAppointmentQuery,
-  useGetAppointmentsMutation,
+  useGetAppointmentsQuery,
   useGetAppointmentStatsByDateMutation,
-  useGetServiceCentersMutation,
 } from "@/redux/api";
-import { useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
 import {
   Appointment as AppointmentType,
   BarChartItemType,
   DateRange,
 } from "@/types";
-import { getDefaultWeekDates } from "@/utils";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 
 const Appointments = () => {
-  const { user_info } = useAppSelector((state) => state.auth);
-  const [getAppointments, { data, isLoading }] = useGetAppointmentsMutation();
+  const [status, setStatus] = useState<AppointmentStatus>(AppointmentStatus.ALL);
+  const { data, isLoading } = useGetAppointmentsQuery({
+    status,
+  });
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
@@ -67,48 +66,29 @@ const Appointments = () => {
   const [tableData, setTableData] = useState([]);
   const [weeklyStats, setWeeklyStats] = useState<BarChartItemType[]>([]);
 
-  const [getServiceCenters, { data: serviceCenter }] =
-    useGetServiceCentersMutation();
-
   useEffect(() => {
-    const { startDate, endDate } = getDefaultWeekDates();
-    handleAppointmentStats(startDate, endDate);
-    getServiceCenters({ ownerId: user_info?.userId });
-  }, []);
-
-  useEffect(() => {
-    getAppointmentsData(AppointmentStatus.NOT_STARTED);
-  }, []);
-
-  const getAppointmentsData = (status?: AppointmentStatus) => {
-    const submitData = status
-      ? {
-          status,
-          serviceCenterId: serviceCenter?.data?.[0]?.id,
-        }
-      : {};
-    getAppointments(submitData)
-      .unwrap()
-      .then((res) => {
-        setAppointmentsList(res.data);
-        const filteredTableData = res.data.map((item) => {
-          return {
-            id: item?.id,
-            status: item?.status ? item?.status : "NOT_STARTED",
-            date: item?.date,
-            locationType: item?.locationType,
-            serviceTitle: item?.service?.title,
-            vehicleName: item?.vehicle?.name,
-            image: item?.vehicle?.media?.mainItemUrl,
-          };
-        });
-        const filteredCurrentAppointments = res.data.filter(
-          (item) => item.status === "IN_PROGRESS"
-        );
-        setCurrentAppointments(filteredCurrentAppointments.length.toString());
-        setTableData(filteredTableData as any);
+    // console.log("data", data);
+    if (data && data?.data) {
+      console.log(data?.data?.length);
+      setAppointmentsList(data?.data);
+      const filteredTableData = data?.data.map((item) => {
+        return {
+          id: item.id,
+          status: item.status ? item.status : "NOT_STARTED",
+          date: item.date,
+          locationType: item.locationType,
+          serviceTitle: item?.service?.title,
+          vehicleName: item?.vehicle?.name,
+          image: item?.vehicle?.media?.mainItemUrl,
+        };
       });
-  };
+      setTableData(filteredTableData as any);
+      const filteredCurrentAppointments = data.data.filter(
+        (item) => item.status === "IN_PROGRESS"
+      );
+      setCurrentAppointments(filteredCurrentAppointments.length.toString());
+    }
+  }, [data]);
 
   const onDelete = () => {
     if (!deleteId) return;
@@ -117,7 +97,6 @@ const Appointments = () => {
       .then((res) => {
         toast.success(res?.meta?.message ?? "Appointment Deleted Successully");
         setDeleteId("");
-        getAppointmentsData();
       })
       .catch((err) => {
         if (err?.data?.errors) {
@@ -209,9 +188,9 @@ const Appointments = () => {
             <div>
               <FilterBar
                 filters={appointmentStatuses}
-                onFilter={(filter) =>
-                  getAppointmentsData(filter as AppointmentStatus)
-                }
+                onFilter={(filter) => {
+                  setStatus(filter as AppointmentStatus);
+                }}
                 onGrid={() => {
                   setIsList(false);
                 }}

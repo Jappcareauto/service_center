@@ -29,10 +29,8 @@ export const getStatusStyles = (
       return `bg-green-100 text-green-700 text-sm ${
         isInvoice && " bg-green-100 text-green-700"
       }`;
-    case InvoiceStatus.DECLINED:
-      return `bg-red-500 text-white text-sm ${
-        isInvoice && "bg-redAccent bg-red-600"
-      }`;
+    case isInvoice ? InvoiceStatus.DECLINED : AppointmentStatus.CANCELLED:
+      return `bg-redAccent text-red-500 text-sm`;
     default:
       return "bg-gray-100 text-gray-500 text-sm";
   }

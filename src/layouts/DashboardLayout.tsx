@@ -26,9 +26,9 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
   return (
     <div className="flex">
       <SideMenu />
-      <div className="w-full pl-[250px]">
-        <div className="h-[90px] bg-background z-50 w-[calc(100vw-274px)] fixed float-right flex items-center justify-between px-[40px] ml-5">
-          <div className="flex space-x-8" style={{ width: 380 }}>
+      <div className="w-full pl-[40px] md:pl-[220px] lg:pl-[220px]">
+        <div className="h-[90px] bg-background z-40 md:w-[calc(100vw-274px)] fixed float-right flex items-center justify-between px-[40px] md:ml-5">
+          <div className="flex space-x-8 md:w-[25%]">
             {showBack && (
               <button
                 className="pr-3 hover:opacity-60"
@@ -55,7 +55,7 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
             />
           </div>
         </div>
-        <div className="overflow-y-auto h-[calc(100vh-10px)] px-[38px] pt-[90px] pb-9">
+        <div className="overflow-y-auto h-[calc(100vh-10px)] px-[12px] pl-[30px] md:pl-[59px] lg:pl-[59px] pt-[90px] pb-9">
           {children}
         </div>
       </div>
@@ -67,7 +67,7 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
         title="Notifications"
       >
         <div className="gap-y-4 flex flex-col" data-aos="fade-down">
-          {notificationItems.map((item) => (
+          {notificationItems?.map((item) => (
             <NotificationItem
               key={item.id}
               title={item.title}

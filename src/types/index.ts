@@ -12,7 +12,7 @@ export const IMAGE_TYPES = [
 ];
 
 export const AUDIO_TYPES = [
-  "audio/mpeg",    // mp3
+  "audio/mpeg", // mp3
   "audio/wav",
   "audio/ogg",
   "audio/webm",
@@ -23,7 +23,6 @@ export const AUDIO_TYPES = [
   "audio/x-m4a",
   "audio/x-ms-wma",
 ];
-
 
 export interface GenericType {
   id?: string;
@@ -136,7 +135,7 @@ export interface PaymentOption {
     mobileWalletNumber: string;
   };
 }
-export interface User extends GenericResponse {
+export interface User extends GenericType {
   name: string | undefined;
   email: string | undefined;
   password?: string;
@@ -155,6 +154,16 @@ export interface User extends GenericResponse {
   verificationCodes?: VerificationCode[];
   paymentOptions?: PaymentOption[];
   profileImageUrl?: string | undefined;
+  phoneNumber: null;
+  appointmentId: string;
+  chatRoomId: null;
+  vehicleName: string;
+  vehicleRegistrationNumber: string;
+  serviceName: string;
+  appointmentStatus: AppointmentStatus;
+  appointmentDate: string;
+  online: boolean;
+  lastSeen: string;
 }
 
 export interface VerificationCode {
@@ -189,6 +198,9 @@ export interface UpdateServiceCenterImagesRequest extends GenericResponse {
 export interface ServiceCentersResponse extends GenericResponse {
   data: ServiceCenter[];
 }
+export interface ServiceCenterResponse extends GenericResponse {
+  data: ServiceCenter;
+}
 
 export interface Service extends GenericType {
   title: string;
@@ -218,7 +230,7 @@ export interface Appointment extends GenericType {
 
 export interface DiagnosisToMakeRequest {
   id: string;
-  diagnosesToMake: string
+  diagnosesToMake: string;
 }
 export interface DiagnosisMadeRequest {
   id: string;
@@ -229,6 +241,7 @@ export interface LoginResponse extends GenericResponse {
   data: {
     accessToken: string;
     refreshToken: string;
+    serviceCenterId: string;
     accessTokenExpiry: number;
     refreshTokenExpiry: number;
     authorities: {
@@ -278,17 +291,10 @@ type Audit = {
   updatedBy?: string;
 };
 export interface AppointmentRequest {
-  audit?: Audit;
-  pagination?: Pagination;
-  dateBefore?: string;
-  dateAfter?: string;
-  locationType?: string;
-  status?: AppointmentStatus;
-  serviceId?: string;
-  serviceCenterId?: string;
-  vehicleId?: string;
-  garageId?: string;
-  convertStatusToTypeAppointmentStatus?: "NOT_STARTED";
+  status?: AppointmentStatus | "";
+  page?: number;
+  limit?: number;
+  search?: string;
 }
 export interface UpdateAppointmentRequest {
   id: string;
@@ -487,6 +493,7 @@ export interface Message {
   updatedAt?: string;
   createdBy?: string;
   updatedBy?: string;
+  status?: "SENT" | "DELIVERED" | "READ";
 }
 
 export interface ChatRoomsResponse extends GenericResponse {
@@ -499,13 +506,20 @@ export interface UpdateChatRoomRequest extends GenericType {
   data: ChatRoom;
   id: string;
 }
-export interface CreateChatRoomRequest {
-  id: string;
-  name: string;
-  participantUserIds: string[];
-  participantUserIdsAsUuids?: string[];
-  idAsUuid?: string;
+
+export enum ChatRoomType {
+  SINGLE = "SINGLE",
+  GROUP = "GROUP",
 }
+export interface CreateChatRoomRequest {
+  chatName: string;
+  chatDescription?: string;
+  type: ChatRoomType;
+  userIds: string[];
+  creatorId: string;
+  appointmentId?: string;
+}
+
 export interface UploadedFile {
   url: string;
   type: string;
@@ -524,6 +538,14 @@ export interface ChatRoomParticipantsResponse extends GenericResponse {
 }
 export interface ChatRoomMessagesResponse extends GenericResponse {
   data: Message[];
+}
+export interface Contacts extends GenericType {
+  contactType: "CUSTOMERS";
+  serviceCenters: null;
+  customers: User[];
+}
+export interface ContactsResponse extends GenericResponse {
+  data: Contacts;
 }
 
 export interface InvoiceDataType {

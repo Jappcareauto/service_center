@@ -12,6 +12,7 @@ import {
   ChatRoomParticipantsResponse,
   ChatRoomResponse,
   ChatRoomsResponse,
+  ContactsResponse,
   CreateChatRoomRequest,
   CreateInvoiceRequest,
   DiagnosisMadeRequest,
@@ -27,6 +28,7 @@ import {
   PaymentsResponse,
   ResetPasswordRequest,
   ServiceCenter,
+  ServiceCenterResponse,
   ServiceCenterServicesResponse,
   ServiceCentersResponse,
   ServiceResponse,
@@ -40,7 +42,7 @@ import {
   UploadChatFilesResponse,
   User,
   UserResponse,
-  UsersResponse
+  UsersResponse,
 } from "@/types";
 import {
   BaseQueryFn,
@@ -55,6 +57,7 @@ import {
   setRefreshToken,
 } from "./features/auth/authSlice";
 import store, { RootState } from "./store";
+import { AppointmentStatus } from "@/enums";
 
 const onQueryStartedErrorToast = async (_: any, { queryFulfilled }: any) => {
   await queryFulfilled;
@@ -171,18 +174,19 @@ export const apiSlice = createApi({
       },
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    getAppointments: builder.mutation<
-      AppointmentsResponse,
-      AppointmentRequest | object
-    >({
-      query: (data) => {
+    getAppointments: builder.query<AppointmentsResponse, AppointmentRequest>({
+      query: ({
+        status,
+        page,
+        limit,
+        search,
+      }) => {
         return {
-          url: URLS.appointment.getAppointments,
-          method: "POST",
-          body: data,
+          url: URLS.appointment.getAppointments(status, page, limit, search),
+          method: "GET",
         };
       },
-      invalidatesTags: ["appointment"],
+      providesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     getAppointment: builder.query<AppointmentResponse, string>({
@@ -208,10 +212,7 @@ export const apiSlice = createApi({
       providesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    getAppointmentByChatroom: builder.query<
-      AppointmentResponse,
-      string
-    >({
+    getAppointmentByChatroom: builder.query<AppointmentResponse, string>({
       query: (id) => {
         return {
           url: URLS.chat.getAppointmentByChatroom(id),
@@ -626,6 +627,15 @@ export const apiSlice = createApi({
       },
       providesTags: ["user"],
     }),
+    getChatContacts: builder.query<ContactsResponse, undefined>({
+      query: () => {
+        return {
+          url: URLS.service_Center.getChatContacts,
+          method: "GET",
+        };
+      },
+      providesTags: ["user"],
+    }),
     uploadChatFiles: builder.mutation<UploadChatFilesResponse, FormData>({
       query: (data) => {
         return {
@@ -648,6 +658,16 @@ export const apiSlice = createApi({
         };
       },
       invalidatesTags: ["service_center"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    getServiceCenter: builder.query<ServiceCenterResponse, string>({
+      query: (id: string) => {
+        return {
+          url: URLS.service_Center.getServiceCenter(id),
+          method: "GET",
+        };
+      },
+      providesTags: ["service_center"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     updateServiceCenterImage: builder.mutation<
@@ -711,7 +731,7 @@ export const {
   useRegisterUserMutation,
   useResetPasswordMutation,
   useForgotPasswordMutation,
-  useGetAppointmentsMutation,
+  useGetAppointmentsQuery,
   useGetAppointmentQuery,
   useAcceptAppointmentMutation,
   useDeclineAppointmentMutation,
@@ -752,6 +772,7 @@ export const {
   useGetChatroomMessagesQuery,
   useGetChatroomPartcipantsQuery,
   useGetServiceCentersMutation,
+  useGetServiceCenterQuery,
   useUpdateServiceCenterImageMutation,
   useUpdateServiceCenterMutation,
   useAddServiceCenterMediaMutation,
@@ -759,4 +780,5 @@ export const {
   useGetAppointmentByChatroomQuery,
   useUploadChatFilesMutation,
   useGetServiceCenterServicesQuery,
+  useGetChatContactsQuery,
 } = apiSlice;
