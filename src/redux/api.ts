@@ -182,7 +182,7 @@ export const apiSlice = createApi({
         search,
       }) => {
         return {
-          url: URLS.appointment.getAppointments(status, page, limit, search),
+          url: URLS.appointment.getAppointments(status as AppointmentStatus, page, limit, search),
           method: "GET",
         };
       },

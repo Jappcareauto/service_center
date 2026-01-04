@@ -4,6 +4,7 @@ import { twMerge } from "tailwind-merge";
 import { AUDIO_TYPES, IMAGE_TYPES, Message } from "@/types";
 import CustomAudioPlayer from "../custom-audio-player/CustomAudioPlayer.component";
 import { Image } from "antd";
+import dayjs from "dayjs";
 
 interface OwnProps extends Message {
   className?: string;
@@ -16,6 +17,7 @@ const MessageComponent: React.FC<OwnProps> = ({
   reply,
   isMe,
   status,
+  timestamp,
 }) => {
   return (
     <div
@@ -69,13 +71,20 @@ const MessageComponent: React.FC<OwnProps> = ({
             })}
           </div>
         )}
-        <p className="text-xs text-gray-300 text-right relative px-2 pb-1 pt-2">
-          {status === "READ"
-            ? "✓✓ Read"
-            : status === "DELIVERED"
-            ? "✓✓ Delivered"
-            : "✓ Sent"}
-        </p>
+        <div className="flex gap-x-3 justify-end px-2 pb-1 pt-2">
+          <p className="text-xs text-gray-400 text-right relative">
+            {timestamp && dayjs(timestamp).format("h:mm a")}
+          </p>
+          {isMe && (
+            <p className="text-xs text-gray-400 text-right relative">
+              {status === "READ"
+                ? "✓✓ Read"
+                : status === "DELIVERED"
+                ? "✓✓ Delivered"
+                : "✓ Sent"}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

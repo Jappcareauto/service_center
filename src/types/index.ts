@@ -154,16 +154,16 @@ export interface User extends GenericType {
   verificationCodes?: VerificationCode[];
   paymentOptions?: PaymentOption[];
   profileImageUrl?: string | undefined;
-  phoneNumber: null;
-  appointmentId: string;
-  chatRoomId: null;
-  vehicleName: string;
-  vehicleRegistrationNumber: string;
-  serviceName: string;
-  appointmentStatus: AppointmentStatus;
-  appointmentDate: string;
-  online: boolean;
-  lastSeen: string;
+  phoneNumber?: null;
+  appointmentId?: string;
+  chatRoomId?: null;
+  vehicleName?: string;
+  vehicleRegistrationNumber?: string;
+  serviceName?: string;
+  appointmentStatus?: AppointmentStatus;
+  appointmentDate?: string;
+  online?: boolean;
+  lastSeen?: string;
 }
 
 export interface VerificationCode {
@@ -486,7 +486,7 @@ export interface Message {
   content?: string | any;
   chatRoomId?: string;
   id?: string;
-  timestamp?: string | Date;
+  timestamp?: string;
   appointmentId?: string;
   mediaUrls?: UploadedFile[];
   createdAt?: string;

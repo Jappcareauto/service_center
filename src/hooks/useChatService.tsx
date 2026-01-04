@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // hooks/useChatService.ts
-import { useCallback, useEffect, useRef, useState } from "react";
-import SockJS from "sockjs-client";
 import { Client, IMessage } from "@stomp/stompjs"; // Note the change here
+import { useCallback, useRef, useState } from "react";
+import SockJS from "sockjs-client";
 
 interface ChatMessage {
   id: string;

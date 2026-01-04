@@ -63,7 +63,6 @@ const Chat = () => {
       skip: !receiver?.appointmentId,
     }
   );
-  console.log("data", data);
   const dispatch = useAppDispatch();
   const { data: invoice, isLoading: invoiceLoading } =
     useGetInvoiceByAppointmentQuery(receiver?.appointmentId as string, {
@@ -100,7 +99,7 @@ const Chat = () => {
     loading,
     disconnect,
     sendMessage,
-    markAsRead,
+    // markAsRead,
   } = useChatService({
     chatId: roomId,
     token: accessToken,
@@ -253,6 +252,7 @@ const Chat = () => {
     if(roomId === cus.chatRoomId && connected) return
     connect();
   };
+  console.log('messages', messages)
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[370px_auto]">
@@ -389,6 +389,7 @@ const Chat = () => {
                             reply={msg.reply}
                             isMe={msg?.createdBy === user_info?.userId}
                             mediaUrls={msg?.mediaUrls}
+                            timestamp={msg?.timestamp}
                           />
                         ))}
                       </>
