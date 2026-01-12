@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ChatIcon from "@/assets/icons/ChatIcon";
 import SearchIcon from "@/assets/icons/SearchIcon";
 import Avatar from "@/components/avatar/Avatar.component";
 import ChatInvoice from "@/components/chat-item/ChatInvoice.component";
@@ -22,6 +21,7 @@ import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { Message, User } from "@/types";
 import { LoadingOutlined } from "@ant-design/icons";
 import {
+  ArrowUpIcon,
   CameraIcon,
   MicrophoneIcon,
   PaperAirplaneIcon,
@@ -35,6 +35,7 @@ import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
 import images from "@/assets/images";
+import Button from "@/components/button/Button.component";
 import { AppLoader } from "@/components/loader/Fallback.component";
 import { useChatService } from "@/hooks/useChatService";
 import Lottie from "lottie-react";
@@ -77,6 +78,7 @@ const Chat = () => {
     useGetChatContactsQuery(undefined);
 
   const bottomRef = useRef<HTMLDivElement>(null);
+  const topRef = useRef<HTMLDivElement>(null);
   const stompClientRef = useRef<Client | null | any>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -105,20 +107,37 @@ const Chat = () => {
     token: accessToken,
     onMessageReceived: handleMessageReceived,
   });
-  // ⬅️ Reset messages when switching chat
-  useEffect(() => {
+  const scrollToBottom = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
+  };
+  useEffect(() => {
+    scrollToBottom();
   }, [chatroomMessages, messages, loading]);
 
-  // ⬅️ Load messages ONLY once & don't merge twice
+  const scrollToTop = () => {
+    if (topRef.current) {
+      topRef.current.scrollIntoView();
+    }
+  };
   useEffect(() => {
     if (chatroomMessages?.data) {
       setMessages(chatroomMessages.data);
     }
   }, [chatroomMessages]);
 
+  useEffect(() => {
+    const currentUser = chatContacts?.data?.customers?.find((item: User) => {
+      return item?.chatRoomId === roomId;
+    });
+    if (currentUser) {
+      dispatch(setReceiver(currentUser as User));
+      setMessage("");
+      connect();
+      scrollToBottom();
+    }
+  }, [chatContacts, connect, dispatch, roomId]);
   // // Mark messages as read when viewed
   // useEffect(() => {
   //   messages.forEach((msg) => {
@@ -131,7 +150,7 @@ const Chat = () => {
     if (!roomId || !accessToken) return;
     connect();
     return () => disconnect();
-  }, [accessToken, connect, disconnect, roomId]); //
+  }, [accessToken, connect, disconnect, roomId]);
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
@@ -249,19 +268,19 @@ const Chat = () => {
     dispatch(setChatroomId(cus?.chatRoomId));
     dispatch(setReceiver(cus as User));
     setMessage("");
-    if(roomId === cus.chatRoomId && connected) return
+    if (roomId === cus.chatRoomId && connected) return;
     connect();
   };
-  console.log('messages', messages)
+
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[370px_auto]">
         <div className="border-r border-r-gray-200 fixed w-[20vw] overflow-y-auto h-[87vh] pb-2">
           <div className="pr-4 flex flex-col gap-y-6">
-            <div className="flex items-center gap-x-4">
+            {/* <div className="flex items-center gap-x-4">
               <ChatIcon />
               <h2 className="font-[600]">Chat</h2>
-            </div>
+            </div> */}
             <div className="flex justify-between">
               <FilterBar
                 onFilter={() => {}}
@@ -270,18 +289,16 @@ const Chat = () => {
               />
             </div>
             <Input
-              className="rounded-full bg-primaryAccent border-none h-10"
+              className="rounded-full bg-white border border-primaryLight h-10"
               placeholder="Search"
-              prefixIcon={
-                <SearchIcon className="w-5 h-5 text-white" color="#fff" />
-              }
+              prefixIcon={<SearchIcon className="w-5 h-5" color="#b4b4b4" />}
             />
           </div>
           <div className="flex flex-col gap-y-4 w-auto mt-6 pr-3">
             {chatContactsLoading ? (
               <Skeleton paragraph={{ rows: 8 }} />
             ) : (
-              (chatContacts?.data?.customers)?.map((cus, index) => {
+              chatContacts?.data?.customers?.map((cus, index) => {
                 return (
                   cus?.chatRoomId && (
                     <ChatItem
@@ -328,9 +345,19 @@ const Chat = () => {
                   name={receiver?.name}
                   label={receiver?.email}
                 />
-                <div className="text-sm">
-                  {connected ? "🟢 Online" : "🔴 Offline"}
-                  {error && <span className="error">{error}</span>}
+                <div className="flex space-x-4 items-center">
+                  <Button
+                    className="text-sm border border-primaryLight bg-white rounded-full"
+                    variant="tertiary"
+                    onClick={scrollToTop}
+                    rightIcon={<ArrowUpIcon className="w-4 h-4 text-grey2" />}
+                  >
+                    Pinned Appointment
+                  </Button>
+                  <div className="text-sm">
+                    {connected ? "🟢 Online" : "🔴 Offline"}
+                    {loading && error && <span className="error">{error}</span>}
+                  </div>
                 </div>
               </div>
               <div
@@ -341,9 +368,12 @@ const Chat = () => {
                 {loading && (
                   <div className="fixed flex justify-center items-center z-50 bg-lightBg flex-col w-[61vw] h-[80vh]">
                     <AppLoader />
-                    <p className="mt-4 text-gray-400">Connecting Please Wait...</p>
+                    <p className="mt-4 text-gray-400">
+                      Connecting Please Wait...
+                    </p>
                   </div>
                 )}
+                <div ref={topRef} />
                 <div
                   className={twMerge(
                     "relative w-full pl-6 py-4 overflow-y-auto pb-2"
@@ -372,6 +402,9 @@ const Chat = () => {
                           timeOfDay={data?.data?.timeOfDay}
                           onInvoice={() =>
                             navigate(`/create-invoice/${data?.data?.id}`)
+                          }
+                          onInvoiceDetails={() =>
+                            navigate(`/invoice/${invoice?.data?.id}`)
                           }
                           hasInvoice={invoice?.data !== undefined}
                           location={data?.data?.location?.name}
@@ -438,6 +471,7 @@ const Chat = () => {
                   )}
                   <div className=" flex items-center gap-x-8">
                     <Input
+                      className="pr-24"
                       placeholder="write your message..."
                       onKeyDown={(e) =>
                         e.key === "Enter" && handleSendMessage()

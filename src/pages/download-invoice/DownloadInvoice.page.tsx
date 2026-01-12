@@ -1,8 +1,8 @@
 import images from "@/assets/images";
 import Button from "@/components/button/Button.component";
-import DashboardLayout from '@/layouts/DashboardLayout';
+import DashboardLayout from "@/layouts/DashboardLayout";
 import { useAppSelector } from "@/redux/store";
-import { InvoiceData } from "@/types";
+import { InvoiceItem } from "@/types";
 import dayjs from "dayjs";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -10,9 +10,9 @@ import { useRef, useState } from "react";
 
 const DownloadInvoice = () => {
   const invoiceRef = useRef<HTMLDivElement>(null);
-  const { invoice: myInvoice } = useAppSelector((state) => state.appointment);
+  const { invoice } = useAppSelector((state) => state.appointment);
   const [isLoading, setIsLoading] = useState(false);
-  const invoice: InvoiceData = myInvoice;
+
   const handleDownloadPDF = async () => {
     setIsLoading(true);
     const element = invoiceRef.current;
@@ -33,6 +33,7 @@ const DownloadInvoice = () => {
 
   return (
     <DashboardLayout showBack>
+      <h2 className='mb-5'>Invoice for {invoice?.billedTo?.name}</h2>
       <div className="pt-2 bg-white w-[80%]">
         <div
           className="max-w-4xl mx-auto bg-white p-10 font-sans text-gray-800"
@@ -44,8 +45,11 @@ const DownloadInvoice = () => {
               <img src={images.logo} alt="Logo" className="h-full w-full" />
             </div>
             <div className="text-right">
-              <h2 className="text-primary text-sm font-medium">Invoice</h2>
-              <p className="text-primary text-xl font-semibold">
+              <p className="text-primary text-sm font-medium">Invoice No:</p>
+              <h2 className="text-primary text-2xl font-semibold">
+                # {invoice?.invoiceNo}
+              </h2>
+              <p className="text-gray-300 text-xs font-medium">
                 #: system generated
               </p>
             </div>
@@ -111,11 +115,11 @@ const DownloadInvoice = () => {
                 </p>
               )}
 
-              {invoice?.vehicle?.trim && (
+              {invoice?.vehicle?.registrationNumber && (
                 <p className="text-sm w-full justify-between flex">
-                  <span className="text-gray-400">Trim:</span>{" "}
+                  <span className="text-gray-400">Registration No:</span>
                   <span className="font-semibold text-right">
-                    {invoice?.vehicle?.trim}
+                    {invoice?.vehicle?.registrationNumber}
                   </span>
                 </p>
               )}
@@ -135,11 +139,11 @@ const DownloadInvoice = () => {
                   </span>
                 </p>
               )}
-              {invoice?.vehicle?.regNumber && (
+              {invoice?.vehicle?.vin && (
                 <p className="text-sm w-full justify-between flex">
-                  <span className="text-gray-400">REG Number:</span>{" "}
+                  <span className="text-gray-400">Trim:</span>{" "}
                   <span className="font-semibold text-right">
-                    {invoice?.vehicle?.regNumber}
+                    {invoice?.vehicle?.trim}
                   </span>
                 </p>
               )}
@@ -169,13 +173,13 @@ const DownloadInvoice = () => {
             <h3 className="text-sm font-semibold">Charges</h3>
             <div className="divide-y divide-gray-200 mt-3 space-y-2">
               {invoice?.items ? (
-                invoice?.items?.map((item, idx) => (
+                invoice?.items?.map((item: InvoiceItem) => (
                   <div
-                    key={idx}
+                    key={item?.name}
                     className="flex justify-between py-2 relative pt-4 text-sm text-gray-800 items-center"
                   >
-                    <p className="text-gray-400">{item.name}</p>
-                    <p>{item.price} XAF</p>
+                    <p className="text-gray-400">{item?.name}</p>
+                    <p>{item?.price} XAF</p>
                   </div>
                 ))
               ) : (
@@ -191,9 +195,9 @@ const DownloadInvoice = () => {
               <span className="font-bold">{invoice?.total} XAF</span>
             </div>
             <div className="flex justify-between py-1">
-              <span className="text-gray-400">Tax ({invoice?.tax}) %</span>
+              <span className="text-gray-400">Tax %</span>
               <span className="text-gray-400 font-semibold">
-                {invoice?.total} XAF
+                {invoice?.tax}
               </span>
             </div>
           </div>
@@ -202,11 +206,11 @@ const DownloadInvoice = () => {
             <span>{invoice?.total} XAF</span>
           </div>
         </div>
-        <div className="flex justify-end px-32 py-4 pb-8">
+        <div className="flex justify-center items-center pb-8">
           <Button
             onClick={handleDownloadPDF}
             variant="secondary"
-            className="text-sm"
+            className="text-sm w-[82%]"
             isLoading={isLoading}
           >
             Download Invoice

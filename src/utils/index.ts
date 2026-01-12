@@ -1,6 +1,10 @@
 import { AppointmentStatus, InvoiceStatus, PaymentStatus } from "@/enums";
 import { endOfWeek, format, parseISO, startOfWeek } from "date-fns";
 
+export const formatStatus = (status: AppointmentStatus) => {
+  const separated = status?.split('_').join(" ")?.toUpperCase();
+  return separated
+};
 export const getButtonLabel = (status: AppointmentStatus) => {
   switch (status) {
     case "NOT_STARTED":
@@ -23,7 +27,7 @@ export const getStatusStyles = (
       return "bg-gray-100 text-gray-500 text-sm";
     case isInvoice ? InvoiceStatus.PENDING : AppointmentStatus.IN_PROGRESS:
       return `bg-primaryAccent text-primary px-3 text-sm ${
-        isInvoice && "bg-redAccent bg-red-600"
+        isInvoice && "bg-redAccent text-red-600"
       }`;
     case isInvoice ? InvoiceStatus.PAID : AppointmentStatus.COMPLETED:
       return `bg-green-100 text-green-700 text-sm ${

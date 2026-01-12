@@ -6,13 +6,14 @@ import Button from "../button/Button.component";
 import { Image } from "antd";
 import { Appointment } from "@/types";
 import { formatDateTime } from "@/utils/getInitials";
-import LocationIcon from '@/assets/icons/LocationIcon';
+import LocationIcon from "@/assets/icons/LocationIcon";
 
 interface IProps extends Appointment {
   amount?: string;
   dueDate?: string;
   onView?: () => void;
   onInvoice?: () => void;
+  onInvoiceDetails?: () => void;
   hasInvoice?: boolean;
   location: any;
   description: any;
@@ -25,6 +26,7 @@ const ChatInvoice = ({
   dueDate,
   onView,
   onInvoice,
+  onInvoiceDetails,
   timeOfDay,
   note,
   description,
@@ -34,21 +36,15 @@ const ChatInvoice = ({
   return (
     <div className="flex flex-col gap-y-2 max-w-[400px] w-full  border border-borderColor  bg-white p-3 px-5 rounded-xl">
       <div className="w-full bg-white pb-0 rounded-3xl">
-        {vehicle?.detail?.make && (
+        {vehicle?.make && (
           <h2 className="text-primary text-[22px] font-[300]">
-            {vehicle?.detail?.make},{vehicle?.detail?.model}
+            {vehicle?.make},{vehicle?.model}
           </h2>
         )}
-        {vehicle?.detail?.year && (
-          <p className="text-sm">{vehicle?.detail?.year}</p>
-        )}
+        {vehicle?.year && <p className="text-sm">{vehicle?.year}</p>}
         <div className="flex justify-center">
           <Image
-            src={
-              vehicle?.media?.mainItemUrl
-                ? vehicle?.media?.mainItemUrl
-                : images.s2
-            }
+            src={vehicle?.imageUrl ? vehicle?.imageUrl : images.s2}
             className="object-contain"
             width={200}
           />
@@ -67,9 +63,7 @@ const ChatInvoice = ({
               <LocationIcon />
               <div>
                 <p>{location}</p>
-                <p className=" text-gray-500 mt-1">
-                  {description}
-                </p>
+                <p className=" text-gray-500 mt-1">{description}</p>
               </div>
             </div>
           </div>
@@ -105,7 +99,7 @@ const ChatInvoice = ({
           )}
         </div>
         <div className="flex flex-col gap-y-2">
-          {vehicle?.media?.items && vehicle?.media?.items?.length > 0 && (
+          {/* {vehicle?.media?.items && vehicle?.media?.items?.length > 0 && (
             <>
               <p className="text-grey4 text-sm">Gallery</p>
               <div className="flex flex-row overflow-x-auto no-scrollbar w-full gap-x-2">
@@ -122,12 +116,16 @@ const ChatInvoice = ({
                 })}
               </div>
             </>
-          )}
+          )} */}
           <div className="flex justify-between mt-4">
             <Button className="text-sm" variant="tertiary" onClick={onView}>
-              View Appointment
+              View Details
             </Button>
-            {!hasInvoice && (
+            {hasInvoice ? (
+              <Button className="text-sm" onClick={onInvoiceDetails}>
+                Invoice Details
+              </Button>
+            ) : (
               <Button className="text-sm" onClick={onInvoice}>
                 Create Invoice
               </Button>

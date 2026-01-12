@@ -46,7 +46,6 @@ const Login = () => {
     loginUser(data)
       .unwrap()
       .then((res) => {
-        console.log('res', res?.data)
         dispatch(setUserInfo(res?.data?.authorities));
         dispatch(setAccessToken(res.data.accessToken));
         dispatch(setRefreshToken(res.data.refreshToken));
@@ -55,7 +54,6 @@ const Login = () => {
         navigate(paths.dashboard);
       })
       .catch((err) => {
-        console.log('err', err)
         if (err?.data?.error) {
           toast(ToastType.ERROR, err?.data?.error);
         }

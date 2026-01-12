@@ -34,7 +34,7 @@ const Table = <T extends object>({
             backgroundColor: "#FFF8F6",
             marginTop: "1.5rem",
           }}
-          showHeader={false}
+          // showHeader={false}
           rowClassName="bg-background"
         />
       )}

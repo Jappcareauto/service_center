@@ -22,14 +22,16 @@ const StatisticsCard: React.FC<StatisticsCardProps> = ({
     >
       <div className="flex items-center justify-between">
         {icon}
-        <div
-          className={twMerge(
-            "text-sm rounded-2xl px-3 py-2",
-            second ? "bg-grey3 text-grey4" : "bg-primaryAccent2 text-white"
-          )}
-        >
-          {badgeTitle}
-        </div>
+        {badgeTitle && (
+          <div
+            className={twMerge(
+              "text-sm rounded-2xl px-3 py-2",
+              second ? "bg-grey3 text-grey4" : "bg-primaryAccent2 text-white"
+            )}
+          >
+            {badgeTitle}
+          </div>
+        )}
       </div>
       {isLoading ? (
         <Skeleton paragraph={{ rows: 3 }} />

@@ -46,6 +46,8 @@ const authSlice = createSlice({
       state.user = null;
       state.shouldRedirect = true;
       state.user_info = null;
+      state.lastLogin = '';
+      state.serviceCenterId = '';
     },
     setRole: (state, { payload }) => {
       state.role = payload;

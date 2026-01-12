@@ -10,6 +10,7 @@ export default {
       },
       colors: {
         primary: "#FB7C37",
+        primaryLight: "#ff8544",
         primaryAccent: "#FFEDE6",
         primaryAccentLight: "#fff5f1",
         primaryAccent2: "#FFB693",

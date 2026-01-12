@@ -54,11 +54,11 @@ const Appointment = ({
   {/* Service & Vehicle Info */}
   <div className={twMerge("flex justify-between items-center flex-col sm:flex-row mt-3 sm:mt-4", isSmall && "mt-3")}>
     <div className="text-center sm:text-left">
-      <h2 className={twMerge("font-medium text-primary", isSmall && "mt-0 mt-3")}>
+      <h2 className={twMerge("font-medium text-primary", isSmall && "mt-3")}>
         {service?.title}
       </h2>
       <p className="mt-1 text-sm text-grey4">
-        {vehicle?.detail?.year}, {vehicle?.detail?.model}, {vehicle?.detail?.make}
+        {vehicle?.year}, {vehicle?.model}, {vehicle?.make}
       </p>
     </div>
 

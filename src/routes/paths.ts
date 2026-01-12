@@ -6,7 +6,7 @@ export const paths = {
   emergency: "/emergency",
   profile: "/profile",
   statistics: "/statistics",
-  chat: "/chat/:appointmentId",
+  chat: "/chat",
   appointments: "/appointments",
   appointmentDetails: "/appointment/:id",
   invoices: "/invoices",
@@ -18,5 +18,5 @@ export const paths = {
   settings: '/settings',
   billing: '/plan-and-billing',
   calendar: '/calendar',
-  updateInvoice: '/update-invoice/:id',
+  updateInvoice: '/update-invoice/:id/:invoiceId',
 };

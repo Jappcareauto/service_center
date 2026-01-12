@@ -31,7 +31,9 @@ import { twMerge } from "tailwind-merge";
 
 const Dashboard = () => {
   const { user_info } = useAppSelector((state) => state.auth);
-  const [status, setStatus] = useState<AppointmentStatus>(AppointmentStatus.ALL);
+  const [status, setStatus] = useState<AppointmentStatus>(
+    AppointmentStatus.ALL
+  );
   const { data, isLoading } = useGetAppointmentsQuery({
     status,
   });
@@ -75,7 +77,7 @@ const Dashboard = () => {
           locationType: item.locationType,
           serviceTitle: item?.service?.title,
           vehicleName: item?.vehicle?.name,
-          image: item?.vehicle?.media?.mainItemUrl,
+          image: item?.vehicle?.imageUrl,
         };
       });
       setTableData(filteredTableData as any);
@@ -177,7 +179,9 @@ const Dashboard = () => {
             >
               {!isList && (
                 <div>
-                  <p className="font-semibold mb-3">Up Next</p>
+                  {appointmentsList?.length > 0 && (
+                    <p className="font-semibold mb-3">Up Next</p>
+                  )}
                   {appointmentsList?.length > 0 ? (
                     <Appointment
                       {...appointmentsList?.[0]}
@@ -196,40 +200,41 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
-
-              <div
-                className={twMerge(
-                  "flex flex-col gap-y-3",
-                  isList && "gap-y-0"
-                )}
-              >
-                {!isList && <p className="font-semibold mb-3">Later</p>}
-                <div className="flex flex-col gap-y-5">
-                  {appointmentsList?.length > 0 ? (
-                    isList ? (
-                      <Table data={tableData} columns={columns} />
-                    ) : (
-                      appointmentsList?.map((appointment) => (
-                        <Appointment
-                          key={appointment.id}
-                          {...appointment}
-                          onDetail={() => {
-                            setOpen(true);
-                            setId(appointment.id as string);
-                          }}
-                        />
-                      ))
-                    )
-                  ) : (
-                    <NoData
-                      title="No Appointments"
-                      message="You haven’t scheduled any appointments yet."
-                      isLoading={isLoading}
-                      dataLength={appointmentsList?.length}
-                    />
+              {appointmentsList?.length > 0 && (
+                <div
+                  className={twMerge(
+                    "flex flex-col gap-y-3",
+                    isList && "gap-y-0"
                   )}
+                >
+                  {!isList && <p className="font-semibold mb-3">Later</p>}
+                  <div className="flex flex-col gap-y-5">
+                    {appointmentsList?.length > 0 ? (
+                      isList ? (
+                        <Table data={tableData} columns={columns} />
+                      ) : (
+                        appointmentsList?.map((appointment) => (
+                          <Appointment
+                            key={appointment.id}
+                            {...appointment}
+                            onDetail={() => {
+                              setOpen(true);
+                              setId(appointment.id as string);
+                            }}
+                          />
+                        ))
+                      )
+                    ) : (
+                      <NoData
+                        title="No Appointments"
+                        message="You haven’t scheduled any appointments yet."
+                        isLoading={isLoading}
+                        dataLength={appointmentsList?.length}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

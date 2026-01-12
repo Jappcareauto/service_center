@@ -1,27 +1,27 @@
 import Calendar2Icon from "@/assets/icons/Calendar2Icon";
 import LocationIcon from "@/assets/icons/LocationIcon";
+import { useToast } from "@/context/ToastContext";
 import { AppointmentStatus, ToastType } from "@/enums";
-import { VehicleMediaItem } from "@/types";
+import {
+  useAcceptAppointmentMutation,
+  useCompleteAppointmentMutation,
+  useDeclineAppointmentMutation,
+} from "@/redux/api";
 import { getStatusStyles } from "@/utils";
 import {
   formatDateTime,
   formatStatusText,
   getInitials,
 } from "@/utils/getInitials";
-import { Image } from "antd";
+import { Divider, Image } from "antd";
+import { useCallback } from "react";
 import { twMerge } from "tailwind-merge";
 import Avatar from "../avatar/Avatar.component";
 import Button from "../button/Button.component";
-import NoData from "../no-data/NoData.component";
 import { AppointmentDetailModalProps } from "./types";
-import { useToast } from "@/context/ToastContext";
-import {
-  useAcceptAppointmentMutation,
-  useCompleteAppointmentMutation,
-  useDeclineAppointmentMutation,
-  // useUpdateAppointmentStatusMutation,
-} from "@/redux/api";
-import { useCallback } from "react";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import Expended2Icon from "@/assets/icons/Expended2Icon";
+import { useNavigate } from "react-router-dom";
 
 const AppointmentDetailModal = ({
   vehicle,
@@ -29,10 +29,12 @@ const AppointmentDetailModal = ({
   date,
   service,
   locationType,
-  timeOfDay,
+  serviceCenter,
   id,
+  note,
 }: AppointmentDetailModalProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [acceptAppointment, { isLoading: acceptLoading }] =
     useAcceptAppointmentMutation();
@@ -61,7 +63,7 @@ const AppointmentDetailModal = ({
         }
         toast(ToastType.ERROR, "Oops an error occcured!");
       });
-  }, [id, acceptAppointment]);
+  }, [id, acceptAppointment, toast]);
 
   const handleDeclineAppointment = useCallback(() => {
     if (!id) return;
@@ -82,7 +84,7 @@ const AppointmentDetailModal = ({
         }
         toast(ToastType.ERROR, "Oops an error occcured!");
       });
-  }, [id, declineAppointment]);
+  }, [id, declineAppointment, toast]);
 
   const handleCompleteAppointment = useCallback(() => {
     if (!id) return;
@@ -102,36 +104,11 @@ const AppointmentDetailModal = ({
         }
         toast(ToastType.ERROR, "Oops an error occurred!");
       });
-  }, [id, completeAppointment]);
-
-  // const handleUpdateStatus = useCallback(() => {
-  //   if (!id) return;
-  //   const data = {
-  //     status: AppointmentStatus.NOT_STARTED,
-  //     id: id as string,
-  //   };
-  //   updateAppointment(data)
-  //     .unwrap()
-  //     .then((res) => {
-  //       toast(
-  //         ToastType.SUCCESS,
-  //         res?.meta?.message ?? "Appointment Status Updated Successfully"
-  //       );
-  //     })
-  //     .catch((err) => {
-  //       console.error("myerr", err);
-  //       if (err?.data?.errors) {
-  //         toast(ToastType.ERROR, err?.data?.errors);
-  //         return;
-  //       }
-  //       toast(ToastType.ERROR, "Oops an error occurred!");
-  //     });
-  // }, [id, updateAppointment]);
-
+  }, [id, completeAppointment, toast]);
   return (
     <>
       <div className="pb-16">
-        <div className="flex flex-col gap-y-5">
+        <div className="flex flex-col gap-y-5 pb-4">
           <div className="">
             <h1 className="text-primary font-medium">
               {/* Porsche Taycan Turbo S */}
@@ -139,17 +116,13 @@ const AppointmentDetailModal = ({
             </h1>
             <p>
               {/* 2024, RWD */}
-              {vehicle?.detail?.model}
+              {vehicle?.model}
             </p>
           </div>
-          {vehicle?.media?.mainItemUrl && (
+          {vehicle?.imageUrl && (
             <div className="rounded-2xl bg-white border border-borderColor flex items-center justify-center w-full p-2">
               {/* vehicle image */}
-              <Image
-                src={vehicle?.media?.mainItemUrl}
-                alt={vehicle?.name}
-                height={200}
-              />
+              <Image src={vehicle?.imageUrl} alt={vehicle?.name} height={200} />
             </div>
           )}
           <div className="flex justify-between items-center">
@@ -189,15 +162,31 @@ const AppointmentDetailModal = ({
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-y-2">
-                <p className="text-grey4">Time of Day</p>
-                <h2 className="text-primary font-medium">{timeOfDay}</h2>
+              <div className="flex flex-col gap-y-2 items-end">
+                <p className="text-grey4 textr">service Center</p>
+                <h2 className="text-primary font-medium">
+                  {serviceCenter?.name}
+                </h2>
               </div>
             </div>
           </div>
-          <p>{vehicle?.description}</p>
+          <Divider className="my-0" />
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-2 items-center">
+              <ExclamationCircleIcon className="w-5 h-5 text-gray-400" />
+              <p className=" text-gray-500">{note}</p>
+            </div>
+            <button
+              className="flex space-x-3 hover:text-primary transition-all duration-200"
+              onClick={() => id && navigate(`/appointment/${id}`)}
+              type='button'
+            >
+              <p className="text-[0.9rem]">View Details</p>
+              <Expended2Icon className="cursor-pointer" />
+            </button>
+          </div>
         </div>
-        {vehicle?.media?.items && vehicle?.media?.items?.length > 0 && (
+        {/* {vehicle?.media?.items && vehicle?.media?.items?.length > 0 && (
           <div className="flex flex-col gap-y-3 mt-2">
             <h2 className="font-medium">Images</h2>
             <div className="flex flex-row overflow-x-auto w-full gap-x-5">
@@ -218,7 +207,7 @@ const AppointmentDetailModal = ({
               )}
             </div>
           </div>
-        )}
+        )} */}
         <div className="w-[90%] mt-10 absolute bottom-0 bg-white py-4 pt-9 flex flex-col md:flex-row justify-between box-border">
           <div className="flex flex-col md:flex-row space-y-3 mb-3 md:space-x-4 md:space-y-0 md:mb-0">
             <Button
@@ -244,15 +233,6 @@ const AppointmentDetailModal = ({
             >
               {"Cancel"}
             </Button>
-            {/* <Button
-              isLoading={updateLoading}
-              className={
-                "bg-yellow-50 border text-yellow-500 border-yellow-500 hover:bg-white"
-              }
-              onClick={handleUpdateStatus}
-            >
-              {"Update Status"}
-            </Button> */}
           </div>
           <Button
             disabled={
