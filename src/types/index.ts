@@ -109,15 +109,16 @@ export interface VehicleMedia extends GenericType {
   items: VehicleMediaItem[];
 }
 export interface Vehicle {
-  name: string;
-  description: string;
-  detail: VehicleDetail;
-  garageId: string;
-  imageUrl: string;
-  media: VehicleMedia;
-  registrationNumber: string;
-  vin: string;
   id: string;
+  imageUrl: string;
+  make: string;
+  model: string;
+  name: string;
+  registrationNumber: string;
+  description: string;
+  vin: string;
+  year: string;
+  trim: string;
 }
 export interface Garage {
   name: string;
@@ -154,16 +155,16 @@ export interface User extends GenericType {
   verificationCodes?: VerificationCode[];
   paymentOptions?: PaymentOption[];
   profileImageUrl?: string | undefined;
-  phoneNumber: null;
-  appointmentId: string;
-  chatRoomId: null;
-  vehicleName: string;
-  vehicleRegistrationNumber: string;
-  serviceName: string;
-  appointmentStatus: AppointmentStatus;
-  appointmentDate: string;
-  online: boolean;
-  lastSeen: string;
+  phoneNumber?: string | null;
+  appointmentId?: string;
+  chatRoomId?: null;
+  vehicleName?: string;
+  vehicleRegistrationNumber?: string;
+  serviceName?: string;
+  appointmentStatus?: AppointmentStatus;
+  appointmentDate?: string;
+  online?: boolean;
+  lastSeen?: string;
 }
 
 export interface VerificationCode {
@@ -175,17 +176,22 @@ export interface VerificationCode {
 }
 export enum ServiceCenterCategories {
   GENERAL_MAINTENANCE = "GENERAL_MAINTENANCE",
+  BODY_SHOP = "BODY_SHOP",
 }
 export interface ServiceCenter extends GenericType {
+  id?: string;
+  category?: ServiceCenterCategories;
   name?: string;
   description?: string;
-  category?: ServiceCenterCategories.GENERAL_MAINTENANCE;
   location?: Location;
   ownerId?: string;
   services?: Service[];
   imageId?: string;
   imageUrl?: string;
   available?: boolean | null;
+  latitude?: number;
+  longitude?: number;
+  locationName?: string;
 }
 
 export interface ServiceCenterResponse extends GenericResponse {
@@ -204,10 +210,8 @@ export interface ServiceCenterResponse extends GenericResponse {
 
 export interface Service extends GenericType {
   title: string;
-  image: string;
-  definition: string;
-  serviceCenterId: string;
-  serviceCenter?: ServiceCenter;
+  id: string;
+  description: string;
 }
 
 export interface Appointment extends GenericType {
@@ -224,6 +228,7 @@ export interface Appointment extends GenericType {
   user?: User;
   serviceCenter?: ServiceCenter;
   chatRoom?: ChatRoom;
+  chatRoomId?: string;
   diagnosesToMake?: string;
   diagnosesMade?: string;
 }
@@ -295,6 +300,12 @@ export interface AppointmentRequest {
   page?: number;
   limit?: number;
   search?: string;
+}
+export interface InvoiceRequest {
+  status?: InvoiceStatus;
+  page?: number;
+  size?: number;
+  dueDateAfter?: string;
 }
 export interface UpdateAppointmentRequest {
   id: string;
@@ -385,42 +396,43 @@ export interface InvoiceItem extends Audit {
   quantity: number;
   total?: string;
 }
-
+export interface billedFrom {
+  address?: string;
+  email: string;
+  name: string;
+  phone?: string;
+  phoneNumber?: string;
+}
 export interface Invoice extends Audit {
   number: string;
   money?: Money;
+  status?: InvoiceStatus;
   issueDate: string;
   dueDate: string;
   paidDate: string;
-  appointment?: Appointment;
   appointmentId: string;
-  items: InvoiceItem[];
+  serviceCenterId?: string;
+  serviceCenterOwnerId?: string;
+  garageOwnerId?: string;
+  serviceId?: string;
+  vehicleId?: string;
+  totalAmount?: string;
   billedFromUserId: string;
   billedToUserId: string;
-  vehicleId: string;
-  billedFrom?: User;
-  billedTo?: User;
-  isPaid: boolean;
-  status: InvoiceStatus;
-  serviceId: string;
-  garageId: string;
-  garageOwnerId: string;
-  totalAmount: string;
-  tax?: string;
-  paymentMethod?: string;
+  items: InvoiceItem[];
+  billedTo: billedFrom;
+  billedFrom: billedFrom;
+  vehicle?: Vehicle;
 }
 
 export interface CreateInvoiceRequest {
   appointmentId: string;
-  vehicleId: string;
   money: {
     amount: number;
     currency: string;
   };
   issueDate: string;
   dueDate: string;
-  billedFromUserId: string;
-  billedToUserId: string;
   items: InvoiceItem[];
 }
 
@@ -486,7 +498,7 @@ export interface Message {
   content?: string | any;
   chatRoomId?: string;
   id?: string;
-  timestamp?: string | Date;
+  timestamp?: string;
   appointmentId?: string;
   mediaUrls?: UploadedFile[];
   createdAt?: string;
@@ -568,25 +580,14 @@ export interface AppointmentChatRoomResponse extends GenericResponse {
 }
 
 export interface InvoiceData {
-  billedTo: {
-    name?: string;
-    email?: string;
-    location?: string;
-    phone?: string;
-  };
-  billedFrom: {
-    name?: string;
-    email?: string;
-    location?: string;
-    phone?: string;
-  };
+  billedTo: billedFrom;
+  billedFrom: billedFrom;
   vehicle: {
     make?: string;
     model?: string;
-    trim?: string;
+    registrationNumber?: string;
     year?: string;
     vin: string;
-    regNumber: string;
   };
   issueDate: string;
   dueDate: string;

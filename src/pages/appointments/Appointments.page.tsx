@@ -35,13 +35,16 @@ import {
   BarChartItemType,
   DateRange,
 } from "@/types";
+import { formatStatusText } from "@/utils/formatStatusText";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 
 const Appointments = () => {
-  const [status, setStatus] = useState<AppointmentStatus>(AppointmentStatus.ALL);
+  const [status, setStatus] = useState<AppointmentStatus>(
+    AppointmentStatus.ALL
+  );
   const { data, isLoading } = useGetAppointmentsQuery({
     status,
   });
@@ -67,23 +70,22 @@ const Appointments = () => {
   const [weeklyStats, setWeeklyStats] = useState<BarChartItemType[]>([]);
 
   useEffect(() => {
-    // console.log("data", data);
     if (data && data?.data) {
       console.log(data?.data?.length);
       setAppointmentsList(data?.data);
       const filteredTableData = data?.data.map((item) => {
         return {
-          id: item.id,
-          status: item.status ? item.status : "NOT_STARTED",
-          date: item.date,
-          locationType: item.locationType,
+          id: item?.id,
+          status: item?.status ? item?.status : "NOT_STARTED",
+          date: item?.date,
+          locationType: item?.locationType,
           serviceTitle: item?.service?.title,
           vehicleName: item?.vehicle?.name,
-          image: item?.vehicle?.media?.mainItemUrl,
+          image: item?.vehicle?.imageUrl,
         };
       });
       setTableData(filteredTableData as any);
-      const filteredCurrentAppointments = data.data.filter(
+      const filteredCurrentAppointments = data?.data?.filter(
         (item) => item.status === "IN_PROGRESS"
       );
       setCurrentAppointments(filteredCurrentAppointments.length.toString());
@@ -213,19 +215,21 @@ const Appointments = () => {
                 )}
               >
                 <div className="flex gap-x-4 mb-3">
-                  <div className="border-borderColor border rounded-xl p-3 w-[250px]">
-                    <CalendarIcon color={colors.primary} />
-                    {isLoading ? (
-                      <Skeleton paragraph={{ rows: 1 }} />
-                    ) : (
-                      <h2 className="font-bold mt-3 text-2xl">
-                        {currentAppointments}
-                      </h2>
-                    )}
-                    <small className="text-sm font-light text-gray-400">
-                      Current Appointments
-                    </small>
-                  </div>
+                  {status === AppointmentStatus.ALL && (
+                    <div className="border-borderColor border rounded-xl p-3 w-[250px]">
+                      <CalendarIcon color={colors.primary} />
+                      {isLoading ? (
+                        <Skeleton paragraph={{ rows: 1 }} />
+                      ) : (
+                        <h2 className="font-bold mt-3 text-2xl">
+                          {currentAppointments}
+                        </h2>
+                      )}
+                      <small className="text-sm font-light text-gray-400">
+                        Ongoing Appointments
+                      </small>
+                    </div>
+                  )}
                   <div className="border-borderColor border rounded-xl p-3 w-[250px]">
                     <CalendarIcon color={colors.primary} />
                     {isLoading ? (
@@ -236,17 +240,18 @@ const Appointments = () => {
                       </h2>
                     )}
                     <small className="text-sm font-light text-gray-400">
-                      Total Appointments
+                      {status === AppointmentStatus.ALL
+                        ? "Total"
+                        : formatStatusText(status)}{" "}
+                      Appointments
                     </small>
                   </div>
                 </div>
                 <div className="flex flex-col gap-y-5 h-screen">
                   {appointmentsList?.length > 0 ? (
                     isList ? (
-                      // Show the table when isList is true
                       <Table data={tableData} columns={columns} />
                     ) : (
-                      // Show the appointment list (or map) when isList is false
                       appointmentsList?.map((app) => (
                         <Appointment
                           key={app.id}

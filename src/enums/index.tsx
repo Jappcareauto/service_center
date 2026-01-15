@@ -11,6 +11,7 @@ export enum InvoiceStatus {
   PAID = "PAID",
   DECLINED = "DECLINES",
   DRAFT = "DRAFT",
+  ALL = "",
 }
 export enum PaymentStatus {
   ALL = "ALL",
@@ -49,8 +50,8 @@ export enum EmergencyStatus {
 }
 
 export enum ToastType {
-  SUCCESS = 'success',
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
+  SUCCESS = "success",
+  INFO = "info",
+  WARNING = "warning",
+  ERROR = "error",
 }

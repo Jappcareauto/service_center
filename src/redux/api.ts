@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BASE_URL } from "@/config";
 import { URLS } from "@/config/urls";
+import { AppointmentStatus } from "@/enums";
 import {
   AppointmentChatRoomResponse,
   AppointmentRequest,
@@ -19,7 +20,7 @@ import {
   DiagnosisToMakeRequest,
   ForgotPasswordRequest,
   GenericResponse,
-  GetInvoicesRequest,
+  InvoiceRequest,
   InvoiceResponse,
   InvoicesResponse,
   LoginRequest,
@@ -57,7 +58,6 @@ import {
   setRefreshToken,
 } from "./features/auth/authSlice";
 import store, { RootState } from "./store";
-import { AppointmentStatus } from "@/enums";
 
 const onQueryStartedErrorToast = async (_: any, { queryFulfilled }: any) => {
   await queryFulfilled;
@@ -175,14 +175,14 @@ export const apiSlice = createApi({
       onQueryStarted: onQueryStartedErrorToast,
     }),
     getAppointments: builder.query<AppointmentsResponse, AppointmentRequest>({
-      query: ({
-        status,
-        page,
-        limit,
-        search,
-      }) => {
+      query: ({ status, page, limit, search }) => {
         return {
-          url: URLS.appointment.getAppointments(status, page, limit, search),
+          url: URLS.appointment.getAppointments(
+            status as AppointmentStatus,
+            page,
+            limit,
+            search
+          ),
           method: "GET",
         };
       },
@@ -390,18 +390,14 @@ export const apiSlice = createApi({
       invalidatesTags: ["emergency"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    getInvoices: builder.mutation<
-      InvoicesResponse,
-      GetInvoicesRequest | object
-    >({
-      query: (data) => {
+    getInvoices: builder.query<InvoicesResponse, InvoiceRequest>({
+      query: ({ status, page, size, dueDateAfter }) => {
         return {
-          url: URLS.invoice.getInvoices,
-          method: "POST",
-          body: data,
+          url: URLS.invoice.getInvoices(status, page, size, dueDateAfter),
+          method: "GET",
         };
       },
-      invalidatesTags: ["invoice"],
+      providesTags: ["invoice"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     createInvoice: builder.mutation<GenericResponse, CreateInvoiceRequest>({
@@ -430,7 +426,7 @@ export const apiSlice = createApi({
         return {
           url: URLS.invoice.updateInvoice(id),
           method: "PUT",
-          body: data,
+          body: data?.data,
         };
       },
       invalidatesTags: ["invoice"],
@@ -748,7 +744,7 @@ export const {
   useCreateEmergencyMutation,
   useCreateAppointmentMutation,
   useUpdateEmergencyStatusMutation,
-  useGetInvoicesMutation,
+  useGetInvoicesQuery,
   useCreateInvoiceMutation,
   useGetInvoiceByAppointmentQuery,
   useUpdateInvoiceMutation,

@@ -35,9 +35,9 @@ const NoData: React.FC<NoDataProps> = ({
           className
         )}
       >
-        {icon || <img src={images.bgService} className="w-24 h-24" />}
+        {icon || <img src={images.bgService} className="w-20 h-20" />}
         <div className="mt-5">
-          {title && <p className="text-gray-400 text-sm">{title}</p>}
+          {title && <p className="text-gray-400 font-medium text-sm">{title}</p>}
           {message && (
             <p className="text-gray-300 font-light text-sm mt-1">{message}</p>
           )}

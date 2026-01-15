@@ -8,6 +8,8 @@ import { paths } from "@/routes/paths";
 import { apiSlice, useGetUserQuery } from "@/redux/api";
 import Loader from "../loader/Loader";
 import { useEffect, useRef } from "react";
+import { setChatroomId, setReceiver } from "@/redux/features/chat/chatSlice";
+import { setAppointment, setAppointmentId, setInvoice } from '@/redux/features/appointment/appointmentSlice';
 
 const SideMenu = () => {
   const location = useLocation();
@@ -30,6 +32,11 @@ const SideMenu = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    dispatch(setChatroomId(""));
+    dispatch(setReceiver(null));
+    dispatch(setAppointment(null))
+    dispatch(setAppointmentId(''))
+    dispatch(setInvoice(null))
     navigate(paths.index);
     dispatch(apiSlice.util.resetApiState());
   };

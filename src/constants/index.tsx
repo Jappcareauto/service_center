@@ -134,6 +134,10 @@ export const appointmentStatuses: DropdownType[] = [
 
 export const InvoiceStatuses: DropdownType[] = [
   {
+    label: "All",
+    value: InvoiceStatus.ALL,
+  },
+  {
     label: "Pending",
     value: InvoiceStatus.PENDING,
   },
@@ -271,28 +275,36 @@ export const getInvoicesColumns = (
   handleMore: (id: string) => void
 ) => {
   return [
+    // {
+    //   title: "Image",
+    //   dataIndex: "image",
+    //   key: "image",
+    //   width: 60,
+    //   render: (url: string) => {
+    //     return url ? (
+    //       <img
+    //         src={url}
+    //         alt="Vehicle"
+    //         className="w-7 h-7 object-contain border border-borderColor rounded-full p-1"
+    //       />
+    //     ) : (
+    //       <TruckIcon className="w-7 h-7 rounded-full text-gray-500 border border-borderColor p-1" />
+    //     );
+    //   },
+    // },
     {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
-      width: 60,
-      render: (url: string) => {
-        return url ? (
-          <img
-            src={url}
-            alt="Vehicle"
-            className="w-7 h-7 object-contain border border-borderColor rounded-full p-1"
-          />
-        ) : (
-          <TruckIcon className="w-7 h-7 rounded-full text-gray-500 border border-borderColor p-1" />
-        );
-      },
-    },
-    {
-      title: "Number",
+      title: "Invoice No",
       dataIndex: "number",
       key: "number",
       ellipsis: true,
+    },
+    {
+      title: "User",
+      dataIndex: "number",
+      key: "number",
+      render: (url: string) => {
+        return <Avatar name={url} className="w-6 h-6" />;
+      },
     },
     {
       title: "Amount",
@@ -316,9 +328,9 @@ export const getInvoicesColumns = (
       ),
     },
     {
-      title: "Date",
-      key: "date",
-      dataIndex: "date",
+      title: "Due Date",
+      key: "dueDate",
+      dataIndex: "dueDate",
       render: (_: any, record: any) => (
         <div className="flex items-center gap-x-2">
           {/* <CalendarDaysIcon className='w-10 h-10' /> */}
@@ -346,7 +358,9 @@ export const getInvoicesColumns = (
         <span
           className={twMerge(
             "rounded-full px-2 py-1 lowercase first-letter:uppercase",
-            status ? getStatusStyles(status, true) : InvoiceStatus.DRAFT
+            status
+              ? getStatusStyles(status, true)
+              : getStatusStyles(InvoiceStatus.DRAFT)
           )}
         >
           {status ? status : InvoiceStatus.DRAFT}

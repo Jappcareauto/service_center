@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   CheckIcon,
@@ -20,16 +20,22 @@ interface InvoiceItem {
 
 interface IProps {
   onChange: (items: InvoiceItem[]) => void;
+  initialItems?: InvoiceItem[];
 }
 
-const EditableTable: React.FC<IProps> = ({ onChange }) => {
-  const [data, setData] = useState<InvoiceItem[]>([]);
+const EditableTable: React.FC<IProps> = ({ onChange, initialItems }) => {
+  const [data, setData] = useState<InvoiceItem[]>(initialItems ?? []);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [formState, setFormState] = useState<Partial<InvoiceItem>>({});
   const { toast } = useToast();
 
-  const isEditing = (key: string) => key === editingKey;
+  useEffect(() => {
+    if (initialItems?.length) {
+      setData(initialItems);
+    }
+  }, [initialItems]);
 
+  const isEditing = (key: string) => key === editingKey;
   const startEdit = (record: InvoiceItem) => {
     setEditingKey(record.key);
     setFormState({ ...record });
@@ -185,7 +191,7 @@ const EditableTable: React.FC<IProps> = ({ onChange }) => {
                         <td className="p-2 text-center">{row.quantity}</td>
                         <td className="p-2 text-center">{row.unitPrice}</td>
                         <td className="p-2 text-center">{row.totalPrice}</td>
-                        <td className="p-2 text-center flex space-x-5">
+                        <td className="p-4 flex space-x-5 items-end pl-7">
                           <button
                             onClick={() => startEdit(row)}
                             disabled={!!editingKey}
@@ -208,13 +214,13 @@ const EditableTable: React.FC<IProps> = ({ onChange }) => {
             </tbody>
           </table>
 
-          <div className="flex justify-end mt-4">
+          <div className="flex justify-end mt-7">
             <button
               onClick={addRow}
               disabled={!!editingKey}
-              className="flex items-center space-x-2 bg-black text-white px-4 py-2 rounded-full disabled:opacity-50"
+              className="flex items-center space-x-2 bg-primary text-white px-4 py-2 rounded-full disabled:opacity-50 text-sm"
             >
-              <PlusIcon className="w-5 h-5" />
+              <PlusIcon className="w-4 h-4" />
               <span>Add Item</span>
             </button>
           </div>

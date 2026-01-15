@@ -1,7 +1,10 @@
-import { getFormattedDate } from "@/utils";
+import { getFormattedDate, getStatusStyles } from "@/utils";
 import Avatar from "../avatar/Avatar.component";
 import Button from "../button/Button.component";
 import { InvoiceProps } from "./types";
+import { twMerge } from "tailwind-merge";
+import { formatStatusText } from '@/utils/formatStatusText';
+import { InvoiceStatus } from '@/enums';
 
 const Invoice = ({
   email,
@@ -10,14 +13,21 @@ const Invoice = ({
   issueDate,
   money,
   service,
+  status,
   onClick,
 }: InvoiceProps) => {
   return (
     <div className="rounded-xl p-4 border border-borderColor">
       <div className="flex justify-between items-center">
         <p className="text-grey4">Billed to</p>
-        <div className="bg-redAccent px-4 bg-red-600 p-2 rounded-2xl text-sm">
-          Pending
+        <div
+          className={twMerge(
+            "bg-primaryAccent px-4 text-red-600 p-1 rounded-full text-sm",
+            status &&
+              getStatusStyles(status, true)
+          )}
+        >
+              {status && formatStatusText(status as InvoiceStatus)}
         </div>
       </div>
       <div className="flex mt-3">

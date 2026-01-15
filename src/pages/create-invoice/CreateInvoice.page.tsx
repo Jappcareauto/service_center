@@ -13,7 +13,7 @@ import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useCreateInvoiceMutation,
   useGetAppointmentQuery,
-  useGetUserQuery,
+  useGetChatContactsQuery,
 } from "@/redux/api";
 import { setInvoice } from "@/redux/features/appointment/appointmentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -24,28 +24,29 @@ import { twMerge } from "tailwind-merge";
 
 const CreateInvoice = () => {
   const { id } = useParams();
-  const { user_info, user: adminUser, accessToken } = useAppSelector((state) => state.auth);
+  const { user: adminUser } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { toast } = useToast();
-  console.log(accessToken)
 
   const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
   const { data: appointment } = useGetAppointmentQuery(id as string, {
     skip: !id,
   });
-  const { data: user } = useGetUserQuery(
-    appointment?.data?.createdBy as string,
-    {
-      skip: !appointment?.data?.createdBy,
-    }
-  );
+
+  const { data: chatContacts } = useGetChatContactsQuery(undefined);
+
+  // const { data: user } = useGetUserQuery(
+  //   appointment?.data?.createdBy as string,
+  //   {
+  //     skip: !appointment?.data?.createdBy,
+  //   }
+  // );
   const [dueDate, setDueDate] = useState("");
   const [issueDate, setIssueDate] = useState("");
   const [items, setItems] = useState<InvoiceDataType[]>([]);
   const [total, setTotal] = useState(0);
   const [fee, setFee] = useState(0);
-
   const handleCreateInvoice = () => {
     if (!appointment?.data) {
       console.error("No appointment data available");
@@ -55,32 +56,37 @@ const CreateInvoice = () => {
       const invoiceItems = items?.map((item) => {
         return {
           name: item.item,
-          price: item.totalPrice,
-          quantity: item.quantity,
+          price: Number(item.totalPrice) || 0,
+          quantity: Number(item.quantity) || 0,
         };
       });
       const data = {
         appointmentId: appointment?.data?.id as string,
-        vehicleId: appointment?.data?.vehicle?.id as string,
         money: {
           amount: total + fee,
           currency: "XAF",
         },
         issueDate,
         dueDate,
-        billedFromUserId: user_info?.userId as string,
-        billedToUserId: appointment?.data?.createdBy as string,
         items: invoiceItems as any,
       };
-      console.log("invoice data", data);
       createInvoice(data)
         .unwrap()
-        .then()
+        .then((res) => {
+          if (res?.meta?.message) {
+            toast(ToastType.SUCCESS, res?.meta?.message as string);
+          }
+        })
         .catch((err) => {
-          if (err?.data?.errors) {
-            toast(ToastType.ERROR, err?.data?.errors);
+          const validationErrors = err?.data?.errors;
+          if (validationErrors) {
+            Object.values(validationErrors).forEach((errorMessage) => {
+              toast(ToastType.ERROR, errorMessage as string);
+            });
+          } else if (err?.data?.message || err?.message) {
+            toast(ToastType.ERROR, err?.data?.message || err?.message);
           } else {
-            toast(ToastType.ERROR, "Invoice creation failed!");
+            toast(ToastType.ERROR, "Update failed!");
           }
         });
     }
@@ -93,20 +99,19 @@ const CreateInvoice = () => {
     );
     setTotal(totalSum);
   };
-  const disabled =
-    !appointment?.data ||
-    !dueDate ||
-    !issueDate ||
-    isLoading 
-    // ||
-    // !items?.length ||
-    // total <= 0 ||
-    // appointment?.data?.status !== "COMPLETED";
+  const disabled = !appointment?.data || !dueDate || !issueDate || isLoading;
+  // ||
+  // !items?.length ||
+  // total <= 0 ||
+  // appointment?.data?.status !== "COMPLETED";
 
   const handleAdd = useCallback((items: any[]) => {
     setItems(items);
     getTotalPrice(items);
   }, []);
+  const billedToUser = chatContacts?.data?.customers.find(
+    (item) => item?.appointmentId === appointment?.data?.id
+  );
   const appData = appointment?.data;
   const handlePreviewInvoice = () => {
     const invoiceItems = items?.map((item) => {
@@ -118,24 +123,21 @@ const CreateInvoice = () => {
     });
     const invoiceData: InvoiceData = {
       billedTo: {
-        name: user?.data?.name,
-        email: user?.data?.email,
-        location: user?.data?.location?.name,
-        phone: user?.data?.phones && user?.data?.phones?.[0]?.number,
+        name: billedToUser?.name as string,
+        email: billedToUser?.email as string,
+        phoneNumber: billedToUser?.phoneNumber as string,
       },
       billedFrom: {
         name: adminUser?.name,
         email: adminUser?.email,
-        location: appData?.location?.name,
         phone: adminUser?.phone,
       },
       vehicle: {
-        make: appData?.vehicle?.detail?.make,
-        model: appData?.vehicle?.detail?.model,
-        trim: appData?.vehicle?.detail?.trim,
-        year: appData?.vehicle?.detail?.year,
+        make: appData?.vehicle?.make,
+        model: appData?.vehicle?.model,
+        registrationNumber: appData?.vehicle?.registrationNumber,
+        year: appData?.vehicle?.year,
         vin: appData?.vehicle?.vin as string,
-        regNumber: appData?.vehicle?.registrationNumber as string,
       },
       issueDate,
       dueDate,
@@ -190,10 +192,12 @@ const CreateInvoice = () => {
               <DatePicker
                 label="Date Issued"
                 onSelect={(value) => setIssueDate(value as any)}
+                isISO
               />
               <DatePicker
                 label="Due Date"
                 onSelect={(value) => setDueDate(value as any)}
+                isISO
               />
             </div>
             <div className="flex justify-between space-x-8">
@@ -209,11 +213,19 @@ const CreateInvoice = () => {
               <div className="flex flex-col w-full">
                 <label className="text-sm mb-2">Billed To</label>
                 <InvoiceBillingCard
+                  profileImageUrl={
+                    billedToUser && billedToUser?.profileImageUrl
+                  }
+                  name={billedToUser && billedToUser?.name}
+                  email={billedToUser && billedToUser?.email}
+                  location={billedToUser && billedToUser?.location}
+                />
+                {/* <InvoiceBillingCard
                   profileImageUrl={user?.data?.profileImageUrl}
                   name={user?.data?.name}
                   email={user?.data?.email}
                   location={user?.data?.location}
-                />
+                /> */}
               </div>
             </div>
             {appointment?.data && (
@@ -258,6 +270,25 @@ const CreateInvoice = () => {
         </div>
         {/* <div className={twMerge("flex flex-col flex-[30%] gap-y-6")}></div> */}
       </div>
+       {/* <Modal
+              open={showPlans}
+              onClose={() => setShowPlans(false)}
+              title="Choose a Plan"
+              onOk={() => setShowPlans(false)}
+              okText="Select"
+              footer={null}
+            >
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3'>
+                {plans.map((plan) => (
+                <PlanCard
+                  key={plan.id}
+                  name={plan.name}
+                  price={plan.price}
+                  features={plan.features}
+                />
+              ))}
+              </div>
+            </Modal> */}
     </DashboardLayout>
   );
 };

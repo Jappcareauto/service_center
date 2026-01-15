@@ -4,6 +4,7 @@ import CalendarCard from "@/components/calendars/CalendarCard.component";
 import CalendarFull from "@/components/calendars/CalendarFull.component";
 import BarChart from "@/components/charts/BarChart.component";
 import { dayMap, weekDays } from "@/constants";
+import { AppointmentStatus } from '@/enums';
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useGetAppointmentsQuery,
@@ -13,7 +14,7 @@ import { BarChartItemType, DateRange } from "@/types";
 import { useState } from "react";
 
 const CalendarView = () => {
-  const { data, isLoading } = useGetAppointmentsQuery(undefined);
+  const { data, isLoading } = useGetAppointmentsQuery({status: AppointmentStatus.IN_PROGRESS});
   const [weeklyStats, setWeeklyStats] = useState<BarChartItemType[]>([]);
   const [getAppointmentStats, { isLoading: statsLoading }] =
     useGetAppointmentStatsByDateMutation();

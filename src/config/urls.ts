@@ -1,4 +1,4 @@
-import { AppointmentStatus } from "@/enums";
+import { AppointmentStatus, InvoiceStatus } from "@/enums";
 
 export const URLS = {
   auth: {
@@ -55,7 +55,15 @@ export const URLS = {
     updateEmergencyStatus: (id: string) => `/emergency-assistance/${id}/status`,
   },
   invoice: {
-    getInvoices: "/invoice/list",
+    getInvoices: (
+      status?: InvoiceStatus,
+      page?: number,
+      size?: number,
+      dueDateAfter?: string
+    ) =>
+      `/invoice/list?status=${status ?? ""}&page=${page ?? ""}&size=${
+        size ?? ""
+      }&dueDateAfter=${dueDateAfter ?? ""}`,
     getInvoiceByAppointment: (appointmentId: string) =>
       `/invoice/${appointmentId}`,
     createInvoice: "/invoice",
@@ -89,7 +97,7 @@ export const URLS = {
   },
   service_Center: {
     getServiceCenters: "/service-center/list",
-    getServiceCenter: (id: string) => `/service-center/${id}`, 
+    getServiceCenter: (id: string) => `/service-center/${id}`,
     updateServiceCenterImage: (id: string) =>
       `/service-center/${id}/update-image`,
     updateServiceCenter: (id: string) => `/service-center/${id}`,

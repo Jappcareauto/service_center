@@ -37,7 +37,10 @@ const Statistics = () => {
     AppointmentType[]
   >([]);
 
-  const { data: appointments, isLoading } = useGetAppointmentsQuery(undefined);
+  const { data: appointments, isLoading } = useGetAppointmentsQuery({
+    status: AppointmentStatus.IN_PROGRESS,
+  });
+
   const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
     {}
   );
@@ -60,11 +63,13 @@ const Statistics = () => {
     );
     setAllAppointments(allAppoinments);
     const inProgressAppointments = allAppoinments.filter(
-      (appointment: AppointmentType) => appointment.status === AppointmentStatus.IN_PROGRESS
+      (appointment: AppointmentType) =>
+        appointment.status === AppointmentStatus.IN_PROGRESS
     );
     setInProgressAppointments(inProgressAppointments);
     const completedAppointments = allAppoinments.filter(
-      (appointment: AppointmentType) => appointment.status === AppointmentStatus.COMPLETED
+      (appointment: AppointmentType) =>
+        appointment.status === AppointmentStatus.COMPLETED
     );
     setCompletedAppointments(completedAppointments);
   };

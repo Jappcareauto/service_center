@@ -27,7 +27,7 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
     <div className="flex">
       <SideMenu />
       <div className="w-full pl-[40px] md:pl-[220px] lg:pl-[220px]">
-        <div className="h-[90px] bg-background z-40 md:w-[calc(100vw-274px)] fixed float-right flex items-center justify-between px-[40px] md:ml-5">
+        <div className="h-[90px] bg-background z-40 md:w-[calc(100vw-274px)] fixed float-right flex items-center justify-between pl-[40px] pr-[10px] md:ml-5">
           <div className="flex space-x-8 md:w-[25%]">
             {showBack && (
               <button
@@ -44,14 +44,14 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
               width={"100%"}
             />
           </div>
-          <div className="flex flex-row gap-x-6">
+          <div className="flex flex-row gap-x-7 bg-white p-3 rounded-full px-4">
             <NotificationIcon
               onClick={() => setOpen(true)}
-              className="cursor-pointer text-grey2"
+              className="cursor-pointer text-gray-500"
             />
             <SettingIcon
               onClick={() => navigate(paths.profile)}
-              className="cursor-pointer text-grey2"
+              className="cursor-pointer text-gray-500"
             />
           </div>
         </div>
