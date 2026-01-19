@@ -15,6 +15,7 @@ import {
   PaymentStatus,
 } from "@/enums";
 import { paths } from "@/routes/paths";
+import { billedFrom } from "@/types";
 import {
   getBillingStatusStyles,
   getFormattedDate,
@@ -23,14 +24,13 @@ import {
 } from "@/utils";
 import { formatStatusText } from "@/utils/formatStatusText";
 import {
-  ArrowDownIcon,
   ArrowDownLeftIcon,
+  ArrowDownTrayIcon,
   ArrowRightIcon,
   ArrowUpRightIcon,
   CalendarDaysIcon,
-  PencilIcon,
   TrashIcon,
-  TruckIcon,
+  TruckIcon
 } from "@heroicons/react/24/outline";
 import { twMerge } from "tailwind-merge";
 
@@ -271,8 +271,7 @@ export const getAppointmentColumns = (
 export const getInvoicesColumns = (
   handleDelete: (id: string) => void,
   handleViewDetails: (id: string) => void,
-  handleEdit: (id: string) => void,
-  handleMore: (id: string) => void
+  handleDownload: (id: string) => void
 ) => {
   return [
     // {
@@ -293,17 +292,17 @@ export const getInvoicesColumns = (
     //   },
     // },
     {
-      title: "Invoice No",
+      title: "Inv #",
       dataIndex: "number",
       key: "number",
-      ellipsis: true,
+      width: 100,
     },
     {
       title: "User",
-      dataIndex: "number",
-      key: "number",
-      render: (url: string) => {
-        return <Avatar name={url} className="w-6 h-6" />;
+      dataIndex: "billedToUser",
+      key: "billedToUser",
+      render: (user: billedFrom) => {
+        return <Avatar name={user?.name} className="w-6 h-6" />;
       },
     },
     {
@@ -369,24 +368,20 @@ export const getInvoicesColumns = (
       ellipsis: true,
     },
     {
-      title: "",
+      title: "Actions",
       key: "actions",
       render: (_: any, record: any) => (
-        <div className="flex items-center gap-x-5">
-          <PencilIcon
-            onClick={() => handleEdit(record.id)}
-            className="cursor-pointer"
-          />
-          <ArrowDownIcon
-            onClick={() => handleMore(record.id)}
-            className="cursor-pointer"
+        <div className="flex items-center gap-x-6">
+          <ArrowDownTrayIcon
+            onClick={() => handleDownload(record.id)}
+            className="cursor-pointer w-5 h-5 hover:opacity-70"
           />
           <TrashIcon
-            className="bg-red-600-500 hover:bg-red-600-700 cursor-pointer"
+            className="bg-red-600-500 hover:bg-red-600-700 cursor-pointer w-5 h-5 hover:opacity-70"
             onClick={() => handleDelete(record.id)}
           />
           <ArrowRightIcon
-            className="text-primary hover:text-black cursor-pointer"
+            className="text-primary hover:text-black cursor-pointer w-5 h-5 hover:opacity-70"
             onClick={() => handleViewDetails(record.id)}
           />
         </div>

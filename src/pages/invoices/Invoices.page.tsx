@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import InvoiceIcon from "@/assets/icons/InvoiceIcon";
 import FilterBar from "@/components/filter-bar/FilterBar.component";
+import Modal from "@/components/modals/Modal.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
 import Table from "@/components/table/Table.component";
 import { getInvoicesColumns, InvoiceStatuses } from "@/constants";
 import { colors } from "@/constants/colors";
-import { InvoiceStatus } from "@/enums";
+import { useToast } from "@/context/ToastContext";
+import { InvoiceStatus, ToastType } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
-import { useGetInvoicesQuery } from "@/redux/api";
+import { useDeleteInvoiceMutation, useGetInvoicesQuery } from "@/redux/api";
 import { Invoice } from "@/types";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +19,13 @@ const Invoices = () => {
   const { data, isLoading } = useGetInvoicesQuery({
     status,
   });
+  const [deleteInvoice, { isLoading:deleteLoading }] = useDeleteInvoiceMutation();
   const [invoicesList, setInvoicesList] = useState<Invoice[]>([]);
   const [pendingInvoices, setPendingInvoices] = useState("");
+  const [id, setId] = useState("");
   const navigate = useNavigate();
+  const { toast } = useToast();
+
   const getInvoicesData = useCallback(() => {
     const filteredTableData = data?.data?.map((item) => {
       return {
@@ -30,6 +36,7 @@ const Invoices = () => {
         issueDate: item.issueDate,
         paidDate: item?.paidDate ?? null,
         dueDate: item?.dueDate ?? null,
+        billedToUser: item?.billedToUser ?? null,
       };
     });
     if (filteredTableData) {
@@ -47,9 +54,37 @@ const Invoices = () => {
     getInvoicesData();
   }, [data, getInvoicesData]);
 
-  const handleDelete = () => {};
-  const handleEdit = () => {};
-  const handleMore = () => {};
+  const handleDelete = (id: string) => {
+    setId(id);
+  };
+  const onDelete = () => {
+    deleteInvoice(id)
+      .unwrap()
+      .then((res) => {
+        console.log("res", res);
+        if (res?.meta?.message) {
+          toast(ToastType.SUCCESS, res?.meta?.message as string);
+        }
+      })
+      .catch((err) => {
+        console.log('err', err)
+        const validationErrors = err?.data?.errors;
+        if (validationErrors) {
+          Object.values(validationErrors).forEach((errorMessage) => {
+            toast(ToastType.ERROR, errorMessage as string);
+          });
+        } else if (err?.data?.message || err?.message) {
+          toast(ToastType.ERROR, err?.data?.message || err?.message);
+        } else {
+          toast(ToastType.ERROR, "Update failed!");
+        }
+      }).finally(() => {
+        setId('')
+      });
+  };
+  const handleDownload = (id: string) => {
+    navigate(`/download-invoice/${id}`);
+  };
 
   const handleViewDetails = (id: string) => {
     navigate(`/invoice/${id}`);
@@ -59,8 +94,7 @@ const Invoices = () => {
   const columns = getInvoicesColumns(
     handleDelete,
     handleViewDetails,
-    handleEdit,
-    handleMore
+    handleDownload
   );
 
   return (
@@ -84,7 +118,6 @@ const Invoices = () => {
         <div className="flex gap-5 mt-5">
           <div className="w-72">
             <StatisticsCard
-              badgeTitle=""
               icon={<InvoiceIcon color={colors.primary} />}
               second
               value={pendingInvoices}
@@ -112,6 +145,17 @@ const Invoices = () => {
           pageSize={5}
         />
       </div>
+      <Modal
+        open={id?.length > 0}
+        onClose={() => setId("")}
+        title="Delete Invoice"
+        onOk={onDelete}
+        width={window.innerWidth * 0.3}
+        okText="Delete"
+        confirmLoading={deleteLoading}
+      >
+        <p>Are you sure you want to delete this Invoice</p>
+      </Modal>
     </DashboardLayout>
   );
 };

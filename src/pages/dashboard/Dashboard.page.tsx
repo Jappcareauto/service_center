@@ -12,12 +12,13 @@ import NoData from "@/components/no-data/NoData.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
 import Table from "@/components/table/Table.component";
 import { appointmentStatuses, getAppointmentColumns } from "@/constants";
-import { AppointmentStatus } from "@/enums";
+import { AppointmentStatus, InvoiceStatus } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useDeleteAppointmentMutation,
   useGetAppointmentQuery,
   useGetAppointmentsQuery,
+  useGetInvoicesQuery,
   useGetPaymentsMutation,
   useGetUserQuery,
 } from "@/redux/api";
@@ -28,6 +29,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
+import Invoice from "@/components/invoice/Invoice.component";
+import Skeleton from "@/components/skeletons/Skeleton.component";
 
 const Dashboard = () => {
   const { user_info } = useAppSelector((state) => state.auth);
@@ -41,6 +44,9 @@ const Dashboard = () => {
   const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
     {}
   );
+  const { data: invoice, isLoading: invoiceLoading } = useGetInvoicesQuery({
+    status: InvoiceStatus.ALL,
+  });
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
@@ -247,7 +253,24 @@ const Dashboard = () => {
             onSelect={(start, end) => handleAppointmentStats(start, end)}
             isLoading={statsLoading}
           /> */}
-          <div className="bg-purple rounded-3xl w-full relative flex items-center h-[120px] px-4">
+          {invoiceLoading ? (
+            <Skeleton />
+          ) : (
+            <Invoice
+              name={invoice?.data?.[0]?.billedToUser.name}
+              email={invoice?.data?.[0]?.billedToUser.email}
+              invoiceNumber={invoice?.data?.[0]?.number as string}
+              issueDate={invoice?.data?.[0]?.issueDate as string}
+              money={invoice?.data?.[0]?.money}
+              // service={service?.data?.title}
+              status={invoice?.data?.[0]?.status as InvoiceStatus}
+              onClick={() => {
+                navigate(`/invoice/${invoice?.data?.[0]?.id}`);
+                // dispatch(setAppointment(data?.data as Appointment));
+              }}
+            />
+          )}
+          <div className="bg-purple bg-red-400 rounded-3xl w-full relative flex items-center h-[120px] px-4">
             <p className="text-2xl font-light">
               Vehicle
               <br />

@@ -31,7 +31,7 @@ const Invoice = ({
         </div>
       </div>
       <div className="flex mt-3">
-        <Avatar name={name} label={email} isName={false} />
+        <Avatar name={name} label={email} />
       </div>
       <div className="flex flex-col gap-y-4 mt-5">
         <div className="flex justify-between items-center">

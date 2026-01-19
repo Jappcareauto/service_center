@@ -9,16 +9,15 @@ import Skeleton from "@/components/skeletons/Skeleton.component";
 import { InvoiceStatus } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useGetInvoiceReportQuery } from "@/redux/api";
-import { setInvoice } from "@/redux/features/appointment/appointmentSlice";
-import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
+import { RootState, useAppSelector } from "@/redux/store";
 import { getStatusStyles } from "@/utils";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 
 const InvoiceDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const { appointment, invoice } = useAppSelector(
     (state: RootState) => state.appointment
   );
@@ -26,43 +25,9 @@ const InvoiceDetails = () => {
   const { data, isLoading } = useGetInvoiceReportQuery(id as string, {
     skip: !id,
   });
-  const totalAmount = data?.data?.items?.reduce((sum, item) => {
-    return sum + Number(item.total);
-  }, 0);
-console.log(data?.data)
-  const invoiceData = {
-    invoiceNo: data?.data?.number,
-    billedTo: {
-      name: data?.data?.billedTo.name as string,
-      email: data?.data?.billedTo.email as string,
-      phoneNumber: data?.data?.billedTo.phoneNumber as string,
-      address: data?.data?.billedTo.address as string,
-    },
-    billedFrom: {
-      name: data?.data?.billedFrom.name as string,
-      email: data?.data?.billedFrom.email as string,
-      phoneNumber: data?.data?.billedFrom.phoneNumber as string,
-      address: data?.data?.billedFrom.address as string,
-    },
-    vehicle: {
-      make: data?.data?.vehicle?.make,
-      model: data?.data?.vehicle?.model,
-      registrationNumber: data?.data?.vehicle?.registrationNumber,
-      year: data?.data?.vehicle?.year,
-      vin: data?.data?.vehicle?.vin,
-      trim: data?.data?.vehicle?.trim,
-    },
-    issueDate: data?.data?.issueDate,
-    dueDate: data?.data?.dueDate,
-    items: data?.data?.items,
-    total: totalAmount,
-    subTotal: totalAmount,
-    tax: 0,
-  };
 
   const handlePreviewInvoice = () => {
-    dispatch(setInvoice(invoiceData));
-    navigate(`/download-invoice`);
+    navigate(`/download-invoice/${invoice?.id}`);
   };
 
   return (
@@ -100,6 +65,23 @@ console.log(data?.data)
                 >
                   Download
                 </Button>
+                {(invoice?.status === InvoiceStatus.PENDING ||
+                  invoice?.status === InvoiceStatus.DRAFT) && (
+                  <div className="flex justify-end gap-x-4">
+                    <Button
+                      className="rounded-full w-auto h-[38px] text-sm"
+                      onClick={() =>
+                        navigate(
+                          `/update-invoice/${appointment?.id}/${invoice?.id}`
+                        )
+                      }
+                      variant="tertiary"
+                    >
+                      Update Invoice
+                      <PencilIcon className="w-4 h-4 ml-3" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             {/* number Section */}
@@ -171,19 +153,6 @@ console.log(data?.data)
               isUpdating
               disabled={true}
             />
-          )}
-          {(invoice?.status === InvoiceStatus.PENDING ||
-            invoice?.status === InvoiceStatus.DRAFT) && (
-            <div className="flex justify-end gap-x-4 mt-10">
-              <Button
-                className="w-auto"
-                onClick={() =>
-                  navigate(`/update-invoice/${appointment?.id}/${id}`)
-                }
-              >
-                Update Invoice
-              </Button>
-            </div>
           )}
         </div>
       </div>

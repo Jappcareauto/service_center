@@ -421,7 +421,9 @@ export interface Invoice extends Audit {
   billedToUserId: string;
   items: InvoiceItem[];
   billedTo: billedFrom;
+  billedToUser: billedFrom;
   billedFrom: billedFrom;
+  billedFromUser: billedFrom;
   vehicle?: Vehicle;
 }
 
@@ -434,6 +436,9 @@ export interface CreateInvoiceRequest {
   issueDate: string;
   dueDate: string;
   items: InvoiceItem[];
+}
+export interface CreateInvoiceResponse extends GenericResponse {
+  data?: Invoice
 }
 
 export interface InvoicesResponse extends GenericResponse {

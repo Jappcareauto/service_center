@@ -16,6 +16,7 @@ import {
   ContactsResponse,
   CreateChatRoomRequest,
   CreateInvoiceRequest,
+  CreateInvoiceResponse,
   DiagnosisMadeRequest,
   DiagnosisToMakeRequest,
   ForgotPasswordRequest,
@@ -400,7 +401,7 @@ export const apiSlice = createApi({
       providesTags: ["invoice"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    createInvoice: builder.mutation<GenericResponse, CreateInvoiceRequest>({
+    createInvoice: builder.mutation<CreateInvoiceResponse, CreateInvoiceRequest>({
       query: (data) => {
         return {
           url: URLS.invoice.createInvoice,

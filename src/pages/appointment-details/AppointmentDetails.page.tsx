@@ -362,8 +362,8 @@ const AppointmentDetails = () => {
                 <p className="mb-2 text-sm">Invoice</p>
                 {invoice?.data ? (
                   <Invoice
-                    name={user?.data?.name}
-                    email={user?.data?.email}
+                    name={invoice?.data?.billedToUser.name}
+                    email={invoice?.data?.billedToUser.email}
                     invoiceNumber={invoice?.data?.number}
                     issueDate={invoice?.data?.issueDate}
                     money={invoice?.data?.money}
