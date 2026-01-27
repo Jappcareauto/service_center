@@ -16,6 +16,7 @@ import {
   ContactsResponse,
   CreateChatRoomRequest,
   CreateInvoiceRequest,
+  CreateInvoiceResponse,
   DiagnosisMadeRequest,
   DiagnosisToMakeRequest,
   ForgotPasswordRequest,
@@ -337,15 +338,19 @@ export const apiSlice = createApi({
       invalidatesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    getPayments: builder.mutation<PaymentsResponse, PaymentRequest | object>({
-      query: (data) => {
+    getPayments: builder.query<PaymentsResponse, PaymentRequest>({
+      query: ({ size, page, status }) => {
+        // console.log(status)
         return {
-          url: URLS.payment.getPayments,
-          method: "POST",
-          body: data,
+          url: URLS.payment.getPayments(
+            page,
+            size,
+            status
+          ),
+          method: "GET",
         };
       },
-      invalidatesTags: ["payment"],
+      providesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     getEmergencies: builder.mutation<any, any | object>({
@@ -400,7 +405,7 @@ export const apiSlice = createApi({
       providesTags: ["invoice"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    createInvoice: builder.mutation<GenericResponse, CreateInvoiceRequest>({
+    createInvoice: builder.mutation<CreateInvoiceResponse, CreateInvoiceRequest>({
       query: (data) => {
         return {
           url: URLS.invoice.createInvoice,
@@ -732,7 +737,7 @@ export const {
   useAcceptAppointmentMutation,
   useDeclineAppointmentMutation,
   useCompleteAppointmentMutation,
-  useGetPaymentsMutation,
+  useGetPaymentsQuery,
   useDeleteAppointmentMutation,
   useUpdateAppointmentMutation,
   useUpdateAppointmentStatusMutation,

@@ -1,7 +1,7 @@
 import Calendar2Icon from "@/assets/icons/Calendar2Icon";
 import LocationIcon from "@/assets/icons/LocationIcon";
 import { useToast } from "@/context/ToastContext";
-import { AppointmentStatus, ToastType } from "@/enums";
+import { AppointmentStatus, InvoiceStatus, ToastType } from "@/enums";
 import {
   useAcceptAppointmentMutation,
   useCompleteAppointmentMutation,
@@ -32,6 +32,7 @@ const AppointmentDetailModal = ({
   serviceCenter,
   id,
   note,
+  invoice,
 }: AppointmentDetailModalProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -91,6 +92,7 @@ const AppointmentDetailModal = ({
     completeAppointment(id as string)
       .unwrap()
       .then((res) => {
+        console.log('res', res)
         toast(
           ToastType.SUCCESS,
           res?.meta?.message ?? "Appointment Completed Successfully"
@@ -105,6 +107,7 @@ const AppointmentDetailModal = ({
         toast(ToastType.ERROR, "Oops an error occurred!");
       });
   }, [id, completeAppointment, toast]);
+
   return (
     <>
       <div className="pb-16">
@@ -179,7 +182,7 @@ const AppointmentDetailModal = ({
             <button
               className="flex space-x-3 hover:text-primary transition-all duration-200"
               onClick={() => id && navigate(`/appointment/${id}`)}
-              type='button'
+              type="button"
             >
               <p className="text-[0.9rem]">View Details</p>
               <Expended2Icon className="cursor-pointer" />
@@ -235,12 +238,7 @@ const AppointmentDetailModal = ({
             </Button>
           </div>
           <Button
-            disabled={
-              completeLoading ||
-              status === AppointmentStatus.IN_PROGRESS ||
-              status === AppointmentStatus.NOT_STARTED ||
-              status === AppointmentStatus.CANCELLED
-            }
+            disabled={completeLoading || invoice?.status !== InvoiceStatus.PAID}
             isLoading={completeLoading}
             onClick={handleCompleteAppointment}
             variant="secondary"

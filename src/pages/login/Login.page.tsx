@@ -57,6 +57,18 @@ const Login = () => {
         if (err?.data?.error) {
           toast(ToastType.ERROR, err?.data?.error);
         }
+        const validationErrors = err?.data?.errors;
+        if (validationErrors) {
+          Object.values(validationErrors).forEach((errorMessage) => {
+            toast(ToastType.ERROR, errorMessage as string);
+          });
+        } else if (err?.data?.message || err?.message) {
+          toast(ToastType.ERROR, err?.data?.message || err?.message);
+        } else if (err?.error?.error) {
+          toast(ToastType.ERROR, err?.error?.error);
+        } else {
+          toast(ToastType.ERROR, "Update failed!");
+        }
       });
   };
 

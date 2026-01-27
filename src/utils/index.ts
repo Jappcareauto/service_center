@@ -44,9 +44,9 @@ export const getPaymentStatusStyles = (status: PaymentStatus) => {
   switch (status) {
     case PaymentStatus.ALL:
       return "bg-gray-100 text-gray-500 text-xs";
-    case PaymentStatus.EARNINGS:
+    case PaymentStatus.PAID:
       return `text-xs bg-green-200 text-green-800`;
-    case PaymentStatus.WITHDRAWALS:
+    case PaymentStatus.UNPAID:
       return `bg-red-500 text-white text-xs bg-redAccent bg-red-600`;
     default:
       return "bg-gray-100 text-gray-500 text-xs";

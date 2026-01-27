@@ -41,7 +41,8 @@ export const URLS = {
     diagnosisMade: "/appointment/update-diagnosis-made",
   },
   payment: {
-    getPayments: "/payment/list",
+    getPayments: (page?: number, size?: number, status?: string) =>
+      `/payment?size=${size ?? ""}&page=${page ?? ""}&status=${status ?? ""}`,
     getPayment: (id: string) => `/payment/${id}`,
     createPayment: "/payment",
     paymentForOrder: (id: string) => `/payment/order/${id}`,

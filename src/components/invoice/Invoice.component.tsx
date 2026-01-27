@@ -22,7 +22,7 @@ const Invoice = ({
         <p className="text-grey4">Billed to</p>
         <div
           className={twMerge(
-            "bg-primaryAccent px-4 text-red-600 p-1 rounded-full text-sm",
+            "bg-primaryAccent px-4 text-red-600 py-1 rounded-full text-sm",
             status &&
               getStatusStyles(status, true)
           )}
@@ -31,7 +31,7 @@ const Invoice = ({
         </div>
       </div>
       <div className="flex mt-3">
-        <Avatar name={name} label={email} isName={false} />
+        <Avatar name={name} label={email} />
       </div>
       <div className="flex flex-col gap-y-4 mt-5">
         <div className="flex justify-between items-center">

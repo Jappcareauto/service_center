@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AppointmentStatus, InvoiceStatus, MessageType } from "@/enums";
+import { AppointmentStatus, InvoiceStatus, MessageType, PaymentStatus } from "@/enums";
 
 export const IMAGE_TYPES = [
   "image/jpeg",
@@ -231,6 +231,7 @@ export interface Appointment extends GenericType {
   chatRoomId?: string;
   diagnosesToMake?: string;
   diagnosesMade?: string;
+  invoice?: Invoice;
 }
 
 export interface DiagnosisToMakeRequest {
@@ -334,12 +335,24 @@ export interface Payment extends GenericType {
   appointmentId: string;
   paymentMethod: "CASH";
   invoiceId: string;
-  orderId: string;
-  paymentOption: string;
-  userFrom: "User";
-  userTo: "Manager";
+  orderId: string | null;
+  paymentOption: string | null;
+  userFrom: string;
+  userTo: string;
   amount: string;
   paymentMethodName: string;
+  id: string;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: string;
+  updatedAt: string;
+  note: string;
+  receiptFileUrl: null;
+  totalAmount: number;
+  totalPaid: number;
+  remainingBalance: number;
+  invoiceStatus: InvoiceStatus;
+  fullyPaid: boolean;
 }
 
 export interface PaymentsResponse extends GenericResponse {
@@ -347,12 +360,9 @@ export interface PaymentsResponse extends GenericResponse {
 }
 
 export interface PaymentRequest {
-  audit?: Audit;
-  pagination?: Pagination;
-  paymentDateBefore?: string;
-  paymentDateAfter?: string;
-  paymentMethod?: "Credit Card" | "Cash" | "Mobile Money";
-  invoiceId?: string;
+  page?: number;
+  size?: number;
+  status?: PaymentStatus
 }
 
 export interface BarChartItemType {
@@ -421,7 +431,9 @@ export interface Invoice extends Audit {
   billedToUserId: string;
   items: InvoiceItem[];
   billedTo: billedFrom;
+  billedToUser: billedFrom;
   billedFrom: billedFrom;
+  billedFromUser: billedFrom;
   vehicle?: Vehicle;
 }
 
@@ -434,6 +446,9 @@ export interface CreateInvoiceRequest {
   issueDate: string;
   dueDate: string;
   items: InvoiceItem[];
+}
+export interface CreateInvoiceResponse extends GenericResponse {
+  data?: Invoice;
 }
 
 export interface InvoicesResponse extends GenericResponse {

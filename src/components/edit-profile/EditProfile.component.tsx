@@ -26,7 +26,6 @@ const EditProfile: FC<IProps> = ({
   serviceCenterId,
   ...props
 }) => {
-  // console.log('props', props)
   const [updateServiceCenter, { isLoading }] = useUpdateServiceCenterMutation();
   const [updateImage, { isLoading: imageUpdateLoading }] =
     useUpdateServiceCenterImageMutation();
@@ -53,7 +52,6 @@ const EditProfile: FC<IProps> = ({
           onRequested?.();
         })
         .catch((err) => {
-          console.log("err", err);
           if (err?.data?.errors) {
             toast(ToastType.ERROR, err?.data?.errors);
           } else if (err?.message) {
@@ -87,11 +85,9 @@ const EditProfile: FC<IProps> = ({
         data: updatedData,
       };
       
-      console.log("Payload being sent:", payload);
       updateServiceCenter(payload)
         .unwrap()
         .then((res) => {
-          console.log("res update", res);
           toast(ToastType.SUCCESS, res?.meta?.message as string);
           onRequested?.();
         })

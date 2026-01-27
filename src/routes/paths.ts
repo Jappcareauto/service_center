@@ -11,7 +11,7 @@ export const paths = {
   appointmentDetails: "/appointment/:id",
   invoices: "/invoices",
   invoiceDetails: "/invoice/:id",
-  downloadInvoice: "/download-invoice",
+  downloadInvoice: "/download-invoice/:id",
   createInvoice: "/create-invoice/:id",
   payments: "/payments",
   chatDetails: "/chat/:id",

@@ -193,9 +193,9 @@ const Profile = () => {
                         <h2 className="font-normal">{item?.service?.title}</h2>
                         <img
                           src={
-                            serviceImage[
-                              item?.service.title as keyof typeof serviceImage
-                            ].image
+                            serviceImage?.[
+                              item?.service?.title as keyof typeof serviceImage
+                            ]?.image
                           }
                           alt=""
                           className={twMerge(

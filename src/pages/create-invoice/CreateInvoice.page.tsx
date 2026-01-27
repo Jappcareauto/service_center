@@ -5,6 +5,7 @@ import Button from "@/components/button/Button.component";
 import Input from "@/components/inputs/Input.component";
 import InvoiceBillingCard from "@/components/invoice-billing-card/InvoiceBillingCard.component";
 import InvoiceTotal from "@/components/invoice-total/InvoiceTotal.component";
+import Modal from "@/components/modals/Modal.component";
 import DatePicker from "@/components/pickers/DatePicker.component";
 import EditableTable from "@/components/table/EditableTable.component";
 import { useToast } from "@/context/ToastContext";
@@ -28,14 +29,12 @@ const CreateInvoice = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { toast } = useToast();
-
+  const [invId, setInvId] = useState("");
   const [createInvoice, { isLoading }] = useCreateInvoiceMutation();
   const { data: appointment } = useGetAppointmentQuery(id as string, {
     skip: !id,
   });
-
   const { data: chatContacts } = useGetChatContactsQuery(undefined);
-
   // const { data: user } = useGetUserQuery(
   //   appointment?.data?.createdBy as string,
   //   {
@@ -73,6 +72,9 @@ const CreateInvoice = () => {
       createInvoice(data)
         .unwrap()
         .then((res) => {
+          if (res?.data?.id) {
+            setInvId(res?.data?.id);
+          }
           if (res?.meta?.message) {
             toast(ToastType.SUCCESS, res?.meta?.message as string);
           }
@@ -86,7 +88,7 @@ const CreateInvoice = () => {
           } else if (err?.data?.message || err?.message) {
             toast(ToastType.ERROR, err?.data?.message || err?.message);
           } else {
-            toast(ToastType.ERROR, "Update failed!");
+            toast(ToastType.ERROR, "Failed to create invoice!");
           }
         });
     }
@@ -147,7 +149,6 @@ const CreateInvoice = () => {
       tax: 0,
     };
     dispatch(setInvoice(invoiceData));
-    navigate(`/download-invoice`);
   };
 
   const handleFee = useCallback((f: number) => {
@@ -191,10 +192,15 @@ const CreateInvoice = () => {
             <div className="flex gap-x-7 justify-between">
               <DatePicker
                 label="Date Issued"
-                onSelect={(value) => setIssueDate(value as any)}
+                value={issueDate}
+                onSelect={(value) => {
+                  console.log("value", value);
+                  setIssueDate(value as any);
+                }}
                 isISO
               />
               <DatePicker
+                value={dueDate}
                 label="Due Date"
                 onSelect={(value) => setDueDate(value as any)}
                 isISO
@@ -270,25 +276,17 @@ const CreateInvoice = () => {
         </div>
         {/* <div className={twMerge("flex flex-col flex-[30%] gap-y-6")}></div> */}
       </div>
-       {/* <Modal
-              open={showPlans}
-              onClose={() => setShowPlans(false)}
-              title="Choose a Plan"
-              onOk={() => setShowPlans(false)}
-              okText="Select"
-              footer={null}
-            >
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3'>
-                {plans.map((plan) => (
-                <PlanCard
-                  key={plan.id}
-                  name={plan.name}
-                  price={plan.price}
-                  features={plan.features}
-                />
-              ))}
-              </div>
-            </Modal> */}
+      <Modal
+        open={invId?.length > 0}
+        onClose={() => setInvId("")}
+        title="Preview Invoice"
+        onOk={() => navigate(`/download-invoice/${invId}`)}
+        width={window.innerWidth * 0.3}
+        okText="View Invoice"
+        confirmLoading={isLoading}
+      >
+        <p>Do you want to preview this invoice?</p>
+      </Modal>
     </DashboardLayout>
   );
 };

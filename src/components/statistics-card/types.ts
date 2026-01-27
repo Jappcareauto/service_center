@@ -3,7 +3,7 @@ export interface StatisticsCardProps {
     value: string | number | undefined;
     title: string;
     titleClassName?: string;
-    badgeTitle: string;
+    badgeTitle?: string;
     second?: boolean;
     isLoading?: boolean;
     isSmall?: boolean;
