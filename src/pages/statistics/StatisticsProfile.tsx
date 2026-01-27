@@ -35,7 +35,7 @@ const StatisticsProfile = () => {
         </div>
         <div>
           <h2 className="font-[600]">Select Data to Export</h2>
-          <div className="flex flex-col gap-y-3 mt-4">
+          <div className="flex flex-col gap-y-5 mt-4">
             <div className="flex items-center justify-between">
               <p>Revenue</p>
               <Switch />

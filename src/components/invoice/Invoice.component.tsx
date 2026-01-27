@@ -22,7 +22,7 @@ const Invoice = ({
         <p className="text-grey4">Billed to</p>
         <div
           className={twMerge(
-            "bg-primaryAccent px-4 text-red-600 p-1 rounded-full text-sm",
+            "bg-primaryAccent px-4 text-red-600 py-1 rounded-full text-sm",
             status &&
               getStatusStyles(status, true)
           )}

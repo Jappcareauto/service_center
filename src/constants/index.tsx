@@ -30,7 +30,7 @@ import {
   ArrowUpRightIcon,
   CalendarDaysIcon,
   TrashIcon,
-  TruckIcon
+  TruckIcon,
 } from "@heroicons/react/24/outline";
 import { twMerge } from "tailwind-merge";
 
@@ -269,9 +269,9 @@ export const getAppointmentColumns = (
   },
 ];
 export const getInvoicesColumns = (
+  handleDownload: (id: string) => void,
   handleDelete: (id: string) => void,
-  handleViewDetails: (id: string) => void,
-  handleDownload: (id: string) => void
+  handleViewDetails: (id: string) => void
 ) => {
   return [
     // {
@@ -372,17 +372,18 @@ export const getInvoicesColumns = (
       key: "actions",
       render: (_: any, record: any) => (
         <div className="flex items-center gap-x-6">
-          <ArrowDownTrayIcon
-            onClick={() => handleDownload(record.id)}
-            className="cursor-pointer w-5 h-5 hover:opacity-70"
+          <ArrowRightIcon
+            className="text-primary hover:text-black cursor-pointer w-5 h-5 hover:opacity-70"
+            onClick={() => handleViewDetails(record.id)}
           />
+
           <TrashIcon
             className="bg-red-600-500 hover:bg-red-600-700 cursor-pointer w-5 h-5 hover:opacity-70"
             onClick={() => handleDelete(record.id)}
           />
-          <ArrowRightIcon
-            className="text-primary hover:text-black cursor-pointer w-5 h-5 hover:opacity-70"
-            onClick={() => handleViewDetails(record.id)}
+          <ArrowDownTrayIcon
+            onClick={() => handleDownload(record.id)}
+            className="cursor-pointer w-5 h-5 hover:opacity-70"
           />
         </div>
       ),
@@ -473,11 +474,27 @@ export const PaymentsStatuses: DropdownType[] = [
   },
   {
     label: "Earnings",
-    value: PaymentStatus.EARNINGS,
+    value: PaymentStatus.PAID,
   },
   {
-    label: "Withdrawals",
-    value: PaymentStatus.WITHDRAWALS,
+    label: "Pending",
+    value: PaymentStatus.PENDING,
+  },
+  {
+    label: "Partial",
+    value: PaymentStatus.PARTIALLY_PAID,
+  },
+  {
+    label: "Unpaid",
+    value: PaymentStatus.UNPAID,
+  },
+  {
+    label: "Draft",
+    value: PaymentStatus.DRAFT,
+  },
+  {
+    label: "Declined",
+    value: PaymentStatus.DECLINED,
   },
 ];
 
@@ -544,20 +561,20 @@ export const paymentMethods = [
   },
 ];
 
-export const getPaymentsColumns = () => [
+export const getPaymentsColumns = (handleViewDetails: (id: string) => void) => [
+  // {
+  //   title: "Id",
+  //   dataIndex: "id",
+  //   key: "id",
+  //   ellipsis: true,
+  // },
   {
-    title: "Id",
-    dataIndex: "id",
-    key: "id",
-    ellipsis: true,
-  },
-  {
-    title: "Amount",
+    title: "Total Amount",
     dataIndex: "amount",
     key: "amount",
   },
   {
-    title: "Date",
+    title: "Payment Date",
     dataIndex: "paymentDate",
     key: "paymentDate",
     render: (text: string) => (
@@ -587,26 +604,31 @@ export const getPaymentsColumns = () => [
       ),
   },
   {
-    title: "To",
-    dataIndex: "userTo",
-    key: "userTo",
-    render: (text: string) =>
-      text && (
-        <Avatar
-          className="w-6 h-6"
-          name={text}
-          label="To"
-          namesClassName="flex flex-col-reverse"
-          labelClassName="text-xs"
-        />
-      ),
+    title: "Amount Paid",
+    dataIndex: "totalPaid",
+    key: "totalPaid",
+  },
+  {
+    title: "Fully Paid",
+    dataIndex: "fullyPaid",
+    key: "fullyPaid",
+    render: (fullyPaid: boolean) => (
+      <span
+        className={twMerge(
+          "rounded-full px-3 py-1",
+          fullyPaid ? "text-green-600" : "text-red-600"
+        )}
+      >
+        {fullyPaid ? "Yes" : "No"}
+      </span>
+    ),
   },
   {
     title: "Status",
     dataIndex: "status",
     key: "status",
     render: (status: PaymentStatus) => (
-      <div className="flex items-center justify-center gap-x-3">
+      <div className="flex items-center gap-x-3">
         <span
           className={twMerge(
             "rounded-full px-3 py-1 lowercase first-letter:uppercase",
@@ -615,12 +637,25 @@ export const getPaymentsColumns = () => [
         >
           {status && formatStatusText(status)}
         </span>
-        {status === PaymentStatus.EARNINGS ? (
+        {status === PaymentStatus.PAID ? (
           <ArrowDownLeftIcon className="w-4 h-5 text-green-700" />
         ) : (
           <ArrowUpRightIcon className="bg-red-600" />
         )}
       </div>
+    ),
+  },
+  {
+    title: "Actions",
+    key: "actions",
+    render: (_: any, record: any) => (
+      <button
+        className="flex items-center gap-x-3"
+        onClick={() => handleViewDetails(record.invoiceId)}
+      >
+        <span className="text-primary">View Invoice</span>
+        <ArrowRightIcon className="text-primary hover:text-black cursor-pointer w-4 h-4 hover:opacity-70" />
+      </button>
     ),
   },
 ];

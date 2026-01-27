@@ -40,11 +40,11 @@ const FilterBar: React.FC<OwnProps> = ({
 >
   {/* Filters */}
   <div className="flex items-center gap-3 overflow-x-auto sm:overflow-visible no-scrollbar">
-    {filters.map((item, index) => {
+    {filters?.map((item) => {
       const isSelected = item.label === activeItem;
       return (
         <div
-          key={"filter-bar-item-" + index}
+          key={"filter-bar-item-" + item.value}
           onClick={() => {
             setActiveItem(item.label);
             onFilter(item.value);

@@ -15,8 +15,14 @@ export enum InvoiceStatus {
 }
 export enum PaymentStatus {
   ALL = "ALL",
-  EARNINGS = "EARNINGS",
-  WITHDRAWALS = "WITHDRAWALS",
+  // EARNINGS = "EARNINGS",
+  // WITHDRAWALS = "WITHDRAWALS",
+  PAID="PAID",
+  PENDING="PENDING",
+  PARTIALLY_PAID="PARTIALLY_PAID",
+  UNPAID="UNPAID",
+  DRAFT="DRAFT",
+  DECLINED="DECLINED",
 }
 
 export enum ROLES {

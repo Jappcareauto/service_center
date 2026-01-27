@@ -338,15 +338,19 @@ export const apiSlice = createApi({
       invalidatesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    getPayments: builder.mutation<PaymentsResponse, PaymentRequest | object>({
-      query: (data) => {
+    getPayments: builder.query<PaymentsResponse, PaymentRequest>({
+      query: ({ size, page, status }) => {
+        // console.log(status)
         return {
-          url: URLS.payment.getPayments,
-          method: "POST",
-          body: data,
+          url: URLS.payment.getPayments(
+            page,
+            size,
+            status
+          ),
+          method: "GET",
         };
       },
-      invalidatesTags: ["payment"],
+      providesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
     getEmergencies: builder.mutation<any, any | object>({
@@ -733,7 +737,7 @@ export const {
   useAcceptAppointmentMutation,
   useDeclineAppointmentMutation,
   useCompleteAppointmentMutation,
-  useGetPaymentsMutation,
+  useGetPaymentsQuery,
   useDeleteAppointmentMutation,
   useUpdateAppointmentMutation,
   useUpdateAppointmentStatusMutation,

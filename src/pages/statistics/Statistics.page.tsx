@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import CalendarIcon from "@/assets/icons/CalendarIcon";
 import LocationIcon from "@/assets/icons/LocationIcon";
 import StarIcon from "@/assets/icons/StarIcon";
@@ -10,25 +10,25 @@ import Drawer from "@/components/drawer/Drawer.component";
 import LineChart from "@/components/line-chart/LineChart.component";
 import Skeleton from "@/components/skeletons/Skeleton.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
+import { AppointmentStatus } from "@/enums";
+import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useGetAppointmentsQuery,
-  useGetPaymentsMutation,
-  useGetServiceCentersMutation,
+  useGetPaymentsQuery,
+  useGetServiceCenterQuery
 } from "@/redux/api";
 import { useAppSelector } from "@/redux/store";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import StatisticsProfile from "./StatisticsProfile";
 import StatComponent from "./StatsComponent";
-import DashboardLayout from "@/layouts/DashboardLayout";
-import { useAutoFetch } from "@/hooks/useAutoFetch";
-import { AppointmentStatus } from "@/enums";
 
 const Statistics = () => {
   const [open, setOpen] = useState(false);
-  const { user_info } = useAppSelector((state) => state.auth);
   const [revenue, setRevenue] = useState("");
+  const { serviceCenterId } = useAppSelector((state) => state.auth);
+
   const [allAppointments, setAllAppointments] = useState<AppointmentType[]>([]);
   const [inprogressAppointments, setInProgressAppointments] = useState<
     AppointmentType[]
@@ -38,23 +38,22 @@ const Statistics = () => {
   >([]);
 
   const { data: appointments, isLoading } = useGetAppointmentsQuery({
-    status: AppointmentStatus.IN_PROGRESS,
+    status: AppointmentStatus.ALL,
   });
 
-  const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
+  const { data: payments, isLoading: paymentsLoading } = useGetPaymentsQuery(
     {}
   );
 
-  const { result: data, isLoading: serviceCentersLoading } = useAutoFetch(
-    useGetServiceCentersMutation as any,
-    {
-      ownerId: user_info?.userId,
-    }
-  );
+  const {
+    data: myCenter,
+    isLoading: centerLoading,
+  } = useGetServiceCenterQuery(serviceCenterId, {
+    skip: !serviceCenterId,
+  });
 
-  const getAppointmentsData = () => {
+  const getAppointmentsData = useCallback(() => {
     if (!appointments?.data) return;
-
     const allAppoinments = appointments?.data?.filter(
       (appointment: AppointmentType) =>
         appointment.status === AppointmentStatus.NOT_STARTED ||
@@ -72,27 +71,24 @@ const Statistics = () => {
         appointment.status === AppointmentStatus.COMPLETED
     );
     setCompletedAppointments(completedAppointments);
-  };
+  }, [appointments]);
 
   useEffect(() => {
     getAppointmentsData();
-    getPayments({})
-      .unwrap()
-      .then((res) => {
-        const totalAmount = res?.data?.reduce(
-          (sum, payment) => sum + (payment.money?.amount || 0),
-          0
-        );
-        setRevenue(`${totalAmount.toString()} XAF`);
-      });
-  }, []);
+    const totalAmount = payments?.data?.reduce(
+      (sum, payment) => sum + (payment?.totalAmount || 0),
+      0
+    );
+    if (totalAmount) {
+      setRevenue(`${totalAmount.toString()} XAF`);
+    }
+  }, [getAppointmentsData, payments]);
 
-  const center = data?.data?.[0];
-  console.log("center", center);
+  const center = myCenter?.data;
 
   return (
     <DashboardLayout showBack={false}>
-      {isLoading || serviceCentersLoading || paymentsLoading ? (
+      {isLoading || centerLoading || paymentsLoading ? (
         <div className="flex-co space-y-8">
           <Skeleton paragraph={{ rows: 8 }} />
           <Skeleton paragraph={{ rows: 8 }} />

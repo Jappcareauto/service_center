@@ -8,55 +8,54 @@ import Successful from "@/components/successful/Successful.component";
 import Table from "@/components/table/Table.component";
 import { getPaymentsColumns, PaymentsStatuses } from "@/constants";
 import { PaymentStatus } from "@/enums";
-import DashboardLayout from '@/layouts/DashboardLayout';
-import { useGetPaymentsMutation } from "@/redux/api";
-import { formatAmount } from "@/utils";
+import DashboardLayout from "@/layouts/DashboardLayout";
+import { useGetPaymentsQuery } from "@/redux/api";
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Payments = () => {
   const [open, setOpen] = useState(false);
   const [successOpen, setSuccessOpen] = useState(false);
   const [revenue, setRevenue] = useState("");
   const [tableData, setTableData] = useState([]);
-
-  const [getPayments, { isLoading }] = useGetPaymentsMutation();
+  const [status, setStatus] = useState<PaymentStatus>(PaymentStatus.ALL);
+  const { data: payments, isLoading: paymentsLoading } = useGetPaymentsQuery({
+    status,
+  });
+  const navigate = useNavigate()
+  useEffect(() => {
+    const totalAmount = payments?.data?.reduce(
+      (sum, payment) => sum + (payment?.totalAmount || 0),
+      0
+    );
+    if (totalAmount) {
+      setRevenue(`${totalAmount.toString()} XAF`);
+    }
+  }, [payments]);
 
   useEffect(() => {
-    getPaymentsData();
-  }, []);
+    const filteredTableData = payments?.data.map((item) => {
+      return {
+        invoiceId: item.invoiceId,
+        amount: item.amount,
+        status: item.paymentDate ? PaymentStatus.PAID : PaymentStatus.ALL,
+        paymentDate: item.paymentDate,
+        paymentMethodName: item.paymentMethodName,
+        userFrom: item.userFrom,
+        totalPaid: `${item.totalPaid} XAF`,
+        fullyPaid: item.fullyPaid,
+      };
+    });
+    setTableData(filteredTableData as any);
+  }, [payments, status]);
 
-  const getPaymentsData = (status?: PaymentStatus) => {
-    const submitData = status
-      ? {
-          status,
-        }
-      : {};
-    getPayments(submitData)
-      .unwrap()
-      .then((res) => {
-        const totalAmount = res?.data?.reduce(
-          (sum, payment) => sum + (payment.money?.amount || 0),
-          0
-        );
-        const filteredTableData = res.data.map((item) => {
-          return {
-            id: item.id,
-            amount: item.amount,
-            status: item.paymentDate
-              ? PaymentStatus.EARNINGS
-              : PaymentStatus.ALL,
-            paymentDate: item.paymentDate,
-            paymentMethodName: item.paymentMethodName,
-            userFrom: item.userFrom,
-            userTo: item.userTo,
-          };
-        });
-        setTableData(filteredTableData as any);
-        setRevenue(`${formatAmount(totalAmount.toString())}`);
-      });
+    const handleViewDetails = (id: string) => {
+    navigate(`/invoice/${id}`);
+    return;
   };
 
-  const columns = getPaymentsColumns();
+
+  const columns = getPaymentsColumns(handleViewDetails);
 
   return (
     <DashboardLayout showBack={false}>
@@ -81,7 +80,7 @@ const Payments = () => {
             </svg>
 
             <div>
-              <h1 className="text-3xl">{revenue} Frs</h1>
+              <h1 className="text-3xl">{revenue}</h1>
               <h4 className="text-grey">Available for Withdrawal</h4>
             </div>
           </div>
@@ -103,7 +102,7 @@ const Payments = () => {
         <h3 className="font-medium">Transactions</h3>
         <FilterBar
           filters={PaymentsStatuses}
-          onFilter={(filter) => getPaymentsData(filter as PaymentStatus)}
+          onFilter={(filter) => setStatus(filter as PaymentStatus)}
           hideLayoutButtons
         />
         <div>
@@ -111,7 +110,7 @@ const Payments = () => {
             data={tableData}
             columns={columns}
             pageSize={6}
-            loading={isLoading}
+            loading={paymentsLoading}
           />
         </div>
       </div>

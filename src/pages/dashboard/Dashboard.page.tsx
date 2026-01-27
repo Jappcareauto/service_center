@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import images from "@/assets/images";
 // import DisclosiorAlertComponent from "./components/DisclosiorAlertComponent";
 import CalendarIcon from "@/assets/icons/CalendarIcon";
 import StatisticIcon from "@/assets/icons/StatisticIcon";
@@ -7,8 +6,10 @@ import AppointmentDetailModal from "@/components/appointment-detail-modal/Appoin
 import Appointment from "@/components/appointment/Appointment.component";
 import Drawer from "@/components/drawer/Drawer.component";
 import FilterBar from "@/components/filter-bar/FilterBar.component";
+import Invoice from "@/components/invoice/Invoice.component";
 import Modal from "@/components/modals/Modal.component";
 import NoData from "@/components/no-data/NoData.component";
+import Skeleton from "@/components/skeletons/Skeleton.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
 import Table from "@/components/table/Table.component";
 import { appointmentStatuses, getAppointmentColumns } from "@/constants";
@@ -19,7 +20,7 @@ import {
   useGetAppointmentQuery,
   useGetAppointmentsQuery,
   useGetInvoicesQuery,
-  useGetPaymentsMutation,
+  useGetPaymentsQuery,
   useGetUserQuery,
 } from "@/redux/api";
 import { setUser } from "@/redux/features/auth/authSlice";
@@ -29,8 +30,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
-import Invoice from "@/components/invoice/Invoice.component";
-import Skeleton from "@/components/skeletons/Skeleton.component";
 
 const Dashboard = () => {
   const { user_info } = useAppSelector((state) => state.auth);
@@ -41,7 +40,7 @@ const Dashboard = () => {
     status,
   });
   const { data: user } = useGetUserQuery(user_info?.userId);
-  const [getPayments, { isLoading: paymentsLoading }] = useGetPaymentsMutation(
+  const { data: payments, isLoading: paymentsLoading } = useGetPaymentsQuery(
     {}
   );
   const { data: invoice, isLoading: invoiceLoading } = useGetInvoicesQuery({
@@ -87,18 +86,15 @@ const Dashboard = () => {
         };
       });
       setTableData(filteredTableData as any);
-      getPayments({})
-        .unwrap()
-        .then((res) => {
-          // setPaymentsList(res.data);
-          const totalAmount = res?.data?.reduce(
-            (sum, payment) => sum + (payment.money?.amount || 0),
-            0
-          );
-          setRevenue(`${totalAmount.toString()} XAF`);
-        });
+      const totalAmount = payments?.data?.reduce(
+        (sum, payment) => sum + (payment?.totalAmount || 0),
+        0
+      );
+      if (totalAmount) {
+        setRevenue(`${totalAmount.toString()} XAF`);
+      }
     }
-  }, [data, getPayments]);
+  }, [data, payments]);
 
   const onDelete = () => {
     if (!deleteId) return;
@@ -270,7 +266,7 @@ const Dashboard = () => {
               }}
             />
           )}
-          <div className="bg-purple bg-red-400 rounded-3xl w-full relative flex items-center h-[120px] px-4">
+          {/* <div className="bg-purple bg-red-400 rounded-3xl w-full relative flex items-center h-[120px] px-4">
             <p className="text-2xl font-light">
               Vehicle
               <br />
@@ -281,7 +277,7 @@ const Dashboard = () => {
               alt=""
               className="absolute bottom-0 right-2"
             />
-          </div>
+          </div> */}
         </div>
 
         {/* Drawer + Modal */}
