@@ -83,7 +83,7 @@ const Avatar: React.FC<OwnProps> = ({
         ) : imageSource ? (
           <AntdImage
             src={imageSource}
-            className="w-full rounded-full h-full border object-cover"
+            className="object-contain"
             preview={false}
             id={id}
           />

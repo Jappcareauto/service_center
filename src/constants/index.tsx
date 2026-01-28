@@ -810,14 +810,16 @@ export const billingItems = [
   },
 ];
 
-export const serviceImage = {
-  VIN_DETECTION: {
-    image: images.s2,
-  },
-  GENERAL_MAINTAINANCE: {
-    image: images.s1,
-  },
-};
+// export const serviceImage = {
+//   VIN_DETECTION: {
+//     image: images.s2,
+//   },
+//   GENERAL_MAINTAINANCE: {
+//     image: images.s1,
+//   },
+// };
+
+export const serviceImage = [images.s2, images.s1];
 
 export const plans = [
   {

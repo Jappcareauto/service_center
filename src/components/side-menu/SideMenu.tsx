@@ -83,7 +83,7 @@ const SideMenu = () => {
       {/* Logout */}
       <div
         onClick={handleLogout}
-        className="flex items-center justify-center md:justify-center gap-x-4 mt-10 h-[50px] hover:cursor-pointer rounded-xl px-2 hover:bg-red-50 fixed bottom-3 w-[14rem] transition-all duration-300 bg-white"
+        className="flex items-center justify-center md:justify-center gap-x-4 mt-10 h-[50px] hover:cursor-pointer rounded-xl px-2 hover:bg-red-50 fixed bottom-3 md:w-[14rem] transition-all duration-300 bg-white sm:w-auto"
       >
         <div>
           <svg

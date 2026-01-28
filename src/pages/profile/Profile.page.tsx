@@ -97,7 +97,7 @@ const Profile = () => {
     setPreviewUrl("");
     setIsModalVisible(false);
   };
-
+  console.log(serviceCenterServices?.data);
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[auto_360px] gap-x-6">
@@ -107,7 +107,7 @@ const Profile = () => {
               <Skeleton paragraph={{ rows: 8 }} />
             ) : (
               <img
-                className="w-full h-[250px] rounded-[20px] object-cover"
+                className="w-full h-[250px] p-8 rounded-[20px] border border-gray-100 object-contain"
                 // need some check
                 src={images.logo}
               />
@@ -124,7 +124,7 @@ const Profile = () => {
                     <AntdSkeleton.Avatar active size={50} shape="circle" />
                   </div>
                 ) : (
-                  <Avatar name={data?.data?.name} />
+                  <Avatar name={data?.data?.name} nameClassName="text-lg" />
                 )}
                 <div className="flex items-center gap-x-4 mr-7">
                   <Button
@@ -145,10 +145,10 @@ const Profile = () => {
               </div>
               <div className="flex items-end justify-between mt-4">
                 <div>
-                  <h2>{data?.data?.category}</h2>
+                  <h2 className='mb-1'>{data?.data?.category}</h2>
                   <div className="flex items-center gap-x-4 text-primary">
                     <div className="flex items-center gap-x-2">
-                      <LocationIcon />
+                      <LocationIcon size={20} />
                       <span>{data?.data?.location?.name}</span>
                     </div>
                     <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
@@ -184,19 +184,34 @@ const Profile = () => {
               <h2 className="font-medium">Specialized Services</h2>
               <div className="flex flex-row overflow-x-auto w-full">
                 {serviceCenterServices?.data &&
-                  serviceCenterServices?.data?.map((item) => {
+                  serviceCenterServices?.data?.map((item, index) => {
                     return (
                       <div
-                        className="w-[150px] h-[150px] rounded-2xl bg-primaryAccent mr-2 relative p-4 overflow-hidden"
+                        className="w-auto h-[150px] rounded-2xl bg-primaryAccent mr-2 relative p-4 overflow-hidden"
                         key={item.id}
                       >
                         <h2 className="font-normal">{item?.service?.title}</h2>
+                        <div className="flex space-x-4 mt-1">
+                          <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
+                            <span className="text-gray-400">Duration:</span>
+                            <span>{item?.durationMinutes} Mins</span>
+                          </div>
+                          <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
+                            <span className="text-gray-400">Price:</span>
+                            <span>{item?.price}</span>
+                          </div>
+                          <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
+                            <span className="text-gray-400">Available:</span>
+                            <div
+                              className={twMerge(
+                                "w-2 h-2 bg-green-400 rounded-full",
+                                !item?.available && "bg-red-400"
+                              )}
+                            />
+                          </div>
+                        </div>
                         <img
-                          src={
-                            serviceImage?.[
-                              item?.service?.title as keyof typeof serviceImage
-                            ]?.image
-                          }
+                          src={serviceImage?.[index]}
                           alt=""
                           className={twMerge(
                             "absolute -bottom-2 -right-0 object-contain"
