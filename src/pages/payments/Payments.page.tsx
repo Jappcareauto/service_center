@@ -80,7 +80,7 @@ const Payments = () => {
             </svg>
 
             <div>
-              <h1 className="text-3xl">{revenue}</h1>
+              <h1 className="text-3xl">{revenue ? revenue : 0}</h1>
               <h4 className="text-grey">Available for Withdrawal</h4>
             </div>
           </div>

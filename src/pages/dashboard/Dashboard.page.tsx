@@ -2,6 +2,7 @@
 // import DisclosiorAlertComponent from "./components/DisclosiorAlertComponent";
 import CalendarIcon from "@/assets/icons/CalendarIcon";
 import StatisticIcon from "@/assets/icons/StatisticIcon";
+import images from '@/assets/images';
 import AppointmentDetailModal from "@/components/appointment-detail-modal/AppointmentDetailModal.component";
 import Appointment from "@/components/appointment/Appointment.component";
 import Drawer from "@/components/drawer/Drawer.component";
@@ -251,7 +252,7 @@ const Dashboard = () => {
           /> */}
           {invoiceLoading ? (
             <Skeleton />
-          ) : (
+          ) : invoice?.data?.[0] ? (
             <Invoice
               name={invoice?.data?.[0]?.billedToUser.name}
               email={invoice?.data?.[0]?.billedToUser.email}
@@ -265,6 +266,17 @@ const Dashboard = () => {
                 // dispatch(setAppointment(data?.data as Appointment));
               }}
             />
+          ) : (
+            <div className="bg-purple bg-primaryAccentLight rounded-3xl w-full relative flex items-center h-[120px] px-4">
+              <p className="text-gray-400 font-light">
+                No Invoice available
+              </p>
+              <img
+                src={images.bgService}
+                alt=""
+                className="absolute bottom-0 right-2"
+              />
+            </div>
           )}
           {/* <div className="bg-purple bg-red-400 rounded-3xl w-full relative flex items-center h-[120px] px-4">
             <p className="text-2xl font-light">

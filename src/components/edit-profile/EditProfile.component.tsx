@@ -111,8 +111,8 @@ const EditProfile: FC<IProps> = ({
       <div className="w-full flex justify-center items-center">
         <div className="relative">
           <Avatar
-            parentClassName="w-[120px] h-[120px]"
-            className="border-[4px] p-1"
+            parentClassName="w-[120px] h-[120px] p-3"
+            className="border-none p-1"
             profileImageUrl={images.logo}
             // profileImageUrl={props.imageUrl ? props.imageUrl : images.logo}
             id="profile"
