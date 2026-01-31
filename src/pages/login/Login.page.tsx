@@ -12,11 +12,11 @@ import {
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { LoginValidationSchema } from "../../schemas";
-import { useEffect } from "react";
 
 const Login = () => {
   const { accessToken } = useAppSelector((state) => state.auth);
@@ -40,7 +40,7 @@ const Login = () => {
       const redirect = params.get("redirect");
       navigate(redirect || paths.dashboard, { replace: true });
     }
-  }, [accessToken]);
+  }, [accessToken, navigate]);
 
   const onSubmit: SubmitHandler<LoginInput> = (data) => {
     loginUser(data)
@@ -66,8 +66,6 @@ const Login = () => {
           toast(ToastType.ERROR, err?.data?.message || err?.message);
         } else if (err?.error?.error) {
           toast(ToastType.ERROR, err?.error?.error);
-        } else {
-          toast(ToastType.ERROR, "Update failed!");
         }
       });
   };

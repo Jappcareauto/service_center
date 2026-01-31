@@ -66,7 +66,7 @@ const Profile = () => {
     setPreviewUrl(imageUrl);
     setIsModalVisible(true);
   };
-
+  console.log('data?.data', data?.data);
   const handleAddMediaImage = () => {
     if (data?.data?.id) {
       const formData = new FormData();
@@ -193,15 +193,15 @@ const Profile = () => {
                         <h2 className="font-normal">{item?.service?.title}</h2>
                         <div className="flex space-x-4 mt-1">
                           <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
-                            <span className="text-gray-400">Duration:</span>
+                            <span className="text-gray-300">Duration:</span>
                             <span>{item?.durationMinutes} Mins</span>
                           </div>
                           <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
-                            <span className="text-gray-400">Price:</span>
+                            <span className="text-gray-300">Price:</span>
                             <span>{item?.price}</span>
                           </div>
                           <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
-                            <span className="text-gray-400">Available:</span>
+                            <span className="text-gray-300">Available:</span>
                             <div
                               className={twMerge(
                                 "w-2 h-2 bg-green-400 rounded-full",

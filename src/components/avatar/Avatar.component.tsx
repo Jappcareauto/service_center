@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import EditIcon from "@/assets/icons/EditIcon";
 import { getInitials } from "@/utils/getInitials";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import React, { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import AntdImage from "../antd-image/AntdImage.component";
-import EditIcon from "@/assets/icons/EditIcon";
 
 interface OwnProps {
   className?: string;

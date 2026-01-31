@@ -37,6 +37,9 @@ export const useChatService = ({
       setError("Token and chatId are required");
       return;
     }
+    if (stompClient.current?.active) {
+      return;
+    }
     setLoading(true); // 👉 we're now connecting...
 
     // Initialize the Client
@@ -48,7 +51,7 @@ export const useChatService = ({
       debug: (str) => {
         if (process.env.NODE_ENV === "development") console.log(str);
       },
-      // reconnectDelay: 3000, // auto reconnect
+      reconnectDelay: 3000, // auto reconnect
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
     });
@@ -56,7 +59,7 @@ export const useChatService = ({
     client.onConnect = () => {
       setConnected(true);
       setError(null);
-      setLoading(false); // 👉 connected, stop loading
+      setLoading(false); 
 
       // Subscribe to chat messages
       client.subscribe(`/topic/chat/${chatId}`, (message: IMessage) => {

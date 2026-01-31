@@ -1,27 +1,23 @@
 import Calendar2Icon from "@/assets/icons/Calendar2Icon";
+import Expended2Icon from "@/assets/icons/Expended2Icon";
 import LocationIcon from "@/assets/icons/LocationIcon";
 import { useToast } from "@/context/ToastContext";
 import { AppointmentStatus, InvoiceStatus, ToastType } from "@/enums";
-import {
-  useAcceptAppointmentMutation,
-  useCompleteAppointmentMutation,
-  useDeclineAppointmentMutation,
-} from "@/redux/api";
+import { useUpdateAppointmentStatusMutation } from "@/redux/api";
 import { getStatusStyles } from "@/utils";
 import {
   formatDateTime,
   formatStatusText,
   getInitials,
 } from "@/utils/getInitials";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import { Divider, Image } from "antd";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import Avatar from "../avatar/Avatar.component";
 import Button from "../button/Button.component";
 import { AppointmentDetailModalProps } from "./types";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
-import Expended2Icon from "@/assets/icons/Expended2Icon";
-import { useNavigate } from "react-router-dom";
 
 const AppointmentDetailModal = ({
   vehicle,
@@ -37,76 +33,115 @@ const AppointmentDetailModal = ({
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const [acceptAppointment, { isLoading: acceptLoading }] =
-    useAcceptAppointmentMutation();
-  const [declineAppointment, { isLoading: declineLoading }] =
-    useDeclineAppointmentMutation();
-  const [completeAppointment, { isLoading: completeLoading }] =
-    useCompleteAppointmentMutation();
-  // const [updateAppointment, { isLoading: updateLoading }] =
-  //   useUpdateAppointmentStatusMutation();
+  // const [completeAppointment, { isLoading: completeLoading }] =
+  //   useCompleteAppointmentMutation();
+  const [updateAppointment, { isLoading: updateLoading }] =
+    useUpdateAppointmentStatusMutation();
+  const [Initialstatus, setInitialStatus] = useState<
+    AppointmentStatus | undefined
+  >();
 
-  const handleAcceptAppointment = useCallback(() => {
-    if (!id) return;
-    acceptAppointment(id as string)
-      .unwrap()
-      .then((res) => {
-        toast(
-          ToastType.SUCCESS,
-          res?.meta?.message ?? "Appointment Accepted Successully"
-        );
-      })
-      .catch((err) => {
-        console.error("myerr", err);
-        if (err?.data?.errors) {
-          toast(ToastType.ERROR, err?.data?.errors);
-          return;
-        }
-        toast(ToastType.ERROR, "Oops an error occcured!");
-      });
-  }, [id, acceptAppointment, toast]);
+  const handleUpdateAppointment = useCallback(
+    (status: AppointmentStatus) => {
+      if (!id) return;
+      const data = {
+        id: id as string,
+        status,
+      };
+      setInitialStatus(status);
+      updateAppointment(data)
+        .unwrap()
+        .then((res) => {
+          toast(
+            ToastType.SUCCESS,
+            res?.meta?.message ?? "Appointment Updated Successfully"
+          );
+        })
+        .catch((err) => {
+          console.error("myerr", err);
+          if (err?.data?.errors) {
+            toast(ToastType.ERROR, err?.data?.errors);
+            return;
+          }
+          toast(ToastType.ERROR, "Oops an error occcured!");
+        });
+    },
+    [id, updateAppointment, toast]
+  );
 
-  const handleDeclineAppointment = useCallback(() => {
-    if (!id) return;
-    declineAppointment(id as string)
-      .unwrap()
-      .then((res) => {
-        toast(
-          ToastType.SUCCESS,
-          res?.meta?.message ?? "Appointment Declined Successully"
-        );
-      })
-      .catch((err) => {
-        console.error("myerr", err);
+  // const handleAcceptAppointment = useCallback(() => {
+  //   if (!id) return;
+  //   const data = {
+  //     id: id as string,
+  //     status: AppointmentStatus.IN_PROGRESS,
+  //   }
+  //   updateAppointment(data)
+  //     .unwrap()
+  //     .then((res) => {
+  //       toast(
+  //         ToastType.SUCCESS,
+  //         res?.meta?.message ?? "Appointment Accepted Successully"
+  //       );
+  //     })
+  //     .catch((err) => {
+  //       console.error("myerr", err);
+  //       if (err?.data?.errors) {
+  //         toast(ToastType.ERROR, err?.data?.errors);
+  //         return;
+  //       }
+  //       toast(ToastType.ERROR, "Oops an error occcured!");
+  //     });
+  // }, [id, updateAppointment, toast]);
 
-        if (err?.data?.errors) {
-          toast(ToastType.ERROR, err?.data?.errors);
-          return;
-        }
-        toast(ToastType.ERROR, "Oops an error occcured!");
-      });
-  }, [id, declineAppointment, toast]);
+  // const handleDeclineAppointment = useCallback(() => {
+  //   if (!id) return;
+  //   const data = {
+  //     id: id as string,
+  //     status: AppointmentStatus.CANCELLED,
+  //   }
+  //   updateAppointment(data)
+  //     .unwrap()
+  //     .then((res) => {
+  //       console.log('res', res)
+  //       toast(
+  //         ToastType.SUCCESS,
+  //         res?.meta?.message ?? "Appointment Declined Successully"
+  //       );
+  //     })
+  //     .catch((err) => {
+  //       console.error("myerr", err);
+  //       if (err?.data?.errors) {
+  //         toast(ToastType.ERROR, err?.data?.errors);
+  //         return;
+  //       }
+  //       toast(ToastType.ERROR, "Oops an error occcured!");
+  //     });
+  // }, [id, updateAppointment, toast]);
 
-  const handleCompleteAppointment = useCallback(() => {
-    if (!id) return;
-    completeAppointment(id as string)
-      .unwrap()
-      .then((res) => {
-        console.log('res', res)
-        toast(
-          ToastType.SUCCESS,
-          res?.meta?.message ?? "Appointment Completed Successfully"
-        );
-      })
-      .catch((err) => {
-        console.error("myerr", err);
-        if (err?.data?.errors) {
-          toast(ToastType.ERROR, err?.data?.errors);
-          return;
-        }
-        toast(ToastType.ERROR, "Oops an error occurred!");
-      });
-  }, [id, completeAppointment, toast]);
+  // const handleCompleteAppointment = useCallback(() => {
+  //   if (!id) return;
+  //   const data = {
+  //     id: id as string,
+  //     status: AppointmentStatus.CANCELLED,
+  //   }
+  //   updateAppointment(data)
+  //     .unwrap()
+  //     .then((res) => {
+  //       console.log('res', res)
+  //       toast(
+  //         ToastType.SUCCESS,
+  //         res?.meta?.message ?? "Appointment Completed Successfully"
+  //       );
+  //     })
+  //     .catch((err) => {
+  //       console.error("myerr", err);
+  //       if (err?.data?.errors) {
+  //         toast(ToastType.ERROR, err?.data?.errors);
+  //         return;
+  //       }
+  //       toast(ToastType.ERROR, "Oops an error occurred!");
+  //     });
+  // }, [id, completeAppointment, toast]);
 
   return (
     <>
@@ -215,32 +250,40 @@ const AppointmentDetailModal = ({
           <div className="flex flex-col md:flex-row space-y-3 mb-3 md:space-x-4 md:space-y-0 md:mb-0">
             <Button
               disabled={
-                acceptLoading ||
+                updateLoading ||
                 status === AppointmentStatus.COMPLETED ||
                 status === AppointmentStatus.IN_PROGRESS
               }
-              isLoading={acceptLoading}
-              onClick={handleAcceptAppointment}
+              isLoading={
+                Initialstatus === AppointmentStatus.IN_PROGRESS && updateLoading
+              }
+              onClick={() =>
+                handleUpdateAppointment(AppointmentStatus.IN_PROGRESS)
+              }
             >
               {"Accept"}
             </Button>
             <Button
-              disabled={
-                declineLoading || status === AppointmentStatus.COMPLETED
+              disabled={updateLoading || status === AppointmentStatus.COMPLETED}
+              isLoading={
+                Initialstatus === AppointmentStatus.CANCELLED && updateLoading
               }
-              isLoading={declineLoading}
               className={
                 "bg-red-50 border text-red-500 border-red-500 hover:bg-white"
               }
-              onClick={handleDeclineAppointment}
+              onClick={() =>
+                handleUpdateAppointment(AppointmentStatus.CANCELLED)
+              }
             >
               {"Cancel"}
             </Button>
           </div>
           <Button
-            disabled={completeLoading || invoice?.status !== InvoiceStatus.PAID}
-            isLoading={completeLoading}
-            onClick={handleCompleteAppointment}
+            disabled={updateLoading || invoice?.status !== InvoiceStatus.PAID}
+            isLoading={
+              Initialstatus === AppointmentStatus.COMPLETED && updateLoading
+            }
+            onClick={() => handleUpdateAppointment(AppointmentStatus.COMPLETED)}
             variant="secondary"
           >
             {"Mark Complete"}

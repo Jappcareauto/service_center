@@ -68,6 +68,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (user?.data) {
       dispatch(setUser(user?.data));
+      console.log(user?.data)
     }
   }, [dispatch, user]);
 
@@ -203,7 +204,7 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
-              {appointmentsList?.length > 0 && (
+              {appointmentsList?.length > 1 && (
                 <div
                   className={twMerge(
                     "flex flex-col gap-y-3",

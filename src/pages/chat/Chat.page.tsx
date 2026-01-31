@@ -134,7 +134,6 @@ const Chat = () => {
     if (currentUser) {
       dispatch(setReceiver(currentUser as User));
       setMessage("");
-      connect();
       scrollToBottom();
     }
   }, [chatContacts, connect, dispatch, roomId]);
@@ -152,13 +151,13 @@ const Chat = () => {
     return () => disconnect();
   }, [accessToken, connect, disconnect, roomId]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = useCallback(() => {
     if (!message.trim()) return;
     const success = sendMessage(message, user?.id, "TEXT");
     if (success) {
       setMessage("");
     }
-  };
+  }, [message]);
 
   const handleUploadFiles = async (files: File[]): Promise<string[]> => {
     const formData = new FormData();
@@ -356,7 +355,9 @@ const Chat = () => {
                   </Button>
                   <div className="text-sm">
                     {connected ? "🟢 Online" : "🔴 Offline"}
-                    {loading && error && <span className="error">{error}</span>}
+                    {!loading && error && (
+                      <span className="error">{error}</span>
+                    )}
                   </div>
                 </div>
               </div>

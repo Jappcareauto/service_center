@@ -263,6 +263,7 @@ export const apiSlice = createApi({
       UpdateAppointmentStatusRequest
     >({
       query: ({ id, status }) => {
+        console.log("id,status", id, status);
         return {
           url: URLS.appointment.updateAppointmentStatus(id),
           method: "PUT",
@@ -272,36 +273,7 @@ export const apiSlice = createApi({
       invalidatesTags: ["appointment"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    declineAppointment: builder.mutation<GenericResponse, string>({
-      query: (id) => {
-        return {
-          url: URLS.appointment.declineAppointment(id),
-          method: "PUT",
-        };
-      },
-      invalidatesTags: ["appointment"],
-      onQueryStarted: onQueryStartedErrorToast,
-    }),
-    completeAppointment: builder.mutation<GenericResponse, string>({
-      query: (id) => {
-        return {
-          url: URLS.appointment.completeAppointment(id),
-          method: "PUT",
-        };
-      },
-      invalidatesTags: ["appointment"],
-      onQueryStarted: onQueryStartedErrorToast,
-    }),
-    acceptAppointment: builder.mutation<GenericResponse, string>({
-      query: (id) => {
-        return {
-          url: URLS.appointment.acceptAppointment(id),
-          method: "PUT",
-        };
-      },
-      invalidatesTags: ["appointment"],
-      onQueryStarted: onQueryStartedErrorToast,
-    }),
+
     diagnosisToMake: builder.mutation<GenericResponse, DiagnosisToMakeRequest>({
       query: (data) => {
         return {
@@ -342,11 +314,7 @@ export const apiSlice = createApi({
       query: ({ size, page, status }) => {
         // console.log(status)
         return {
-          url: URLS.payment.getPayments(
-            page,
-            size,
-            status
-          ),
+          url: URLS.payment.getPayments(page, size, status),
           method: "GET",
         };
       },
@@ -405,7 +373,10 @@ export const apiSlice = createApi({
       providesTags: ["invoice"],
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    createInvoice: builder.mutation<CreateInvoiceResponse, CreateInvoiceRequest>({
+    createInvoice: builder.mutation<
+      CreateInvoiceResponse,
+      CreateInvoiceRequest
+    >({
       query: (data) => {
         return {
           url: URLS.invoice.createInvoice,
@@ -734,9 +705,6 @@ export const {
   useForgotPasswordMutation,
   useGetAppointmentsQuery,
   useGetAppointmentQuery,
-  useAcceptAppointmentMutation,
-  useDeclineAppointmentMutation,
-  useCompleteAppointmentMutation,
   useGetPaymentsQuery,
   useDeleteAppointmentMutation,
   useUpdateAppointmentMutation,
