@@ -258,7 +258,7 @@ const Appointments = () => {
                 <div className="flex flex-col gap-y-5 h-screen">
                   {appointmentsList?.length > 0 ? (
                     isList ? (
-                      <Table data={tableData} columns={columns} />
+                      <Table data={tableData} columns={columns} emptyText='No Appointments Available'  />
                     ) : (
                       appointmentsList?.map((app) => (
                         <Appointment

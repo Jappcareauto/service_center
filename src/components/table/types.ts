@@ -7,6 +7,8 @@ export interface CustomTableProps<T> {
   loading?: boolean;
   rowKey?: string | ((record: T) => string);
   pageSize?: number;
+  emptyText?: string;
+  onAdd?: () => void;
 }
 export interface EditableTableProps {
   onAdd?: (items: InvoiceDataType[]) => void;

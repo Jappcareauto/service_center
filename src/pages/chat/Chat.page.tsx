@@ -38,6 +38,7 @@ import images from "@/assets/images";
 import Button from "@/components/button/Button.component";
 import { AppLoader } from "@/components/loader/Fallback.component";
 import { useChatService } from "@/hooks/useChatService";
+import { formatAmount } from '@/utils';
 import Lottie from "lottie-react";
 import waveAnimation from "../../assets/lotties/voice_wave.json"; // Adjust path
 
@@ -339,13 +340,12 @@ const Chat = () => {
             >
               <div className="w-full border-b border-b-borderColor flex justify-between py-2 px-6">
                 <Avatar
-                  className="w-11 h-11"
                   name={receiver?.name}
                   label={receiver?.email}
                 />
                 <div className="flex space-x-4 items-center">
                   <Button
-                    className="text-sm border border-primaryLight bg-white rounded-full"
+                    className="text-sm border border-primaryAccent bg-white rounded-full"
                     variant="tertiary"
                     onClick={scrollToTop}
                     rightIcon={<ArrowUpIcon className="w-4 h-4 text-grey2" />}
@@ -353,7 +353,7 @@ const Chat = () => {
                     Pinned Appointment
                   </Button>
                   <div className="text-sm">
-                    {connected ? "🟢 Online" : "🔴 Offline"}
+                    {connected ? "🟢" : "🔴"}
                     {!loading && error && (
                       <span className="error">{error}</span>
                     )}
@@ -392,7 +392,7 @@ const Chat = () => {
                           vehicle={data?.data?.vehicle}
                           amount={
                             invoice?.data?.money &&
-                            `${invoice?.data?.money?.amount} ${invoice?.data?.money?.currency}`
+                            `${formatAmount(invoice?.data?.money?.amount.toString())} ${invoice?.data?.money?.currency}`
                           }
                           dueDate={invoice?.data?.dueDate}
                           service={data?.data?.service}

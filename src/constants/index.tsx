@@ -815,7 +815,6 @@ export const plans = [
       "Regular maintenance reminders to keep your vehicle in top shape.",
       "Exclusive discounts on services and parts at partner locations.",
       "Real-time tracking of your vehicle's health and performance.",
-      "User-friendly interface for easy navigation and management.",
     ],
   },
   {

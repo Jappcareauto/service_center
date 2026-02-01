@@ -95,12 +95,12 @@ const Statistics = () => {
         </div>
       ) : (
         <div>
-          <Avatar name={center?.name} className="w-16 h-16" isName={false} />
-          <div className="flex items-end justify-between mt-4">
+          <Avatar name={center?.name} isName={false} />
+          <div className="flex items-end justify-between mt-2">
             <h2 className="text-lg">{center?.name}</h2>
             <Button
               onClick={() => setOpen(true)}
-              className=" h-10 rounded-full font-normaltext-sm"
+              className=" h-10 rounded-full font-normal text-sm"
               variant="tertiary"
             >
               View Profile

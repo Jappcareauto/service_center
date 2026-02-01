@@ -4,12 +4,12 @@ import Modal from "@/components/modals/Modal.component";
 import PlanCard from "@/components/plan-card/PlanCard.component";
 import Table from "@/components/table/Table.component";
 import {
-  billingItems,
+  // billingItems,
   getBillingColumns,
   paymentMethods,
   plans,
 } from "@/constants";
-import DashboardLayout from '@/layouts/DashboardLayout';
+import DashboardLayout from "@/layouts/DashboardLayout";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { Progress } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -50,7 +50,7 @@ const Billing = () => {
                 Subscription consumed
               </p>
               <Progress
-                percent={30}
+                percent={0}
                 className="text-primary"
                 strokeColor="#FB7C37"
               />
@@ -59,12 +59,15 @@ const Billing = () => {
           <div className="w-[80%] px-8">
             <p className=" text-gray-500 mb-1">Payment</p>
             <div className="flex items-center gap-x-2">
-              <h1 className="font-bold text-3xl">30,000 XAF </h1>
+              <h1 className="font-bold text-3xl">0 XAF </h1>
               <p className="font-light text-sm text-gray-400 mt-3">per month</p>
             </div>
           </div>
           <div className="flex gap-x-5">
-            <button className="text-primary text-sm font-semibold" onClick={() => setShowPlans(true)}>
+            <button
+              className="text-primary text-sm font-semibold"
+              onClick={() => setShowPlans(true)}
+            >
               Upgrade
             </button>
             <button className="text-gray-600 text-sm">Cancel</button>
@@ -102,7 +105,7 @@ const Billing = () => {
         </div>
       </div>
       <div>
-        <Table data={billingItems} columns={columns} pageSize={7} />
+        <Table data={[]} columns={columns} pageSize={7} emptyText='No Previous Plans Purchased' />
       </div>
       <Modal
         open={showPlans}
@@ -111,16 +114,17 @@ const Billing = () => {
         onOk={() => setShowPlans(false)}
         okText="Select"
         footer={null}
+        width={window.innerWidth * 0.7}
       >
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3'>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-3">
           {plans.map((plan) => (
-          <PlanCard
-            key={plan.id}
-            name={plan.name}
-            price={plan.price}
-            features={plan.features}
-          />
-        ))}
+            <PlanCard
+              key={plan.id}
+              name={plan.name}
+              price={plan.price}
+              features={plan.features}
+            />
+          ))}
         </div>
       </Modal>
     </DashboardLayout>

@@ -146,6 +146,7 @@ const Invoices = () => {
           data={invoicesList}
           loading={isLoading}
           pageSize={5}
+          emptyText="No Invoices Available"
         />
       </div>
       <Modal

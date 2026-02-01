@@ -1,15 +1,19 @@
 import { menuItems } from "@/constants";
+import { apiSlice, useGetUserQuery } from "@/redux/api";
+import {
+  setAppointment,
+  setAppointmentId,
+  setInvoice,
+} from "@/redux/features/appointment/appointmentSlice";
+import { logoutUser, setUser } from "@/redux/features/auth/authSlice";
+import { setChatroomId, setReceiver } from "@/redux/features/chat/chatSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { paths } from "@/routes/paths";
+import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import Avatar from "../avatar/Avatar.component";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { logoutUser, setUser } from "@/redux/features/auth/authSlice";
-import { paths } from "@/routes/paths";
-import { apiSlice, useGetUserQuery } from "@/redux/api";
 import Loader from "../loader/Loader";
-import { useEffect, useRef } from "react";
-import { setChatroomId, setReceiver } from "@/redux/features/chat/chatSlice";
-import { setAppointment, setAppointmentId, setInvoice } from '@/redux/features/appointment/appointmentSlice';
 
 const SideMenu = () => {
   const location = useLocation();
@@ -34,9 +38,9 @@ const SideMenu = () => {
     dispatch(logoutUser());
     dispatch(setChatroomId(""));
     dispatch(setReceiver(null));
-    dispatch(setAppointment(null))
-    dispatch(setAppointmentId(''))
-    dispatch(setInvoice(null))
+    dispatch(setAppointment(null));
+    dispatch(setAppointmentId(""));
+    dispatch(setInvoice(null));
     navigate(paths.index);
     dispatch(apiSlice.util.resetApiState());
   };
@@ -79,11 +83,10 @@ const SideMenu = () => {
           );
         })}
       </div>
-
-      {/* Logout */}
       <div
         onClick={handleLogout}
-        className="flex items-center justify-center md:justify-center gap-x-4 mt-10 h-[50px] hover:cursor-pointer rounded-xl px-2 hover:bg-red-50 fixed bottom-3 md:w-[14rem] transition-all duration-300 bg-white sm:w-auto"
+        className="flex items-center justify-center md:justify-center gap-x-4 mt-10 h-[50px] hover:cursor-pointer rounded-xl px-2 hover:bg-red-50
+         bottom-3 w-full transition-all duration-300 bg-white sm:w-auto"
       >
         <div>
           <svg
