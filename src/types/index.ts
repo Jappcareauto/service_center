@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AppointmentStatus, InvoiceStatus, MessageType, PaymentStatus } from "@/enums";
+import {
+  AppointmentStatus,
+  InvoiceStatus,
+  MessageType,
+  PaymentStatus,
+} from "@/enums";
 
 export const IMAGE_TYPES = [
   "image/jpeg",
@@ -229,6 +234,8 @@ export interface Appointment extends GenericType {
   serviceCenter?: ServiceCenter;
   chatRoom?: ChatRoom;
   chatRoomId?: string;
+  diagnosedIssue?: string;
+  repairedMade?: string;
   diagnosesToMake?: string;
   diagnosesMade?: string;
   invoice?: Invoice;
@@ -362,7 +369,7 @@ export interface PaymentsResponse extends GenericResponse {
 export interface PaymentRequest {
   page?: number;
   size?: number;
-  status?: PaymentStatus
+  status?: PaymentStatus;
 }
 
 export interface BarChartItemType {
@@ -435,6 +442,10 @@ export interface Invoice extends Audit {
   billedFrom: billedFrom;
   billedFromUser: billedFrom;
   vehicle?: Vehicle;
+  diagnosedIssue?: string;
+  repairedMade?: string;
+  diagnosesToMake?: string;
+  diagnosesMade?: string;
 }
 
 export interface CreateInvoiceRequest {
@@ -446,6 +457,8 @@ export interface CreateInvoiceRequest {
   issueDate: string;
   dueDate: string;
   items: InvoiceItem[];
+  repairedMade: string;
+  diagnosedIssue: string;
 }
 export interface CreateInvoiceResponse extends GenericResponse {
   data?: Invoice;

@@ -25,7 +25,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
     >
       {isLoading ? (
-        <Spin indicator={<LoadingOutlined className="text-white" spin />} />
+        <Spin indicator={<LoadingOutlined className="text-primary" spin />} />
       ) : (
         <>
           {leftIcon && <span className="mr-2">{leftIcon}</span>}

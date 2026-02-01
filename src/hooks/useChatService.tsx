@@ -37,18 +37,21 @@ export const useChatService = ({
       setError("Token and chatId are required");
       return;
     }
-    setLoading(true); // 👉 we're now connecting...
+    if (stompClient.current?.active) {
+      return;
+    }
+    setLoading(true);
 
-    // Initialize the Client
     const client = new Client({
       webSocketFactory: () => new SockJS(`https://bpi.jappcare.com/ws`),
       connectHeaders: {
         Authorization: `Bearer ${token}`,
       },
       debug: (str) => {
-        if (process.env.NODE_ENV === "development") console.log(str);
+        if (process.env.NODE_ENV !== "development") return;
+        console.log(str);
       },
-      // reconnectDelay: 3000, // auto reconnect
+      reconnectDelay: 3000, // auto reconnect
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
     });
@@ -56,7 +59,7 @@ export const useChatService = ({
     client.onConnect = () => {
       setConnected(true);
       setError(null);
-      setLoading(false); // 👉 connected, stop loading
+      setLoading(false);
 
       // Subscribe to chat messages
       client.subscribe(`/topic/chat/${chatId}`, (message: IMessage) => {
@@ -77,18 +80,18 @@ export const useChatService = ({
     client.onStompError = (frame) => {
       setError(`Broker reported error: ${frame.headers["message"]}`);
       setConnected(false);
-      setLoading(false); // 👉 stop loading after error
+      setLoading(false);
     };
 
-    client.activate(); // This replaces stompClient.connect()
+    client.activate();
     stompClient.current = client;
   }, [chatId, token, onMessageReceived, onDeliveryUpdate]);
 
   const disconnect = useCallback(() => {
     if (stompClient.current) {
-      stompClient.current.deactivate(); // This replaces disconnect()
+      stompClient.current.deactivate();
       setConnected(false);
-      setLoading(false); // reset
+      setLoading(false);
     }
   }, []);
 

@@ -67,7 +67,7 @@ const AppointmentDetails = () => {
   );
 
   const dispatch = useAppDispatch();
-
+  
   useEffect(() => {
     if (invoice?.data) {
       dispatch(setInvoice(invoice?.data));
@@ -81,7 +81,7 @@ const AppointmentDetails = () => {
     if (data?.data?.diagnosesToMake) {
       setDiagnosisToMake(data?.data?.diagnosesToMake);
     }
-  }, [invoice, data]);
+  }, [invoice, data, dispatch]);
 
   const handleDiagnosisToMake = () => {
     if (diagnosisToMake.trim() === "") return;
@@ -116,7 +116,6 @@ const AppointmentDetails = () => {
         toast(ToastType.SUCCESS, "Diagnosis made updated successfully");
       })
       .catch((error) => {
-        console.error("Error updating diagnosis made:", error);
         toast(
           ToastType.ERROR,
           error?.message ?? "Error updating diagnosis made:"
@@ -245,14 +244,14 @@ const AppointmentDetails = () => {
                   </div>
                   <div className="mt-5">
                     <p className="text-primary mb-1">Service Center Details</p>
-                    <div className="border border-primaryAccent rounded-lg p-3 flex flex-wrap space-x-14">
+                    <div className="border border-primaryAccent rounded-lg p-3 grid grid-cols-3 columns-xl justify-start">
                       <div className="flex flex-col pr-2">
                         <p className="text-gray-400 mb-2">Name</p>
                         <p>{data?.data?.serviceCenter?.name}</p>
                       </div>
-                      <div className="flex flex-col pr-2">
+                      <div className="flex flex-col pr-2 flex-shrink">
                         <p className="text-gray-400 mb-2">Category</p>
-                        <p>{data?.data?.serviceCenter?.category}</p>
+                        <p className='pr-7 flex-wrap'>{data?.data?.serviceCenter?.category}</p>
                       </div>
                       <div className="flex flex-col pr-2 ">
                         <p className="text-gray-400 mb-2">Location Name</p>

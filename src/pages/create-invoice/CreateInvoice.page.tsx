@@ -19,6 +19,7 @@ import {
 import { setInvoice } from "@/redux/features/appointment/appointmentSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { InvoiceData, InvoiceDataType } from "@/types";
+import { Input as AntdInput } from "antd";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
@@ -46,11 +47,14 @@ const CreateInvoice = () => {
   const [items, setItems] = useState<InvoiceDataType[]>([]);
   const [total, setTotal] = useState(0);
   const [fee, setFee] = useState(0);
+
+  const [repairedMade, setRepairedMade] = useState(
+    appointment?.data?.repairedMade || ""
+  );
+  const [diagnosedIssue, setDiagnosedIssue] = useState(
+    appointment?.data?.diagnosedIssue || ""
+  );
   const handleCreateInvoice = () => {
-    if (!appointment?.data) {
-      console.error("No appointment data available");
-      return;
-    }
     if (appointment?.data) {
       const invoiceItems = items?.map((item) => {
         return {
@@ -67,6 +71,8 @@ const CreateInvoice = () => {
         },
         issueDate,
         dueDate,
+        repairedMade,
+        diagnosedIssue,
         items: invoiceItems as any,
       };
       createInvoice(data)
@@ -101,11 +107,6 @@ const CreateInvoice = () => {
     );
     setTotal(totalSum);
   };
-  const disabled = !appointment?.data || !dueDate || !issueDate || isLoading;
-  // ||
-  // !items?.length ||
-  // total <= 0 ||
-  // appointment?.data?.status !== "COMPLETED";
 
   const handleAdd = useCallback((items: any[]) => {
     setItems(items);
@@ -155,6 +156,15 @@ const CreateInvoice = () => {
     setFee(f);
   }, []);
 
+  const disabled =
+    !appointment?.data ||
+    !dueDate ||
+    !issueDate ||
+    isLoading ||
+    items.length === 0 ||
+    !diagnosedIssue ||
+    !repairedMade;
+
   return (
     <DashboardLayout>
       <div className="flex gap-x-6">
@@ -194,17 +204,56 @@ const CreateInvoice = () => {
                 label="Date Issued"
                 value={issueDate}
                 onSelect={(value) => {
-                  console.log("value", value);
                   setIssueDate(value as any);
                 }}
                 isISO
+                isRequired
               />
               <DatePicker
                 value={dueDate}
                 label="Due Date"
                 onSelect={(value) => setDueDate(value as any)}
                 isISO
+                isRequired
               />
+            </div>
+
+            <div>
+              <label className="text-sm mb-2">
+                Purchased Items{" "}
+                <span className="text-red-400 ml-1 text-[1rem]">*</span>
+              </label>
+              <div className="border-grey3 border-2 rounded-xl mt-2">
+                <EditableTable onChange={(values) => handleAdd(values)} />
+              </div>
+            </div>
+            <div className="p-5 border-grey3 border-2 rounded-3xl space-y-2">
+              <div>
+                <label className="text-sm">
+                  Diagnosed Issue{" "}
+                  <span className="text-red-400 ml-1 text-[1rem]">*</span>
+                </label>
+                <AntdInput.TextArea
+                  rows={4}
+                  placeholder="Summarize issues found"
+                  value={diagnosedIssue}
+                  onChange={(e) => setDiagnosedIssue(e.target.value)}
+                  className="mt-2 border-none"
+                />
+              </div>
+              <div>
+                <label className="text-sm">
+                  Repaires Made{" "}
+                  <span className="text-red-400 ml-1 text-[1rem]">*</span>
+                </label>
+                <AntdInput.TextArea
+                  rows={4}
+                  placeholder="Summarize repairs made"
+                  value={repairedMade}
+                  onChange={(e) => setRepairedMade(e.target.value)}
+                  className="mt-2 border-none"
+                />
+              </div>
             </div>
             <div className="flex justify-between space-x-8">
               <div className="flex flex-col w-full">
@@ -247,12 +296,6 @@ const CreateInvoice = () => {
                 />
               </div>
             )}
-            <div>
-              <label className="text-sm mb-2">Purchased Items</label>
-              <div className="border-grey3 border-2 rounded-xl mt-2">
-                <EditableTable onChange={(values) => handleAdd(values)} />
-              </div>
-            </div>
             <InvoiceTotal total={total + fee} onFee={(f) => handleFee(f)} />
           </div>
           <div className="flex justify-end gap-x-4 mt-10">

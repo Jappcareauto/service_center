@@ -63,6 +63,7 @@ const Appointments = () => {
   const [getAppointmentStats, { isLoading: statsLoading }] =
     useGetAppointmentStatsByDateMutation();
   const [currentAppointments, setCurrentAppointments] = useState("");
+  const [allAppointments, setAllAppointments] = useState("");
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [isList, setIsList] = useState(false);
@@ -71,7 +72,6 @@ const Appointments = () => {
 
   useEffect(() => {
     if (data && data?.data) {
-      console.log(data?.data?.length);
       setAppointmentsList(data?.data);
       const filteredTableData = data?.data.map((item) => {
         return {
@@ -85,6 +85,14 @@ const Appointments = () => {
         };
       });
       setTableData(filteredTableData as any);
+      const allAppointments = data?.data?.filter(
+        (item) =>
+          item.status === AppointmentStatus.CANCELLED ||
+          item.status === AppointmentStatus.IN_PROGRESS ||
+          item.status === AppointmentStatus.COMPLETED ||
+          item.status === AppointmentStatus.NOT_STARTED
+      );
+      setAllAppointments(allAppointments.length.toString());
       const filteredCurrentAppointments = data?.data?.filter(
         (item) => item.status === "IN_PROGRESS"
       );
@@ -158,8 +166,8 @@ const Appointments = () => {
                 <div>
                   <StatisticsCard
                     title="Appointments"
-                    value={currentAppointments}
-                    badgeTitle={"In progress"}
+                    value={allAppointments}
+                    badgeTitle={"All"}
                     icon={<CalendarIcon color={colors.primary} />}
                     second
                   />

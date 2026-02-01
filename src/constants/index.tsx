@@ -269,28 +269,11 @@ export const getAppointmentColumns = (
   },
 ];
 export const getInvoicesColumns = (
-  handleDownload: (id: string) => void,
   handleDelete: (id: string) => void,
-  handleViewDetails: (id: string) => void
+  handleViewDetails: (id: string) => void,
+  handleDownload: (id: string) => void,
 ) => {
   return [
-    // {
-    //   title: "Image",
-    //   dataIndex: "image",
-    //   key: "image",
-    //   width: 60,
-    //   render: (url: string) => {
-    //     return url ? (
-    //       <img
-    //         src={url}
-    //         alt="Vehicle"
-    //         className="w-7 h-7 object-contain border border-borderColor rounded-full p-1"
-    //       />
-    //     ) : (
-    //       <TruckIcon className="w-7 h-7 rounded-full text-gray-500 border border-borderColor p-1" />
-    //     );
-    //   },
-    // },
     {
       title: "Inv #",
       dataIndex: "number",
@@ -302,7 +285,7 @@ export const getInvoicesColumns = (
       dataIndex: "billedToUser",
       key: "billedToUser",
       render: (user: billedFrom) => {
-        return <Avatar name={user?.name} className="w-6 h-6" />;
+        return <Avatar name={user?.name} />;
       },
     },
     {
@@ -376,7 +359,6 @@ export const getInvoicesColumns = (
             className="text-primary hover:text-black cursor-pointer w-5 h-5 hover:opacity-70"
             onClick={() => handleViewDetails(record.id)}
           />
-
           <TrashIcon
             className="bg-red-600-500 hover:bg-red-600-700 cursor-pointer w-5 h-5 hover:opacity-70"
             onClick={() => handleDelete(record.id)}

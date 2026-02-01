@@ -72,7 +72,6 @@ const Dashboard = () => {
   }, [dispatch, user]);
 
   useEffect(() => {
-    // console.log("data", data);
     if (data && data?.data) {
       setAppointmentsList(data?.data);
       const filteredTableData = data?.data.map((item) => {
@@ -148,7 +147,7 @@ const Dashboard = () => {
               />
               <StatisticsCard
                 title="Revenue"
-                value={revenue}
+                value={revenue || "0 XAF"}
                 badgeTitle="This Week"
                 icon={<StatisticIcon className="text-primary" />}
                 second
@@ -203,7 +202,7 @@ const Dashboard = () => {
                   )}
                 </div>
               )}
-              {appointmentsList?.length > 0 && (
+              {appointmentsList?.length > 1 && (
                 <div
                   className={twMerge(
                     "flex flex-col gap-y-3",

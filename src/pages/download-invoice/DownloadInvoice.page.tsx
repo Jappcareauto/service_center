@@ -18,7 +18,6 @@ const DownloadInvoice = () => {
       skip: !id,
     }
   );
-  console.log("data", data);
   const invoiceRef = useRef<HTMLDivElement>(null);
   // const { invoice } = useAppSelector((state) => state.appointment);
   const [isLoading, setIsLoading] = useState(false);

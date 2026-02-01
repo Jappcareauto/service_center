@@ -14,7 +14,7 @@ type Props = {
 const ChatItem: React.FC<Props> = ({
   onClick,
   name = "",
-  numberOfUnreadMessage = 10,
+  numberOfUnreadMessage,
   time = "",
   lastMessage,
   active,
@@ -52,9 +52,12 @@ const ChatItem: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center gap-x-1.5 flex-shrink-0">
-        <p className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center">
-          {numberOfUnreadMessage}
-        </p>
+        {numberOfUnreadMessage && (
+          <p className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center">
+            {numberOfUnreadMessage}
+          </p>
+        )}
+
         <span className="text-xs text-grey4 whitespace-nowrap">{time}</span>
       </div>
     </div>

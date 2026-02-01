@@ -29,7 +29,7 @@ const InvoiceDetails = () => {
   const handlePreviewInvoice = () => {
     navigate(`/download-invoice/${invoice?.id}`);
   };
-
+console.log('invoice', invoice)
   return (
     <DashboardLayout>
       <div className="w-[75%]">
@@ -70,15 +70,17 @@ const InvoiceDetails = () => {
                   <div className="flex justify-end gap-x-4">
                     <Button
                       className="rounded-full w-auto h-[38px] text-sm"
-                      onClick={() =>
-                        navigate(
-                          `/update-invoice/${appointment?.id}/${invoice?.id}`
-                        )
-                      }
+                      onClick={() => {
+                        if (appointment?.id && invoice?.id) {
+                          navigate(
+                            `/update-invoice/${invoice?.appointmentId}/${invoice?.id}`
+                          );
+                        }
+                      }}
                       variant="tertiary"
                     >
-                      Update Invoice
-                      <PencilIcon className="w-4 h-4 ml-3" />
+                      Edit Invoice
+                      <PencilIcon className="w-4 h-4 ml-2" />
                     </Button>
                   </div>
                 )}

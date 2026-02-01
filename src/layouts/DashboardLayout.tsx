@@ -4,9 +4,10 @@ import Drawer from "@/components/drawer/Drawer.component";
 import NotificationItem from "@/components/notification-item/NotificationItem.component";
 import SideMenu from "@/components/side-menu/SideMenu";
 import { notificationItems } from "@/constants";
+import { useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
-import { Input } from "antd";
+import { Avatar, Input } from "antd";
 import { SearchProps } from "antd/es/input";
 import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +18,7 @@ interface Iprops {
 }
 const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
   const [open, setOpen] = useState(false);
+  const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const { Search } = Input;
   const handleSearch: SearchProps["onSearch"] = (value) => {
@@ -47,12 +49,19 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
           <div className="flex flex-row gap-x-7 bg-white p-3 rounded-full px-4">
             <NotificationIcon
               onClick={() => setOpen(true)}
-              className="cursor-pointer text-gray-500"
+              className="cursor-pointer text-gray-500 pt-1"
+              width={"28"}
+              height={"28"}
             />
             <SettingIcon
               onClick={() => navigate(paths.profile)}
-              className="cursor-pointer text-gray-500"
+              className="cursor-pointer text-gray-500 pt-1"
+              width={"28"}
+              height={"28"}
             />
+            <div className="rounded-full border border-primaryAccent bg-red-300">
+              <Avatar src={user?.profileImageUrl} />
+            </div>
           </div>
         </div>
         <div className="overflow-y-auto h-[calc(100vh-10px)] px-[12px] pl-[30px] md:pl-[59px] lg:pl-[59px] pt-[90px] pb-9">

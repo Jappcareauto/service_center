@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import EditIcon from "@/assets/icons/EditIcon";
 import { getInitials } from "@/utils/getInitials";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import React, { useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import AntdImage from "../antd-image/AntdImage.component";
-import EditIcon from "@/assets/icons/EditIcon";
 
 interface OwnProps {
   className?: string;
@@ -67,6 +66,7 @@ const Avatar: React.FC<OwnProps> = ({
         className={twMerge(
           "rounded-full flex justify-center items-center overflow-hidden border-[2px] border-primary p-[1.5px]",
           disabledBorder ? "border-none p-0" : "",
+          "w-11 h-11", // Move fixed dimensions here so the circle is consistent
           parentClassName
         )}
       >
@@ -81,16 +81,15 @@ const Avatar: React.FC<OwnProps> = ({
             }
           />
         ) : imageSource ? (
-          <AntdImage
+          <img
             src={imageSource}
-            className="object-contain"
-            preview={false}
+            className="rounded-full w-full h-full"
             id={id}
           />
         ) : (
           <div
             className={twMerge(
-              "w-11 h-11 flex items-center uppercase font-bold justify-center text-sm bg-black text-primary rounded-full",
+              "w-full h-full flex items-center uppercase font-bold justify-center text-sm bg-black text-primary rounded-full",
               className
             )}
           >

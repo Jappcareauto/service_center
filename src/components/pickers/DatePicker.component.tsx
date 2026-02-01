@@ -1,7 +1,7 @@
 import CalendarIcon from "@/assets/icons/CalendarIcon";
 import { DatePicker as AntdDatePicker, DatePickerProps } from "antd";
-import { DatePickerType } from "antd/es/date-picker";
 import dayjs from "dayjs";
+import { DatePickerPropTypes } from "./types";
 
 const DatePicker = ({
   label,
@@ -9,15 +9,9 @@ const DatePicker = ({
   isISO,
   value,
   disabled,
+  isRequired,
   ...props
-}: {
-  label?: string;
-  onSelect?: (value: string) => void;
-  isISO?: boolean;
-  value?: string | null;
-  disabled?: boolean;
-  props?: DatePickerType;
-}) => {
+}: DatePickerPropTypes) => {
   const onChange: DatePickerProps["onChange"] = (date) => {
     if (!date) return;
     if (isISO) {
@@ -28,13 +22,17 @@ const DatePicker = ({
   };
   return (
     <div className="w-full relative">
-      {label && <label className="mb-2 block text-sm">{label}</label>}
+      {label && (
+        <label className="mb-2 block text-sm">
+          {label} {isRequired && <span className='text-red-400 ml-1 text-[1rem]'>*</span>}
+        </label>
+      )}
       <AntdDatePicker
         value={value ? dayjs(value) : null}
         onChange={onChange}
         className="w-full h-10"
         disabled={disabled}
-        suffixIcon={<CalendarIcon color={disabled ? '#b6b6b6' : '#000'} />}
+        suffixIcon={<CalendarIcon color={disabled ? "#b6b6b6" : "#000"} />}
         {...props}
       />
     </div>
