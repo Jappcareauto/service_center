@@ -2,7 +2,7 @@ import Calendar2Icon from "@/assets/icons/Calendar2Icon";
 import Expended2Icon from "@/assets/icons/Expended2Icon";
 import LocationIcon from "@/assets/icons/LocationIcon";
 import { useToast } from "@/context/ToastContext";
-import { AppointmentStatus, InvoiceStatus, ToastType } from "@/enums";
+import { AppointmentStatus, ToastType } from "@/enums";
 import { useUpdateAppointmentStatusMutation } from "@/redux/api";
 import { getStatusStyles } from "@/utils";
 import {
@@ -28,7 +28,7 @@ const AppointmentDetailModal = ({
   serviceCenter,
   id,
   note,
-  invoice,
+  // invoice,
 }: AppointmentDetailModalProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -58,7 +58,6 @@ const AppointmentDetailModal = ({
           );
         })
         .catch((err) => {
-          console.error("myerr", err);
           if (err?.data?.errors) {
             toast(ToastType.ERROR, err?.data?.errors);
             return;
@@ -68,81 +67,6 @@ const AppointmentDetailModal = ({
     },
     [id, updateAppointment, toast]
   );
-
-  // const handleAcceptAppointment = useCallback(() => {
-  //   if (!id) return;
-  //   const data = {
-  //     id: id as string,
-  //     status: AppointmentStatus.IN_PROGRESS,
-  //   }
-  //   updateAppointment(data)
-  //     .unwrap()
-  //     .then((res) => {
-  //       toast(
-  //         ToastType.SUCCESS,
-  //         res?.meta?.message ?? "Appointment Accepted Successully"
-  //       );
-  //     })
-  //     .catch((err) => {
-  //       console.error("myerr", err);
-  //       if (err?.data?.errors) {
-  //         toast(ToastType.ERROR, err?.data?.errors);
-  //         return;
-  //       }
-  //       toast(ToastType.ERROR, "Oops an error occcured!");
-  //     });
-  // }, [id, updateAppointment, toast]);
-
-  // const handleDeclineAppointment = useCallback(() => {
-  //   if (!id) return;
-  //   const data = {
-  //     id: id as string,
-  //     status: AppointmentStatus.CANCELLED,
-  //   }
-  //   updateAppointment(data)
-  //     .unwrap()
-  //     .then((res) => {
-  //       console.log('res', res)
-  //       toast(
-  //         ToastType.SUCCESS,
-  //         res?.meta?.message ?? "Appointment Declined Successully"
-  //       );
-  //     })
-  //     .catch((err) => {
-  //       console.error("myerr", err);
-  //       if (err?.data?.errors) {
-  //         toast(ToastType.ERROR, err?.data?.errors);
-  //         return;
-  //       }
-  //       toast(ToastType.ERROR, "Oops an error occcured!");
-  //     });
-  // }, [id, updateAppointment, toast]);
-
-  // const handleCompleteAppointment = useCallback(() => {
-  //   if (!id) return;
-  //   const data = {
-  //     id: id as string,
-  //     status: AppointmentStatus.CANCELLED,
-  //   }
-  //   updateAppointment(data)
-  //     .unwrap()
-  //     .then((res) => {
-  //       console.log('res', res)
-  //       toast(
-  //         ToastType.SUCCESS,
-  //         res?.meta?.message ?? "Appointment Completed Successfully"
-  //       );
-  //     })
-  //     .catch((err) => {
-  //       console.error("myerr", err);
-  //       if (err?.data?.errors) {
-  //         toast(ToastType.ERROR, err?.data?.errors);
-  //         return;
-  //       }
-  //       toast(ToastType.ERROR, "Oops an error occurred!");
-  //     });
-  // }, [id, completeAppointment, toast]);
-
   return (
     <>
       <div className="pb-16">
@@ -279,7 +203,8 @@ const AppointmentDetailModal = ({
             </Button>
           </div>
           <Button
-            disabled={updateLoading || invoice?.status !== InvoiceStatus.PAID}
+            disabled={updateLoading || status !== AppointmentStatus.IN_PROGRESS}
+            // disabled={updateLoading || invoice?.status !== InvoiceStatus.PAID}
             isLoading={
               Initialstatus === AppointmentStatus.COMPLETED && updateLoading
             }

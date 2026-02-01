@@ -77,7 +77,6 @@ const EditProfile: FC<IProps> = ({
         updatedData.location = locationChanges;
       }
       if (Object.keys(updatedData).length === 0) {
-        console.log("No changes detected.");
         return; 
       }
       const payload = {

@@ -1,6 +1,6 @@
+import { formatMoney } from '@/utils';
 import { useState } from "react";
 import Input from "../inputs/Input.component";
-import Switch from "../switch/Switch.component";
 import { InvoiceTotalProps } from "./types";
 
 const InvoiceTotal = ({
@@ -10,7 +10,7 @@ const InvoiceTotal = ({
   onFee,
   isUpdating,
 }: InvoiceTotalProps) => {
-  const [isTax, setIsTax] = useState(false);
+  const [isTax] = useState(false);
   const [taxValue, setTaxValue] = useState("");
   const [fee, setFee] = useState("");
 
@@ -34,7 +34,7 @@ const InvoiceTotal = ({
             <div>
               <Input
                 value={fee}
-                label="Service Fee (workmanship + purchased items)"
+                label="Optional Service Fee (workmanship)"
                 placeholder="cost of service"
                 onChange={(e) => {
                   setFee(e.target.value);
@@ -44,14 +44,14 @@ const InvoiceTotal = ({
                 type="number"
               />
             </div>
-            <div className="flex justify-between items-center">
+            {/* <div className="flex justify-between items-center">
               <h3>Include Tax</h3>
               <Switch value={isTax} onToggle={setIsTax} disabled={disabled} />
             </div>
             <div className="flex justify-between items-center">
               <h3>SubTotal</h3>
               <h3 className="font-semibold"> {total} XAF</h3>
-            </div>
+            </div> */}
             {isTax && !disabled && (
               <div className="flex justify-between items-center">
                 <div className="flex gap-2 items-center">
@@ -74,12 +74,12 @@ const InvoiceTotal = ({
         )}
         <div className="   flex items-center justify-between  rounded-xl">
           <h3>Payment Method</h3>
-          <h3 className="font-semibold">Mobile Money</h3>
+          <h3 className="font-medium">Mobile Money</h3>
         </div>
         <div className="h-12 p-4 bg-primaryAccent flex items-center justify-between text-primary rounded-xl">
           <h3>Total</h3>
-          <h3 className="font-semibold">
-            {total && <>{!isTax ? total : getTotal(Number(total))}</>} XAF
+          <h3 className="font-bold text-lg">
+            {total && <>{!isTax ? formatMoney(total) : getTotal(Number(total))}</>} XAF
           </h3>
         </div>
       </div>

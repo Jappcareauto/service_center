@@ -67,7 +67,7 @@ const AppointmentDetails = () => {
   );
 
   const dispatch = useAppDispatch();
-
+  
   useEffect(() => {
     if (invoice?.data) {
       dispatch(setInvoice(invoice?.data));
@@ -81,7 +81,7 @@ const AppointmentDetails = () => {
     if (data?.data?.diagnosesToMake) {
       setDiagnosisToMake(data?.data?.diagnosesToMake);
     }
-  }, [invoice, data]);
+  }, [invoice, data, dispatch]);
 
   const handleDiagnosisToMake = () => {
     if (diagnosisToMake.trim() === "") return;
@@ -116,7 +116,6 @@ const AppointmentDetails = () => {
         toast(ToastType.SUCCESS, "Diagnosis made updated successfully");
       })
       .catch((error) => {
-        console.error("Error updating diagnosis made:", error);
         toast(
           ToastType.ERROR,
           error?.message ?? "Error updating diagnosis made:"

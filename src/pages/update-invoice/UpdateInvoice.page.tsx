@@ -21,6 +21,7 @@ import { useAppSelector } from "@/redux/store";
 import { InvoiceDataType, InvoiceItem, UpdateInvoiceRequest } from "@/types";
 import { getStatusStyles } from "@/utils";
 import { formatStatusText } from "@/utils/formatStatusText";
+import { Input as AntdInput } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
@@ -30,20 +31,23 @@ const UpdateInvoice = () => {
   const { user: adminUser } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const { toast } = useToast();
+
   const [updateInvoice, { isLoading }] = useUpdateInvoiceMutation();
   const { data: appointment } = useGetAppointmentQuery(id as string, {
     skip: !id,
   });
-  const { data: invoice, isLoading: invoiceLoading, refetch } =
-    useGetInvoiceByAppointmentQuery(id as string);
+  const {
+    data: invoice,
+    isLoading: invoiceLoading,
+    refetch,
+  } = useGetInvoiceByAppointmentQuery(id as string);
   const { data: chatContacts } = useGetChatContactsQuery(undefined);
-
-  // const { data: user } = useGetUserQuery(
-  //   appointment?.data?.createdBy as string,
-  //   {
-  //     skip: !appointment?.data?.createdBy,
-  //   }
-  // );
+  const [repairedMade, setRepairedMade] = useState(
+    invoice?.data?.repairedMade || ""
+  );
+  const [diagnosedIssue, setDiagnosedIssue] = useState(
+    invoice?.data?.diagnosedIssue || ""
+  );
   const [dueDate, setDueDate] = useState("");
   const [issueDate, setIssueDate] = useState("");
   const [items, setItems] = useState<InvoiceDataType[]>([]);
@@ -70,7 +74,6 @@ const UpdateInvoice = () => {
 
   const handleCreateInvoice = () => {
     if (!appointment?.data) {
-      console.error("No appointment data available");
       return;
     }
     if (appointment?.data) {
@@ -93,18 +96,15 @@ const UpdateInvoice = () => {
         data,
         id: invoiceId,
       };
-      console.log('updateData', updateData)
       updateInvoice(updateData as UpdateInvoiceRequest)
         .unwrap()
         .then((res) => {
-          console.log("res", res);
           if (res?.meta?.message) {
             toast(ToastType.SUCCESS, res?.meta?.message as string);
           }
-          refetch()
+          refetch();
         })
         .catch((err) => {
-          console.log("err", err);
           const validationErrors = err?.data?.errors;
           if (validationErrors) {
             Object.values(validationErrors).forEach((errorMessage) => {
@@ -196,6 +196,37 @@ const UpdateInvoice = () => {
                   isISO
                 />
               </div>
+              <div>
+                <label className="text-sm mb-2">Purchased Items</label>
+                <div className="border-grey3 border-2 rounded-xl mt-2">
+                  <EditableTable
+                    onChange={(values) => handleAdd(values)}
+                    initialItems={currentInvoiceItems}
+                  />
+                </div>
+              </div>
+              <div className="p-5 border-grey3 border-2 rounded-3xl space-y-2">
+                <div>
+                  <label className="text-sm">Diagnosed Issue </label>
+                  <AntdInput.TextArea
+                    rows={4}
+                    placeholder="Summarize issues found"
+                    value={diagnosedIssue}
+                    onChange={(e) => setDiagnosedIssue(e.target.value)}
+                    className="mt-2 border-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm">Repaires Made </label>
+                  <AntdInput.TextArea
+                    rows={4}
+                    placeholder="Summarize repairs made"
+                    value={repairedMade}
+                    onChange={(e) => setRepairedMade(e.target.value)}
+                    className="mt-2 border-none"
+                  />
+                </div>
+              </div>
               <div className="flex justify-between space-x-8">
                 <div className="flex flex-col w-full">
                   <label className="text-sm mb-2">Billed From</label>
@@ -231,15 +262,7 @@ const UpdateInvoice = () => {
                   />
                 </div>
               )}
-              <div>
-                <label className="text-sm mb-2">Purchased Items</label>
-                <div className="border-grey3 border-2 rounded-xl mt-2">
-                  <EditableTable
-                    onChange={(values) => handleAdd(values)}
-                    initialItems={currentInvoiceItems}
-                  />
-                </div>
-              </div>
+
               <InvoiceTotal
                 isUpdating
                 total={total && total + fee}

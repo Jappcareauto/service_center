@@ -26,7 +26,6 @@ const ForgotPassword = () => {
       .unwrap()
       .then((res) => console.log("res", res))
       .catch((err) => {
-        console.log(err);
         if (err?.data?.errors) {
           toast(ToastType.ERROR, err?.data?.errors);
         }

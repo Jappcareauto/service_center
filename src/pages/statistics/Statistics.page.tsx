@@ -1,4 +1,3 @@
- 
 import CalendarIcon from "@/assets/icons/CalendarIcon";
 import LocationIcon from "@/assets/icons/LocationIcon";
 import StarIcon from "@/assets/icons/StarIcon";
@@ -10,15 +9,15 @@ import Drawer from "@/components/drawer/Drawer.component";
 import LineChart from "@/components/line-chart/LineChart.component";
 import Skeleton from "@/components/skeletons/Skeleton.component";
 import StatisticsCard from "@/components/statistics-card/StatisticsCard.component";
+import { colors } from "@/constants/colors";
 import { AppointmentStatus } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useGetAppointmentsQuery,
   useGetPaymentsQuery,
-  useGetServiceCenterQuery
+  useGetServiceCenterQuery,
 } from "@/redux/api";
 import { useAppSelector } from "@/redux/store";
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import StatisticsProfile from "./StatisticsProfile";
@@ -28,6 +27,7 @@ const Statistics = () => {
   const [open, setOpen] = useState(false);
   const [revenue, setRevenue] = useState("");
   const { serviceCenterId } = useAppSelector((state) => state.auth);
+  const [isRevenue, setIsRevenue] = useState(false);
 
   const [allAppointments, setAllAppointments] = useState<AppointmentType[]>([]);
   const [inprogressAppointments, setInProgressAppointments] = useState<
@@ -45,12 +45,12 @@ const Statistics = () => {
     {}
   );
 
-  const {
-    data: myCenter,
-    isLoading: centerLoading,
-  } = useGetServiceCenterQuery(serviceCenterId, {
-    skip: !serviceCenterId,
-  });
+  const { data: myCenter, isLoading: centerLoading } = useGetServiceCenterQuery(
+    serviceCenterId,
+    {
+      skip: !serviceCenterId,
+    }
+  );
 
   const getAppointmentsData = useCallback(() => {
     if (!appointments?.data) return;
@@ -130,13 +130,15 @@ const Statistics = () => {
               title="Appointments"
               value={appointments?.data && appointments?.data?.length}
               badgeTitle="In Progress"
-              icon={<CalendarIcon className="text-primary" />}
+              icon={
+                <CalendarIcon color={colors.primary} className="text-primary" />
+              }
               second
               titleClassName="text-primary"
             />
             <StatisticsCard
               title="Revenue"
-              value={revenue}
+              value={revenue || "0 XAF"}
               badgeTitle="This Week"
               icon={<StatisticIcon className="text-primary" />}
               second
@@ -146,25 +148,38 @@ const Statistics = () => {
           <div className="w-full p-6 border border-borderColor rounded-3xl my-6">
             <div className="flex justify-between items-center mb-5">
               <div className="w-auto">
-                <div className="text-gray-500 text-sm">Total Revenue</div>
+                <div className="text-gray-500 text-sm">
+                  Total {isRevenue ? "Revenue" : "Appointments"}
+                </div>
                 <div className="text-2xl font-bold">{revenue}</div>
               </div>
               <div className="flex items-center gap-x-3">
-                <Button
-                  className={twMerge(
-                    "text-sm text-primary px-6 py-2 space-x-2 items-center rounded-full bg-primaryAccent hover:bg-primary hover:text-white transition-all duration-300"
-                  )}
-                >
-                  <span>Revenue</span>
-                  <ChevronDownIcon className="h-4" />
-                </Button>
+                <div className="flex space-x-4">
+                  <Button
+                    className={twMerge(
+                      "text-sm text-primary px-6 py-2 space-x-2 items-center rounded-full bg-primaryAccenttransition-all duration-300 hover:bg-primary hover:text-white",
+                      !isRevenue && "bg-primary text-white"
+                    )}
+                    onClick={() => setIsRevenue(false)}
+                  >
+                    Appointments
+                  </Button>
+                  <Button
+                    className={twMerge(
+                      "text-sm text-primary px-6 py-2 space-x-2 items-center rounded-full bg-primaryAccent hover:opacity-75 transition-all duration-300 hover:bg-primary hover:text-white",
+                      isRevenue && "bg-primary text-white"
+                    )}
+                    onClick={() => setIsRevenue(true)}
+                  >
+                    <span>Revenue</span>
+                  </Button>
+                </div>
                 <Button
                   className={twMerge(
                     "text-sm text-primary px-6 py-2 space-x-2 items-center rounded-full bg-primaryAccent  hover:bg-primary hover:text-white transition-all duration-300"
                   )}
                 >
                   <span>This Week</span>
-                  <ChevronDownIcon className="h-4" />
                 </Button>
               </div>
             </div>
@@ -173,16 +188,14 @@ const Statistics = () => {
             </div>
           </div>
           <div className="mt-5">
-            <div className="flex justify-between w-full mb-5 items-center">
+            <div className="flex justify-between w-full mb-3 items-center">
               <h2 className="font-medium">Appointment Stats</h2>
-              <div className="text-sm rounded-2xl px-3 py-2 bg-grey3">
-                This Week
-              </div>
+              <div className="text-sm rounded-2xl px-3 py-1 text-gray-500 bg-grey3">This Week</div>
             </div>
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-4 gap-x-6">
               <StatComponent
                 title={"Total Revenue"}
-                value={revenue}
+                value={revenue || "0 XAF"}
                 icon={<CalendarIcon className="text-primary" />}
               />
               <StatComponent

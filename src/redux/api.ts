@@ -263,7 +263,6 @@ export const apiSlice = createApi({
       UpdateAppointmentStatusRequest
     >({
       query: ({ id, status }) => {
-        console.log("id,status", id, status);
         return {
           url: URLS.appointment.updateAppointmentStatus(id),
           method: "PUT",
@@ -312,7 +311,6 @@ export const apiSlice = createApi({
     }),
     getPayments: builder.query<PaymentsResponse, PaymentRequest>({
       query: ({ size, page, status }) => {
-        // console.log(status)
         return {
           url: URLS.payment.getPayments(page, size, status),
           method: "GET",

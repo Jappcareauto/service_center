@@ -1,3 +1,4 @@
+import { formatMoney } from '@/utils';
 import { InvoiceTableItemsType } from './types';
 
 const InvoiceTableItems = ({ items }: InvoiceTableItemsType) => {
@@ -8,8 +9,8 @@ const InvoiceTableItems = ({ items }: InvoiceTableItemsType) => {
           <tr className="text-primary font-light mt-5 text-center">
             <th className="pb-2 font-light text-left">Item</th>
             <th className="pb-2 font-light">Quantity</th>
-            <th className="pb-2 font-light">Price</th>
-            <th className="pb-2 font-light">Total</th>
+            <th className="pb-2 font-light">Price (XAF)</th>
+            <th className="pb-2 font-light">Total (XAF)</th>
           </tr>
         </thead>
         <tbody>
@@ -18,10 +19,10 @@ const InvoiceTableItems = ({ items }: InvoiceTableItemsType) => {
               <td className="py-2 w-[50%]">{item.name}</td>
               <td className="py-2 w-[25%] text-center">{item.quantity}</td>
               <td className="py-2 w-[25%] text-center font-semibold">
-                {item.price.toLocaleString()}
+                {formatMoney(item.price.toLocaleString())}
               </td>
               <td className="py-2 w-[25%] text-center font-semibold">
-                {item.total}
+                {formatMoney(item.total)}
               </td>
             </tr>
           ))}

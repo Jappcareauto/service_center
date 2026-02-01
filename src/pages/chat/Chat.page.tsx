@@ -49,7 +49,6 @@ const Chat = () => {
     (state: RootState) => state.chat
   );
   const [room, setRoom] = useState("");
-  // console.log('chatrooms', chatrooms)
   const roomId = chatroomId ?? room;
 
   const { data: chatroomMessages } = useGetChatroomMessagesQuery(

@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppointmentStatus, InvoiceStatus, PaymentStatus } from "@/enums";
 import { endOfWeek, format, parseISO, startOfWeek } from "date-fns";
 
 export const formatStatus = (status: AppointmentStatus) => {
-  const separated = status?.split('_').join(" ")?.toUpperCase();
-  return separated
+  const separated = status?.split("_").join(" ")?.toUpperCase();
+  return separated;
 };
 export const getButtonLabel = (status: AppointmentStatus) => {
   switch (status) {
@@ -91,6 +92,13 @@ export const formatAmount = (text: string) => {
   const rawValue = text?.replace(/\D/g, "");
   const formattedValue = rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return formattedValue;
+};
+
+export const formatMoney = (amount: any) => {
+  const value = Number(amount);
+  if (isNaN(value)) return "0";
+
+  return value.toLocaleString("en-US");
 };
 
 export const getBillingStatusStyles = (status: "Paid" | "Pending") => {

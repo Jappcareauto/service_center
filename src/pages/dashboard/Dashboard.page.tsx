@@ -68,12 +68,10 @@ const Dashboard = () => {
   useEffect(() => {
     if (user?.data) {
       dispatch(setUser(user?.data));
-      console.log(user?.data)
     }
   }, [dispatch, user]);
 
   useEffect(() => {
-    // console.log("data", data);
     if (data && data?.data) {
       setAppointmentsList(data?.data);
       const filteredTableData = data?.data.map((item) => {
@@ -149,7 +147,7 @@ const Dashboard = () => {
               />
               <StatisticsCard
                 title="Revenue"
-                value={revenue}
+                value={revenue || "0 XAF"}
                 badgeTitle="This Week"
                 icon={<StatisticIcon className="text-primary" />}
                 second

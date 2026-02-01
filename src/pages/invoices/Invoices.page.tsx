@@ -11,6 +11,7 @@ import { InvoiceStatus, ToastType } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useDeleteInvoiceMutation, useGetInvoicesQuery } from "@/redux/api";
 import { Invoice } from "@/types";
+import { formatMoney } from "@/utils";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +20,8 @@ const Invoices = () => {
   const { data, isLoading } = useGetInvoicesQuery({
     status,
   });
-  const [deleteInvoice, { isLoading:deleteLoading }] = useDeleteInvoiceMutation();
+  const [deleteInvoice, { isLoading: deleteLoading }] =
+    useDeleteInvoiceMutation();
   const [invoicesList, setInvoicesList] = useState<Invoice[]>([]);
   const [pendingInvoices, setPendingInvoices] = useState("");
   const [id, setId] = useState("");
@@ -32,7 +34,9 @@ const Invoices = () => {
         id: item.id,
         status: item.status ? item.status : InvoiceStatus.DRAFT,
         number: item.number,
-        amount: `${item.money?.amount} ${item.money?.currency}`,
+        amount: item.money?.amount
+          ? `${formatMoney(item.money?.amount)} ${item.money?.currency}`
+          : "0",
         issueDate: item.issueDate,
         paidDate: item?.paidDate ?? null,
         dueDate: item?.dueDate ?? null,
@@ -61,13 +65,11 @@ const Invoices = () => {
     deleteInvoice(id)
       .unwrap()
       .then((res) => {
-        console.log("res", res);
         if (res?.meta?.message) {
           toast(ToastType.SUCCESS, res?.meta?.message as string);
         }
       })
       .catch((err) => {
-        console.log('err', err)
         const validationErrors = err?.data?.errors;
         if (validationErrors) {
           Object.values(validationErrors).forEach((errorMessage) => {
@@ -78,8 +80,9 @@ const Invoices = () => {
         } else {
           toast(ToastType.ERROR, "Update failed!");
         }
-      }).finally(() => {
-        setId('')
+      })
+      .finally(() => {
+        setId("");
       });
   };
   const handleDownload = (id: string) => {

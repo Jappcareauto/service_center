@@ -66,7 +66,6 @@ const Profile = () => {
     setPreviewUrl(imageUrl);
     setIsModalVisible(true);
   };
-  console.log('data?.data', data?.data);
   const handleAddMediaImage = () => {
     if (data?.data?.id) {
       const formData = new FormData();
