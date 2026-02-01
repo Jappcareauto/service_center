@@ -2,9 +2,10 @@ import { twMerge } from "tailwind-merge";
 // import MessageInvoiceComponent from "./MessageInvoiceComponent.component";
 // import { MessageType } from "@/enums";
 import { AUDIO_TYPES, IMAGE_TYPES, Message } from "@/types";
-import CustomAudioPlayer from "../custom-audio-player/CustomAudioPlayer.component";
+import { ArrowDownCircleIcon } from "@heroicons/react/24/outline";
 import { Image } from "antd";
 import dayjs from "dayjs";
+import CustomAudioPlayer from "../custom-audio-player/CustomAudioPlayer.component";
 
 interface OwnProps extends Message {
   className?: string;
@@ -19,6 +20,28 @@ const MessageComponent: React.FC<OwnProps> = ({
   status,
   timestamp,
 }) => {
+  const handleDownloadAll = async () => {
+    if (!mediaUrls || mediaUrls?.length === 0) return;
+
+    for (const file of mediaUrls) {
+      try {
+        const response = await fetch(file.url);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name || file.url.split("/").pop() || "download";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Download failed for:", file.url, error);
+      }
+    }
+  };
   return (
     <div
       className={twMerge(
@@ -72,6 +95,15 @@ const MessageComponent: React.FC<OwnProps> = ({
           </div>
         )}
         <div className="flex gap-x-3 justify-end px-2 pb-1 pt-2">
+          {mediaUrls && mediaUrls?.length > 0 && (
+            <button
+              onClick={handleDownloadAll}
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-500 transition-colors"
+            >
+              Save
+              <ArrowDownCircleIcon className="w-4 h-4 text-gray-400 hover:text-gray-500" />
+            </button>
+          )}
           <p className="text-xs text-gray-400 text-right relative">
             {timestamp && dayjs(timestamp).format("h:mm a")}
           </p>

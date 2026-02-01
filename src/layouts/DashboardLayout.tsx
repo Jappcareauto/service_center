@@ -1,11 +1,9 @@
 import NotificationIcon from "@/assets/icons/NotificationIcon";
-import SettingIcon from "@/assets/icons/SettingIcon";
 import Drawer from "@/components/drawer/Drawer.component";
 import NotificationItem from "@/components/notification-item/NotificationItem.component";
 import SideMenu from "@/components/side-menu/SideMenu";
 import { notificationItems } from "@/constants";
 import { useAppSelector } from "@/redux/store";
-import { paths } from "@/routes/paths";
 import { ArrowLeftIcon } from "@heroicons/react/24/solid";
 import { Avatar, Input } from "antd";
 import { SearchProps } from "antd/es/input";
@@ -53,12 +51,12 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
               width={"28"}
               height={"28"}
             />
-            <SettingIcon
+            {/* <SettingIcon
               onClick={() => navigate(paths.profile)}
               className="cursor-pointer text-gray-500 pt-1"
               width={"28"}
               height={"28"}
-            />
+            /> */}
             <div className="rounded-full border border-primaryAccent bg-red-300">
               <Avatar src={user?.profileImageUrl} />
             </div>

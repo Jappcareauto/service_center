@@ -111,6 +111,7 @@ const Payments = () => {
             columns={columns}
             pageSize={6}
             loading={paymentsLoading}
+            emptyText="No Payments Available"
           />
         </div>
       </div>

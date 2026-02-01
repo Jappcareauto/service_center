@@ -1,10 +1,10 @@
-import { getFormattedDate, getStatusStyles } from "@/utils";
+import { InvoiceStatus } from '@/enums';
+import { formatAmount, getFormattedDate, getStatusStyles } from "@/utils";
+import { formatStatusText } from '@/utils/formatStatusText';
+import { twMerge } from "tailwind-merge";
 import Avatar from "../avatar/Avatar.component";
 import Button from "../button/Button.component";
 import { InvoiceProps } from "./types";
-import { twMerge } from "tailwind-merge";
-import { formatStatusText } from '@/utils/formatStatusText';
-import { InvoiceStatus } from '@/enums';
 
 const Invoice = ({
   email,
@@ -51,7 +51,7 @@ const Invoice = ({
         <div className="flex justify-between items-center">
           <p className="text-grey4">Amount</p>
           <p className="text-primary font-semibold">
-            {money?.amount} {money?.currency}
+            {money?.amount && formatAmount(money?.amount.toString())} {money?.currency}
           </p>
         </div>
       </div>

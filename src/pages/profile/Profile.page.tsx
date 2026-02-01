@@ -108,13 +108,8 @@ const Profile = () => {
               <img
                 className="w-full h-[250px] p-8 rounded-[20px] border border-gray-100 object-contain"
                 // need some check
-                src={images.logo}
+                src={images?.logo}
               />
-              // <img
-              //   className="w-full h-[250px] rounded-[20px] object-cover"
-              //   // need some check
-              //   src={data?.data?.imageUrl ?? images.logo}
-              // />
             )}
             <div>
               <div className="flex-row justify-between flex">
@@ -142,23 +137,34 @@ const Profile = () => {
                   </Button>
                 </div>
               </div>
-              <div className="flex items-end justify-between mt-4">
-                <div>
-                  <h2 className='mb-1'>{data?.data?.category}</h2>
-                  <div className="flex items-center gap-x-4 text-primary">
-                    <div className="flex items-center gap-x-2">
-                      <LocationIcon size={20} />
-                      <span>{data?.data?.location?.name}</span>
-                    </div>
-                    <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
-                    <div className="flex items-center gap-x-2">
-                      <StarIcon />
-                      <span>4.75</span>
+              {isLoading ? (
+                <div className="mt-4">
+                  <AntdSkeleton.Input
+                    active
+                    style={{ width: 200, height: 20 }}
+                  />
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-end justify-between mt-4">
+                    <div>
+                      <h2 className="mb-1">{data?.data?.category}</h2>
+                      <div className="flex items-center gap-x-4 text-primary">
+                        <div className="flex items-center gap-x-2">
+                          <LocationIcon size={20} />
+                          <span>{data?.data?.location?.name}</span>
+                        </div>
+                        <div className="w-1.5 h-1.5 bg-black rounded-full"></div>
+                        <div className="flex items-center gap-x-2">
+                          <StarIcon />
+                          <span>4.75</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <p className="mt-6">{data?.data?.location?.description}</p>
+                  <p className="mt-6">{data?.data?.location?.description}</p>
+                </>
+              )}
             </div>
             <div className="flex flex-col gap-y-3">
               <h2 className="font-medium">Gallery</h2>
