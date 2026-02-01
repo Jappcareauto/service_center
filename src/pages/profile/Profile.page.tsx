@@ -96,21 +96,22 @@ const Profile = () => {
     setPreviewUrl("");
     setIsModalVisible(false);
   };
-  console.log(serviceCenterServices?.data);
+
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[auto_360px] gap-x-6">
         <>
           <div className="flex flex-col gap-y-6">
-            {isLoading ? (
+            <div className='w-full h-[200px] rounded-[20px] flex justify-center items-center bg-primaryAccent  border border-gray-100'>
+              {isLoading ? (
               <Skeleton paragraph={{ rows: 8 }} />
             ) : (
               <img
-                className="w-full h-[250px] p-8 rounded-[20px] border border-gray-100 object-contain"
-                // need some check
-                src={images?.logo}
+                className="w-full h-full object-contain"
+                src={data?.data?.imageUrl ||  images?.logo}
               />
             )}
+            </div>
             <div>
               <div className="flex-row justify-between flex">
                 {isLoading ? (
@@ -120,7 +121,7 @@ const Profile = () => {
                 ) : (
                   <Avatar name={data?.data?.name} nameClassName="text-lg" />
                 )}
-                <div className="flex items-center gap-x-4 mr-7">
+                <div className="flex items-center gap-x-4 ">
                   <Button
                     onClick={() => setEditOpen(true)}
                     className=" rounded-full h-[40px] px-5 text-sm"

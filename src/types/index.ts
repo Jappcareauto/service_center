@@ -46,6 +46,13 @@ export interface GenericResponse {
   pagination?: Pagination | null;
 }
 
+export interface RequestResetLinkResponse extends GenericResponse {
+  data?: {
+    message?: string;
+    state?: boolean;
+  };
+}
+
 export interface Location extends GenericType {
   latitude: number;
   longitude: number;

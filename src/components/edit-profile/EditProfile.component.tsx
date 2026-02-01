@@ -52,13 +52,20 @@ const EditProfile: FC<IProps> = ({
           onRequested?.();
         })
         .catch((err) => {
-          if (err?.data?.errors) {
-            toast(ToastType.ERROR, err?.data?.errors);
-          } else if (err?.message) {
-            toast(ToastType.ERROR, err?.message);
-          } else {
-            toast(ToastType.ERROR, "update failed!");
-          }
+          console.log('err', err)
+          if (err?.data?.error) {
+          toast(ToastType.ERROR, err?.data?.error);
+        }
+        const validationErrors = err?.data?.errors;
+        if (validationErrors) {
+          Object.values(validationErrors).forEach((errorMessage) => {
+            toast(ToastType.ERROR, errorMessage as string);
+          });
+        } else if (err?.data?.message || err?.message) {
+          toast(ToastType.ERROR, err?.data?.message || err?.message);
+        } else if (err?.error?.error) {
+          toast(ToastType.ERROR, err?.error?.error);
+        }
         });
     }
   };
@@ -110,7 +117,8 @@ const EditProfile: FC<IProps> = ({
       <div className="w-full flex justify-center items-center">
         <div className="relative">
           <Avatar
-            parentClassName="w-[120px] h-[120px] p-3"
+            parentClassName="w-[120px] h-[120px] p-2"
+            imageClassName='object-contain'
             className="border-none p-1"
             profileImageUrl={images.logo}
             // profileImageUrl={props.imageUrl ? props.imageUrl : images.logo}
@@ -137,7 +145,7 @@ const EditProfile: FC<IProps> = ({
           <p className="mb-2 text-sm">Description</p>
           <AntdInput.TextArea
             rows={5}
-            placeholder="Our vehicle service center in Yaoundé, Cameroon offers professional automotive care tailored to keep your car running smoothly and reliably"
+            placeholder="Descibe your service center"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />

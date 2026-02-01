@@ -22,9 +22,10 @@ import {
   useGetAppointmentsQuery,
   useGetInvoicesQuery,
   useGetPaymentsQuery,
+  useGetServiceCenterQuery,
   useGetUserQuery,
 } from "@/redux/api";
-import { setUser } from "@/redux/features/auth/authSlice";
+import { setProfileImage, setUser } from "@/redux/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Appointment as AppointmentType } from "@/types";
 import { useEffect, useState } from "react";
@@ -33,7 +34,7 @@ import { toast } from "react-toastify";
 import { twMerge } from "tailwind-merge";
 
 const Dashboard = () => {
-  const { user_info } = useAppSelector((state) => state.auth);
+  const { user_info,serviceCenterId } = useAppSelector((state) => state.auth);
   const [status, setStatus] = useState<AppointmentStatus>(
     AppointmentStatus.ALL
   );
@@ -47,6 +48,11 @@ const Dashboard = () => {
   const { data: invoice, isLoading: invoiceLoading } = useGetInvoicesQuery({
     status: InvoiceStatus.ALL,
   });
+    const {
+      data: sc,
+    } = useGetServiceCenterQuery(serviceCenterId, {
+      skip: !serviceCenterId,
+    });
   const [deleteAppointment, { isLoading: deleteLoading }] =
     useDeleteAppointmentMutation();
   const [appointmentsList, setAppointmentsList] = useState<AppointmentType[]>(
@@ -69,7 +75,10 @@ const Dashboard = () => {
     if (user?.data) {
       dispatch(setUser(user?.data));
     }
-  }, [dispatch, user]);
+    if(sc?.data) {
+      dispatch(setProfileImage(sc?.data?.imageUrl))
+    }
+  }, [dispatch, sc?.data, user]);
 
   useEffect(() => {
     if (data && data?.data) {

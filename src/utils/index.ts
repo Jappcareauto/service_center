@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { AppointmentStatus, InvoiceStatus, PaymentStatus } from "@/enums";
 import { endOfWeek, format, parseISO, startOfWeek } from "date-fns";
+import dayjs from "dayjs";
 
 export const formatStatus = (status: AppointmentStatus) => {
   const separated = status?.split("_").join(" ")?.toUpperCase();
@@ -110,4 +111,15 @@ export const getBillingStatusStyles = (status: "Paid" | "Pending") => {
     default:
       return "bg-gray-100 text-gray-500 text-xs";
   }
+};
+
+export const getTimeOfDay = () => {
+  const hour = dayjs().hour(); // 0-23
+  if (hour >= 5 && hour < 12) {
+    return "Morning";
+  }
+  if (hour >= 12 && hour < 17) {
+    return "Afternoon";
+  }
+  return "Evening";
 };

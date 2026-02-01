@@ -23,6 +23,7 @@ interface OwnProps {
   onSelect?: (file: any) => void;
   isLoading?: boolean;
   showEdit?: boolean;
+  imageClassName?: string;
 }
 
 const Avatar: React.FC<OwnProps> = ({
@@ -41,6 +42,7 @@ const Avatar: React.FC<OwnProps> = ({
   onSelect,
   isLoading,
   showEdit,
+  imageClassName
 }) => {
   const [preview, setPreview] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -83,7 +85,7 @@ const Avatar: React.FC<OwnProps> = ({
         ) : imageSource ? (
           <img
             src={imageSource}
-            className="rounded-full w-full h-full"
+            className={twMerge("rounded-full w-full h-full", imageClassName)}
             id={id}
           />
         ) : (

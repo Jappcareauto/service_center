@@ -9,6 +9,7 @@ import { logoutUser, setUser } from "@/redux/features/auth/authSlice";
 import { setChatroomId, setReceiver } from "@/redux/features/chat/chatSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { paths } from "@/routes/paths";
+import { getTimeOfDay } from '@/utils';
 import { useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
@@ -48,7 +49,7 @@ const SideMenu = () => {
   return (
     <div className="bg-white border-r border-r-borderColor h-screen fixed left-0 overflow-y-auto no-scrollbar px-3 py-6 w-[60px] sm:w-[70px] md:w-[250px] transition-all duration-300 z-50">
       {/* Greeting & Avatar only visible on md+ */}
-      <p className="mb-4 hidden md:block">Good Morning</p>
+      <p className="mb-4 hidden md:block">Good {getTimeOfDay()}</p>
       <button
         className="items-center p-3 border border-borderColor rounded-2xl w-full gap-x-4 mb-6 font-medium hidden md:flex"
         onClick={() => navigate(paths.profile)}

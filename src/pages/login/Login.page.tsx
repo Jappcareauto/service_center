@@ -46,11 +46,12 @@ const Login = () => {
     loginUser(data)
       .unwrap()
       .then((res) => {
+        console.log(res)
         dispatch(setUserInfo(res?.data?.authorities));
         dispatch(setAccessToken(res.data.accessToken));
         dispatch(setRefreshToken(res.data.refreshToken));
         dispatch(setServiceCenterId(res.data.serviceCenterId));
-        toast(ToastType.SUCCESS, "Logged in");
+        toast(ToastType.SUCCESS, `Welcome`);
         navigate(paths.dashboard);
       })
       .catch((err) => {
