@@ -28,6 +28,7 @@ import {
   LoginResponse,
   PaymentRequest,
   PaymentsResponse,
+  RequestResetLinkResponse,
   ResetPasswordRequest,
   ServiceCenter,
   ServiceCenterResponse,
@@ -155,7 +156,7 @@ export const apiSlice = createApi({
       },
       onQueryStarted: onQueryStartedErrorToast,
     }),
-    forgotPassword: builder.mutation<GenericResponse, ForgotPasswordRequest>({
+    forgotPassword: builder.mutation<RequestResetLinkResponse, ForgotPasswordRequest>({
       query: (userData) => {
         return {
           url: URLS.auth.forgotPassword,

@@ -97,7 +97,7 @@ export const URLS = {
     getServiceCenters: "/service-center/list",
     getServiceCenter: (id: string) => `/service-center/${id}`,
     updateServiceCenterImage: (id: string) =>
-      `/service-center/${id}/update-image`,
+      `/service-center/${id}/image`,
     updateServiceCenter: (id: string) => `/service-center/${id}`,
     addServiceCenterMedia: (id: string) =>
       `/service-center/add-media-to-service-center/${id}/update`,
