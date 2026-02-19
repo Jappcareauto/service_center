@@ -3,9 +3,8 @@
 import { useChatService } from "@/hooks/useChatService";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
-  useGetChatContactsQuery,
   useGetChatroomMessagesQuery,
-  useGetUserChatRoomsQuery,
+  useGetUserChatRoomsQuery
 } from "@/redux/api";
 import { setChatroomId } from "@/redux/features/chat/chatSlice";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
@@ -28,12 +27,11 @@ const ChatRoom = () => {
   const { data: chatrooms } = useGetUserChatRoomsQuery(user?.id, {
     skip: !user?.id,
   });
-  const { data: chatContacts } = useGetChatContactsQuery(undefined);
-  // Handle new message received
+
   const handleMessageReceived = useCallback((message: any) => {
     setMessages((prev) => [...prev, message]);
   }, []);
-  // Initialize WebSocket
+  
   const { connected, error, connect, disconnect, sendMessage, markAsRead } =
     useChatService({
       chatId: chatroomId,
