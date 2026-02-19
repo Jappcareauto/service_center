@@ -96,21 +96,20 @@ const Profile = () => {
     setPreviewUrl("");
     setIsModalVisible(false);
   };
-  console.log('data?.data', data?.data)
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[auto_360px] gap-x-6">
         <>
           <div className="flex flex-col gap-y-6">
-            <div className='w-full h-[200px] rounded-[20px] flex justify-center items-center bg-primaryAccent  border border-gray-100'>
+            <div className="w-full h-[200px] rounded-[20px] flex justify-center items-center bg-primaryAccent  border border-gray-100">
               {isLoading ? (
-              <Skeleton paragraph={{ rows: 8 }} />
-            ) : (
-              <img
-                className="w-full h-full object-contain"
-                src={data?.data?.imageUrl ||  images?.logo}
-              />
-            )}
+                <Skeleton paragraph={{ rows: 8 }} />
+              ) : (
+                <img
+                  className="w-full h-full object-contain"
+                  src={data?.data?.imageUrl || images?.logo}
+                />
+              )}
             </div>
             <div>
               <div className="flex-row justify-between flex">

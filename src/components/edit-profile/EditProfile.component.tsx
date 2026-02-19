@@ -52,7 +52,6 @@ const EditProfile: FC<IProps> = ({
           onRequested?.();
         })
         .catch((err) => {
-          console.log('err', err)
           if (err?.data?.error) {
           toast(ToastType.ERROR, err?.data?.error);
         }
