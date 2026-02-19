@@ -46,7 +46,10 @@ const Login = () => {
     loginUser(data)
       .unwrap()
       .then((res) => {
-        console.log(res)
+        if (!res?.data?.serviceCenterId) {
+          toast(ToastType.ERROR, "Login Failed. Missing service center Id");
+          return;
+        }
         dispatch(setUserInfo(res?.data?.authorities));
         dispatch(setAccessToken(res.data.accessToken));
         dispatch(setRefreshToken(res.data.refreshToken));

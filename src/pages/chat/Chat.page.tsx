@@ -307,7 +307,7 @@ const Chat = () => {
                       }}
                       active={roomId === cus.chatRoomId}
                       time={dayjs(cus.createdAt).format("h:mm a")}
-                      lastMessage={`${cus?.email}`}
+                      // lastMessage={`${cus?.email}`}
                       name={cus?.name ?? "Unknown Name"}
                     />
                   )

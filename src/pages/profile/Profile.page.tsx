@@ -96,7 +96,7 @@ const Profile = () => {
     setPreviewUrl("");
     setIsModalVisible(false);
   };
-
+  console.log('data?.data', data?.data)
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[auto_360px] gap-x-6">
