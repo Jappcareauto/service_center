@@ -33,7 +33,6 @@ const ChatRoom = () => {
   const handleMessageReceived = useCallback((message: any) => {
     setMessages((prev) => [...prev, message]);
   }, []);
-  console.log("chatContacts", chatContacts);
   // Initialize WebSocket
   const { connected, error, connect, disconnect, sendMessage, markAsRead } =
     useChatService({

@@ -45,7 +45,7 @@ const DashboardLayout = ({ children, onSearch, showBack = true }: Iprops) => {
               width={"100%"}
             />
           </div>
-          <div className="flex flex-row gap-x-7 p-3 rounded-full items-center px-4">
+          <div className="flex flex-row gap-x-7 p-3 rounded-full items-center px-0">
             <NotificationIcon
               onClick={() => setOpen(true)}
               className="cursor-pointer text-gray-500 pt-1"

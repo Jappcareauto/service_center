@@ -29,7 +29,6 @@ const InvoiceDetails = () => {
   const handlePreviewInvoice = () => {
     navigate(`/download-invoice/${invoice?.id}`);
   };
-console.log('invoice', invoice)
   return (
     <DashboardLayout>
       <div className="w-[75%]">
