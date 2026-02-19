@@ -174,7 +174,6 @@ const Chat = () => {
 
       return fileIds || [];
     } catch (error) {
-      console.error("File upload error:", error);
       return [];
     } finally {
       setSending(false);
@@ -338,21 +337,21 @@ const Chat = () => {
                 isRecording && "h-[58vh]"
               )}
             >
-              <div className="w-full border-b border-b-borderColor flex justify-between py-2 px-6">
+              <div className="w-full border-b border-b-gray-100 flex justify-between pb-4 px-6">
                 <Avatar
                   name={receiver?.name}
-                  label={receiver?.email}
+                  // label={receiver?.email}
                 />
-                <div className="flex space-x-4 items-center">
+                <div className={twMerge("flex space-x-4 items-center",  loading && 'hidden')}>
                   <Button
-                    className="text-sm border border-primaryAccent bg-white rounded-full"
+                    className={twMerge("text-sm border border-primaryAccent bg-white rounded-full")}
                     variant="tertiary"
                     onClick={scrollToTop}
-                    rightIcon={<ArrowUpIcon className="w-4 h-4 text-grey2" />}
+                    rightIcon={<ArrowUpIcon className="w-3 h-3 text-grey2" />}
                   >
                     Pinned Appointment
                   </Button>
-                  <div className="text-sm">
+                  <div className="text-xs">
                     {connected ? "🟢" : "🔴"}
                     {!loading && error && (
                       <span className="error">{error}</span>

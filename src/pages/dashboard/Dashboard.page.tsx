@@ -138,7 +138,6 @@ const Dashboard = () => {
   //   label: <EmergencyCardHeading data={item} />,
   //   children: <EmergencyCardBottom data={item} />,
   // }));
-  console.log(appointmentsList)
 
   return (
     <DashboardLayout showBack={false}>

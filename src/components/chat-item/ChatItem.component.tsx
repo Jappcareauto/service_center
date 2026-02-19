@@ -28,7 +28,7 @@ const ChatItem: React.FC<Props> = ({
         "hover:bg-primaryAccent hover:shadow-sm transition-all duration-500 ease-in-out"
       )}
     >
-      <div className="flex space-x-3 min-w-0">
+      <div className="flex space-x-3 items-center min-w-0">
         <div className="flex items-center justify-center">
           <div
             className={twMerge(

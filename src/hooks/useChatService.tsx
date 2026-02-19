@@ -49,7 +49,7 @@ export const useChatService = ({
       },
       debug: (str) => {
         if (process.env.NODE_ENV !== "development") return;
-        // console.log(str);
+        console.log(str);
       },
       reconnectDelay: 3000, // auto reconnect
       heartbeatIncoming: 10000,
