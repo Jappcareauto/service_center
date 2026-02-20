@@ -174,6 +174,7 @@ const Chat = () => {
 
       return fileIds || [];
     } catch (error) {
+      console.log('error', error)
       return [];
     } finally {
       setSending(false);
