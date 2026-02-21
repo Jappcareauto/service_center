@@ -91,7 +91,8 @@ export const URLS = {
       `/chatroom/appointment/${appointmentId}`,
     getAppointmentByChatroom: (chatroomId: string) =>
       `/appointment/chat-room/${chatroomId}`,
-    uploadChatFiles: "/file/chat-upload-multiple",
+    uploadChatFiles: (chatId: string) =>  `/chat/${chatId}/sendMessage/with-files`,
+    deleteMessage: (messageId: string) =>  `/chat/message/${messageId}`
   },
   service_Center: {
     getServiceCenters: "/service-center/list",

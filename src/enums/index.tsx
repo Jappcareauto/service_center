@@ -17,12 +17,12 @@ export enum PaymentStatus {
   ALL = "ALL",
   // EARNINGS = "EARNINGS",
   // WITHDRAWALS = "WITHDRAWALS",
-  PAID="PAID",
-  PENDING="PENDING",
-  PARTIALLY_PAID="PARTIALLY_PAID",
-  UNPAID="UNPAID",
-  DRAFT="DRAFT",
-  DECLINED="DECLINED",
+  PAID = "PAID",
+  PENDING = "PENDING",
+  PARTIALLY_PAID = "PARTIALLY_PAID",
+  UNPAID = "UNPAID",
+  DRAFT = "DRAFT",
+  DECLINED = "DECLINED",
 }
 
 export enum ROLES {
@@ -40,12 +40,10 @@ export enum ChatStatus {
 }
 
 export enum MessageType {
-  BASIC = "BASIC",
-  VOICE = "VOICE",
-  INVOICE = "INVOICE",
   IMAGE = "IMAGE",
+  VIDEO = "VIDEO",
+  AUDIO = "AUDIO",
   TEXT = "TEXT",
-  ATTACHMENT_APPOINTMENT = "ATTACHMENT_APPOINTMENT",
 }
 
 export enum EmergencyStatus {

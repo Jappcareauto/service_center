@@ -9,6 +9,7 @@ import {
   AppointmentsResponse,
   AppointmentStatsRequest,
   AppointmentStatsResponse,
+  ChatMessageResponse,
   ChatRoomMessagesResponse,
   ChatRoomParticipantsResponse,
   ChatRoomResponse,
@@ -30,6 +31,7 @@ import {
   PaymentsResponse,
   RequestResetLinkResponse,
   ResetPasswordRequest,
+  SendMessageWithFilesRequest,
   ServiceCenter,
   ServiceCenterResponse,
   ServiceCenterServicesResponse,
@@ -42,10 +44,9 @@ import {
   UpdateInvoiceRequest,
   UpdatePasswordAdmin,
   UpdateServiceCenterImagesRequest,
-  UploadChatFilesResponse,
   User,
   UserResponse,
-  UsersResponse,
+  UsersResponse
 } from "@/types";
 import {
   BaseQueryFn,
@@ -103,7 +104,7 @@ const baseQueryWithReauth: BaseQueryFn<
     },
     api,
     extraOptions
-  )) as { data?: { data?: { accessToken: string; refreshToken: string } } };
+  )) as { data?: { data?: { accessToken: string; refreshToken: string; }; }; };
 
   if (
     refreshResponse.data?.data?.accessToken &&
@@ -550,6 +551,22 @@ export const apiSlice = createApi({
       },
       invalidatesTags: ["user"],
     }),
+    uploadChatFiles: builder.mutation<ChatMessageResponse, SendMessageWithFilesRequest>({
+      query: (data) => {
+        const { chatId, senderId, content, type, files } = data;
+        const formData = new FormData();
+        files.forEach((file: File) => {
+          formData.append("files", file);
+        });
+        return {
+          url: URLS.chat.uploadChatFiles(chatId),
+          method: "POST",
+          params: { senderId, content, type },
+          body: formData,
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
     updateChatRoom: builder.mutation<ChatRoomResponse, UpdateChatRoomRequest>({
       query: (data) => {
         return {
@@ -564,6 +581,15 @@ export const apiSlice = createApi({
       query: (id) => {
         return {
           url: URLS.chat.deleteChatroom(id),
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
+    deleteMessage: builder.mutation<ChatRoomResponse, string>({
+      query: (id) => {
+        return {
+          url: URLS.chat.deleteMessage(id),
           method: "DELETE",
         };
       },
@@ -606,16 +632,6 @@ export const apiSlice = createApi({
         };
       },
       providesTags: ["user"],
-    }),
-    uploadChatFiles: builder.mutation<UploadChatFilesResponse, FormData>({
-      query: (data) => {
-        return {
-          url: URLS.chat.uploadChatFiles,
-          method: "POST",
-          body: data,
-        };
-      },
-      invalidatesTags: ["user"],
     }),
     getServiceCenters: builder.mutation<
       ServiceCentersResponse,
@@ -739,6 +755,7 @@ export const {
   useGetUserChatRoomsQuery,
   useGetChatroomMessagesQuery,
   useGetChatroomPartcipantsQuery,
+  useDeleteMessageMutation,
   useGetServiceCentersMutation,
   useGetServiceCenterQuery,
   useUpdateServiceCenterImageMutation,

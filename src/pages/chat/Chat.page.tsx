@@ -10,6 +10,7 @@ import Skeleton from "@/components/skeletons/Skeleton.component";
 import { ChatStatuses } from "@/constants";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
+  useDeleteMessageMutation,
   useGetAppointmentQuery,
   useGetChatContactsQuery,
   useGetChatroomMessagesQuery,
@@ -27,7 +28,6 @@ import {
   PaperAirplaneIcon,
   StopIcon,
 } from "@heroicons/react/24/outline";
-import { Client } from "@stomp/stompjs";
 import { Image, Spin } from "antd";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -37,8 +37,11 @@ import { twMerge } from "tailwind-merge";
 import images from "@/assets/images";
 import Button from "@/components/button/Button.component";
 import { AppLoader } from "@/components/loader/Fallback.component";
+import Modal from "@/components/modals/Modal.component";
+import { useToast } from '@/context/ToastContext';
+import { MessageType, ToastType } from "@/enums";
 import { useChatService } from "@/hooks/useChatService";
-import { formatAmount } from '@/utils';
+import { formatAmount } from "@/utils";
 import Lottie from "lottie-react";
 import waveAnimation from "../../assets/lotties/voice_wave.json"; // Adjust path
 
@@ -77,9 +80,11 @@ const Chat = () => {
   const { data: chatContacts, isLoading: chatContactsLoading } =
     useGetChatContactsQuery(undefined);
 
+  const [deleteMessage, { isLoading: deleteLoading }] =
+    useDeleteMessageMutation();
+
   const bottomRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
-  const stompClientRef = useRef<Client | null | any>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
@@ -90,10 +95,15 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [sending, setSending] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+  const { toast } = useToast();
+
   const lottieRef = useRef<any>(null);
+
   const handleMessageReceived = useCallback((message: any) => {
     setMessages((prev) => [...prev, message]);
   }, []);
+
   const {
     connected,
     error,
@@ -152,51 +162,74 @@ const Chat = () => {
   }, [accessToken, connect, disconnect, roomId]);
 
   const handleSendMessage = useCallback(() => {
-    if (!message.trim()) return;
-    const success = sendMessage(message, user?.id, "TEXT");
-    if (success) {
-      setMessage("");
-    }
-  }, [message]);
+    if (!roomId || !user_info?.userId) return;
 
-  const handleUploadFiles = async (files: File[]): Promise<string[]> => {
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
-    }
+    const hasFiles = selectedFiles.length > 0;
+    const hasText = message.trim().length > 0;
+    if (!hasFiles && !hasText) return;
 
-    try {
-      const result = await uploadFiles(formData).unwrap();
-      const fileIds = result?.data?.map((file: any) => {
-        const segments = file?.url.split("/");
-        return segments[segments.length - 1];
+    if (hasFiles) {
+      setSending(true);
+      const firstFile = selectedFiles[0];
+      let fileType = MessageType.IMAGE;
+      if (firstFile.type.startsWith("video/")) fileType = MessageType.VIDEO;
+      if (firstFile.type.startsWith("audio/")) fileType = MessageType.AUDIO;
+      uploadFiles({
+        chatId: roomId,
+        senderId: user_info.userId,
+        type: fileType,
+        content: hasText ? message : "NO_TEXT",
+        files: selectedFiles,
+      })
+        .unwrap()
+        .then((res) => {
+          if (res?.data) {
+            setMessages((prev) => [...prev, res.data]);
+          }
+          setSelectedFiles([]);
+          setMessage("");
+          scrollToBottom();
+        })
+        .catch((err) => {
+          console.error("Upload Error:", err);
+        })
+        .finally(() => {
+          setSending(false);
+        });
+    } else {
+      const success = sendMessage(message, user_info.userId, "TEXT");
+      if (success) {
+        setMessage("");
+        scrollToBottom();
+      } else {
+        console.error("Socket message failed");
+      }
+    }
+  }, [roomId, user_info, message, selectedFiles, uploadFiles, sendMessage]);
+
+  const onDelete = () => {
+    deleteMessage(deleteId)
+      .unwrap()
+      .then((res) => {
+        if (res?.meta?.message) {
+          toast(ToastType.SUCCESS, res?.meta?.message as string);
+        }
+      })
+      .catch((err) => {
+        const validationErrors = err?.data?.errors;
+        if (validationErrors) {
+          Object.values(validationErrors).forEach((errorMessage) => {
+            toast(ToastType.ERROR, errorMessage as string);
+          });
+        } else if (err?.data?.message || err?.message) {
+          toast(ToastType.ERROR, err?.data?.message || err?.message);
+        } else {
+          toast(ToastType.ERROR, "Update failed!");
+        }
+      })
+      .finally(() => {
+        setDeleteId("");
       });
-
-      return fileIds || [];
-    } catch (error) {
-      console.log('error', error)
-      return [];
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const handleCameraClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      setSelectedFiles((prev) => [...prev, ...newFiles]);
-      e.target.value = "";
-    }
-  };
-
-  const handleRemoveImage = (index: number) => {
-    const updated = [...selectedFiles];
-    updated.splice(index, 1);
-    setSelectedFiles(updated);
   };
 
   const startRecording = async () => {
@@ -219,32 +252,27 @@ const Chat = () => {
       const audioFile = new File([audioBlob], "voice-note.webm", {
         type: "audio/webm",
       });
-
       audioChunks.current = [];
 
-      // Upload audio file and send message
-      const fileIds = await handleUploadFiles([audioFile]);
+      try {
+        setSending(true);
+        await uploadFiles({
+          chatId: roomId,
+          senderId: user_info?.userId,
+          type: MessageType.AUDIO,
+          content: "Voice Note",
+          files: [audioFile],
+        }).unwrap();
 
-      const payload: any = {
-        senderId: user_info?.userId,
-        content: message ? message : "NO_TEXT",
-        chatRoomId: roomId,
-        type: "AUDIO",
-        ...(fileIds.length > 0 && { fileIds }),
-      };
-
-      if (stompClientRef.current?.connected) {
-        stompClientRef.current.send(
-          "/app/chat/message",
-          {},
-          JSON.stringify(payload)
-        );
+        setMessage("");
+        setIsRecording(false);
+        setMediaRecorder(null);
+        lottieRef.current?.stop();
+      } catch (error) {
+        console.error("Voice note upload failed", error);
+      } finally {
+        setSending(false);
       }
-      setMessage("");
-      setSelectedFiles([]);
-      setIsRecording(false);
-      setMediaRecorder(null);
-      lottieRef.current?.stop();
     };
   };
 
@@ -254,14 +282,7 @@ const Chat = () => {
     setIsRecording(false);
   };
 
-  const isSending = sending || filesUploading;
-  const disabledSendButton =
-    (!message && selectedFiles?.length === 0) ||
-    isSending ||
-    isRecording ||
-    !connected;
   const onUserClick = (cus: User) => {
-    // disconnect()
     if (!cus.chatRoomId) return;
     setRoom(cus.chatRoomId as string);
     dispatch(setChatroomId(cus?.chatRoomId));
@@ -271,15 +292,41 @@ const Chat = () => {
     connect();
   };
 
+  const handleCameraClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const updated = [...selectedFiles];
+    updated.splice(index, 1);
+    if (index === 0) {
+      setSelectedFiles([]);
+      return;
+    }
+    setSelectedFiles(updated);
+  };
+
+  const isSending = filesUploading || sending;
+
+  const disabledSendButton =
+    (!message.trim() && selectedFiles.length === 0) ||
+    isSending ||
+    isRecording ||
+    !connected;
+
   return (
     <DashboardLayout showBack={false}>
       <div className="grid grid-cols-[370px_auto]">
         <div className="border-r border-r-gray-200 fixed w-[20vw] overflow-y-auto h-[87vh] pb-2">
           <div className="pr-4 flex flex-col gap-y-6">
-            {/* <div className="flex items-center gap-x-4">
-              <ChatIcon />
-              <h2 className="font-[600]">Chat</h2>
-            </div> */}
             <div className="flex justify-between">
               <FilterBar
                 onFilter={() => {}}
@@ -323,7 +370,7 @@ const Chat = () => {
                 <img src={images.logo} alt="Logo" className="h-full w-full" />
               </div>
               <div className="mt-4">
-                {loading && !receiver ? (
+                {!loading && receiver ? (
                   <AppLoader />
                 ) : (
                   <p className="text-gray-400">Start Chatting With Customers</p>
@@ -343,9 +390,16 @@ const Chat = () => {
                   name={receiver?.name}
                   // label={receiver?.email}
                 />
-                <div className={twMerge("flex space-x-4 items-center",  loading && 'hidden')}>
+                <div
+                  className={twMerge(
+                    "flex space-x-4 items-center",
+                    loading && "hidden"
+                  )}
+                >
                   <Button
-                    className={twMerge("text-sm border border-primaryAccent bg-white rounded-full")}
+                    className={twMerge(
+                      "text-sm border border-primaryAccent bg-white rounded-full"
+                    )}
                     variant="tertiary"
                     onClick={scrollToTop}
                     rightIcon={<ArrowUpIcon className="w-3 h-3 text-grey2" />}
@@ -362,7 +416,8 @@ const Chat = () => {
               </div>
               <div
                 className={twMerge(
-                  "fixed bg-background w-[61vw] pr-4 h-[70vh] overflow-x-hidden overflow-y-scroll"
+                  "fixed bg-background w-[61vw] pr-4 overflow-x-hidden overflow-y-scroll",
+                  selectedFiles?.length > 0 ? "h-[50vh]" : "h-[70vh]"
                 )}
               >
                 {loading && (
@@ -392,7 +447,9 @@ const Chat = () => {
                           vehicle={data?.data?.vehicle}
                           amount={
                             invoice?.data?.money &&
-                            `${formatAmount(invoice?.data?.money?.amount.toString())} ${invoice?.data?.money?.currency}`
+                            `${formatAmount(
+                              invoice?.data?.money?.amount.toString()
+                            )} ${invoice?.data?.money?.currency}`
                           }
                           dueDate={invoice?.data?.dueDate}
                           service={data?.data?.service}
@@ -415,14 +472,14 @@ const Chat = () => {
                         {messages?.map((msg, index) => (
                           <MessageComponent
                             key={`${msg?.id} ${index}`}
-                            content={
-                              msg.content === "NO_TEXT" ? "" : msg?.content
-                            }
+                            content={msg.content}
                             image={msg.image}
                             reply={msg.reply}
                             isMe={msg?.createdBy === user_info?.userId}
                             mediaUrls={msg?.mediaUrls}
                             timestamp={msg?.timestamp}
+                            id={msg?.id}
+                            onDelete={(id) => setDeleteId(id)}
                           />
                         ))}
                       </>
@@ -545,6 +602,21 @@ const Chat = () => {
           )}
         </>
       </div>
+      <Modal
+        open={deleteId.length > 0}
+        onCancel={() => setDeleteId("")} // Note: antd uses onCancel for the 'x' and backdrop
+        title="Delete Message"
+        onOk={onDelete}
+        width={window.innerWidth < 768 ? "90%" : "30%"}
+        okText="Delete"
+        okButtonProps={{ danger: true }}
+        confirmLoading={deleteLoading}
+      >
+        <p>
+          Are you sure you want to delete this message? This action cannot be
+          undone.
+        </p>
+      </Modal>
     </DashboardLayout>
   );
 };
