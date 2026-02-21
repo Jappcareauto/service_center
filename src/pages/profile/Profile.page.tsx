@@ -4,16 +4,18 @@ import StarIcon from "@/assets/icons/StarIcon";
 import images from "@/assets/images";
 import Avatar from "@/components/avatar/Avatar.component";
 import Button from "@/components/button/Button.component";
+import CategoryCard from "@/components/category-card/CategoryCard.component";
 import Drawer from "@/components/drawer/Drawer.component";
 import EditProfile from "@/components/edit-profile/EditProfile.component";
 import Modal from "@/components/modals/Modal.component";
+import ServiceCard from '@/components/service-card/ServiceCard.component';
 import Skeleton from "@/components/skeletons/Skeleton.component";
-import { serviceImage } from "@/constants";
 import { useToast } from "@/context/ToastContext";
 import { ToastType } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import {
   useAddServiceCenterMediaMutation,
+  useGetServiceCenterCategoriesQuery,
   useGetServiceCenterQuery,
   useGetServiceCenterServicesQuery,
 } from "@/redux/api";
@@ -22,7 +24,6 @@ import { paths } from "@/routes/paths";
 import { Skeleton as AntdSkeleton, Image } from "antd";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { twMerge } from "tailwind-merge";
 
 const Profile = () => {
   const [editOpen, setEditOpen] = useState(false);
@@ -37,19 +38,17 @@ const Profile = () => {
   } = useGetServiceCenterQuery(serviceCenterId, {
     skip: !serviceCenterId,
   });
-  const { data: serviceCenterServices } = useGetServiceCenterServicesQuery(
-    data?.data?.id as string,
-    {
-      skip: !data?.data?.id,
-    }
-  );
+  const { data: serviceCenterServices } =
+    useGetServiceCenterServicesQuery(undefined);
+  const { data: serviceCenterCategories } =
+    useGetServiceCenterCategoriesQuery(undefined);
   const [addMedia, { isLoading: addLoading }] =
     useAddServiceCenterMediaMutation();
   const { toast } = useToast();
 
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement | null>(null);
-
+  console.log("serviceCenterCategories", serviceCenterCategories);
   const center = data?.data;
   // Open file selector
   const handleAddClick = () => {
@@ -77,7 +76,9 @@ const Profile = () => {
       addMedia(req)
         .unwrap()
         .then((res) => {
+          console.log("res", res);
           toast(ToastType.SUCCESS, res?.meta?.message as string);
+          clearModal();
         })
         .catch((err) => {
           if (err?.data?.errors) {
@@ -187,47 +188,24 @@ const Profile = () => {
 
             <div className="flex flex-col gap-y-3">
               <h2 className="font-medium">Specialized Services</h2>
-              <div className="flex flex-row overflow-x-auto w-full">
+              <div className="flex flex-row overflow-x-auto gap-4 w-full">
                 {serviceCenterServices?.data &&
-                  serviceCenterServices?.data?.map((item, index) => {
+                  serviceCenterServices?.data?.map((item) => {
                     return (
-                      <div
-                        className="w-auto h-[150px] rounded-2xl bg-primaryAccent mr-2 relative p-4 overflow-hidden"
-                        key={item.id}
-                      >
-                        <h2 className="font-normal">{item?.service?.title}</h2>
-                        <div className="flex space-x-4 mt-1">
-                          <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
-                            <span className="text-gray-300">Duration:</span>
-                            <span>{item?.durationMinutes} Mins</span>
-                          </div>
-                          <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
-                            <span className="text-gray-300">Price:</span>
-                            <span>{item?.price}</span>
-                          </div>
-                          <div className="flex text-sm text-primaryAccent2 space-x-1 items-center">
-                            <span className="text-gray-300">Available:</span>
-                            <div
-                              className={twMerge(
-                                "w-2 h-2 bg-green-400 rounded-full",
-                                !item?.available && "bg-red-400"
-                              )}
-                            />
-                          </div>
-                        </div>
-                        <img
-                          src={serviceImage?.[index]}
-                          alt=""
-                          className={twMerge(
-                            "absolute -bottom-2 -right-0 object-contain"
-                          )}
-                        />
-                      </div>
+                      <ServiceCard key={item?.title} {...item} />
                     );
                   })}
               </div>
             </div>
-            <>{/* <MapComponent /> */}</>
+            <div className="flex flex-col gap-y-3">
+              <h2 className="font-medium">All Categories</h2>
+              <div className="flex flex-row overflow-x-auto gap-4 w-full">
+                {serviceCenterCategories?.data &&
+                  serviceCenterCategories?.data?.map((item) => {
+                    return <CategoryCard key={item?.code} {...item} />;
+                  })}
+              </div>
+            </div>
           </div>
         </>
         <Drawer

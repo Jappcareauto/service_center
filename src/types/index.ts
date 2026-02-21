@@ -36,7 +36,7 @@ export interface GenericType {
   createdBy?: string;
   updatedBy?: string;
 }
-export interface GenericResponse {
+export interface GenericResponse extends GenericType {
   meta?: {
     statusCode: number;
     statusDescription: "SUCCESS" | "FAILURE" | "ERROR";
@@ -355,13 +355,8 @@ export interface Payment extends GenericType {
   userTo: string;
   amount: string;
   paymentMethodName: string;
-  id: string;
-  createdBy: string;
-  updatedBy: string;
-  createdAt: string;
-  updatedAt: string;
+  receiptFileUrl: string;
   note: string;
-  receiptFileUrl: null;
   totalAmount: number;
   totalPaid: number;
   remainingBalance: number;
@@ -506,41 +501,32 @@ export interface ServiceResponse extends GenericResponse {
 }
 
 export interface ServiceCenterService extends GenericType {
-  serviceCenter: ServiceCenter;
-  service: Service;
-  price: number;
-  durationMinutes: number;
-  available: boolean;
+  serviceCenter?: ServiceCenter;
+  service?: Service;
+  price?: number;
+  durationMinutes?: number;
+  available?: boolean;
+  id: string;
+  title: string;
+  description: string;
+}
+export interface ServiceCenterCategory {
+  code: string;
+  displayName: string;
+  description: string;
 }
 
 export interface ServiceCenterServicesResponse extends GenericResponse {
   data: ServiceCenterService[];
+}
+export interface ServiceCenterCategoriesResponse extends GenericResponse {
+  data: ServiceCenterCategory[];
 }
 
 export interface ChatRoom extends Audit {
   id: string;
   name: string;
   participentIds: string[];
-}
-
-export interface Message {
-  message?: string;
-  image?: string;
-  reply?: string;
-  isMe?: boolean;
-  type?: MessageType;
-  senderId?: string;
-  content?: string | any;
-  chatRoomId?: string;
-  id?: string;
-  timestamp?: string;
-  appointmentId?: string;
-  mediaUrls?: UploadedFile[];
-  createdAt?: string;
-  updatedAt?: string;
-  createdBy?: string;
-  updatedBy?: string;
-  status?: "SENT" | "DELIVERED" | "READ";
 }
 
 export interface ChatRoomsResponse extends GenericResponse {
@@ -554,6 +540,20 @@ export interface UpdateChatRoomRequest extends GenericType {
   id: string;
 }
 
+export interface SendMessageWithFilesRequest {
+  chatId: string;
+  senderId: string;
+  content?: string;
+  type: MessageType;
+  files: File[];
+}
+
+// Example Response Interface (Adjust based on your backend)
+export interface SendMessageResponse extends GenericResponse {
+  success: boolean;
+  message: string;
+}
+
 export enum ChatRoomType {
   SINGLE = "SINGLE",
   GROUP = "GROUP",
@@ -565,6 +565,35 @@ export interface CreateChatRoomRequest {
   userIds: string[];
   creatorId: string;
   appointmentId?: string;
+}
+
+export interface MediaUrl {
+  url: string;
+  type: string;
+  name: string;
+}
+
+
+export interface Message extends GenericType {
+  message?: string;
+  image?: string;
+  reply?: string;
+  isMe?: boolean;
+  type?: MessageType;
+  chatRoomId?: string;
+  appointmentId?: string;
+  status?: "SENT" | "DELIVERED" | "READ";
+  id?: string;
+  senderId?: string;
+  senderName?: string;
+  senderProfileImageUrl?: string | null;
+  content: string;
+  chatId?: string;
+  timestamp: string;
+  mediaUrls?: MediaUrl[];
+}
+export interface ChatMessageResponse extends GenericResponse {
+  data: Message;
 }
 
 export interface UploadedFile {

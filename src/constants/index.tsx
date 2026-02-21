@@ -15,7 +15,7 @@ import {
   PaymentStatus,
 } from "@/enums";
 import { paths } from "@/routes/paths";
-import { billedFrom } from "@/types";
+import { billedFrom, Payment } from "@/types";
 import {
   getBillingStatusStyles,
   getFormattedDate,
@@ -271,7 +271,7 @@ export const getAppointmentColumns = (
 export const getInvoicesColumns = (
   handleDelete: (id: string) => void,
   handleViewDetails: (id: string) => void,
-  handleDownload: (id: string) => void,
+  handleDownload: (id: string) => void
 ) => {
   return [
     {
@@ -543,7 +543,10 @@ export const paymentMethods = [
   },
 ];
 
-export const getPaymentsColumns = (handleViewDetails: (id: string) => void) => [
+export const getPaymentsColumns = (
+  handleViewDetails: (id: string) => void,
+  handleViewReceipt: (id: string) => void
+) => [
   // {
   //   title: "Id",
   //   dataIndex: "id",
@@ -560,15 +563,18 @@ export const getPaymentsColumns = (handleViewDetails: (id: string) => void) => [
     dataIndex: "paymentDate",
     key: "paymentDate",
     render: (text: string) => (
-      <span className="lowercase first-letter:uppercase">
+      <p className="lowercase first-letter:uppercase">
         {text && getFormattedDate(text)}
-      </span>
+      </p>
     ),
   },
   {
     title: "Payment Method",
     dataIndex: "paymentMethodName",
     key: "paymentMethodName",
+    render: (text: string) => (
+      <p className="lowercase first-letter:uppercase text-center">{text}</p>
+    ),
   },
   {
     title: "From",
@@ -577,11 +583,12 @@ export const getPaymentsColumns = (handleViewDetails: (id: string) => void) => [
     render: (text: string) =>
       text && (
         <Avatar
-          className="w-6 h-6"
+          className="w-9 h-9 p-0"
           name={text}
           label="From"
           namesClassName="flex flex-col-reverse"
           labelClassName="text-xs"
+          parentClassName="p-0"
         />
       ),
   },
@@ -630,14 +637,30 @@ export const getPaymentsColumns = (handleViewDetails: (id: string) => void) => [
   {
     title: "Actions",
     key: "actions",
-    render: (_: any, record: any) => (
-      <button
-        className="flex items-center gap-x-3"
-        onClick={() => handleViewDetails(record.invoiceId)}
-      >
-        <span className="text-primary">View Invoice</span>
-        <ArrowRightIcon className="text-primary hover:text-black cursor-pointer w-4 h-4 hover:opacity-70" />
-      </button>
+    render: (_: any, record: Payment) => (
+      <div className="flex gap-x-2 justify-end">
+        <button
+          className="flex items-center gap-x-1"
+          onClick={() => handleViewDetails(record?.invoiceId)}
+        >
+          <span className="text-primary text-sm">Invoice</span>
+          <ArrowRightIcon className="text-primary hover:text-black cursor-pointer w-3 h-3 hover:opacity-70" />
+        </button>
+        {record.receiptFileUrl && (
+          <button
+            className="flex items-center gap-x-1"
+            onClick={() => handleViewReceipt(record?.receiptFileUrl)}
+          >
+            <span className="text-gray-600 hover:text-black  text-sm">
+              Receipt
+            </span>
+            <PaymentIcon
+              color="#424242"
+              className="text-gray-600 hover:text-black cursor-pointer w-3 h-3 hover:opacity-70"
+            />
+          </button>
+        )}
+      </div>
     ),
   },
 ];

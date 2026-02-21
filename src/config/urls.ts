@@ -24,8 +24,7 @@ export const URLS = {
       limit?: number,
       search?: string
     ) =>
-      `/appointment/list?status=${status ?? ""}&page=${page ?? ""}&limit=${
-        limit ?? ""
+      `/appointment/list?status=${status ?? ""}&page=${page ?? ""}&limit=${limit ?? ""
       }&search=${search ?? ""}`,
     getAppointmentStats: "/appointment/stats",
     getAppointment: (id: string) => `/appointment/${id}`,
@@ -59,8 +58,7 @@ export const URLS = {
       size?: number,
       dueDateAfter?: string
     ) =>
-      `/invoice/list?status=${status ?? ""}&page=${page ?? ""}&size=${
-        size ?? ""
+      `/invoice/list?status=${status ?? ""}&page=${page ?? ""}&size=${size ?? ""
       }&dueDateAfter=${dueDateAfter ?? ""}`,
     getInvoiceByAppointment: (appointmentId: string) =>
       `/invoice/${appointmentId}`,
@@ -91,7 +89,8 @@ export const URLS = {
       `/chatroom/appointment/${appointmentId}`,
     getAppointmentByChatroom: (chatroomId: string) =>
       `/appointment/chat-room/${chatroomId}`,
-    uploadChatFiles: "/file/chat-upload-multiple",
+    uploadChatFiles: (chatId: string) => `/chat/${chatId}/sendMessage/with-files`,
+    deleteMessage: (messageId: string) => `/chat/message/${messageId}`
   },
   service_Center: {
     getServiceCenters: "/service-center/list",
@@ -100,8 +99,11 @@ export const URLS = {
       `/service-center/${id}/image`,
     updateServiceCenter: (id: string) => `/service-center/${id}`,
     addServiceCenterMedia: (id: string) =>
-      `/service-center/add-media-to-service-center/${id}/update`,
-    getServiceCenterServices: (id: string) => `/service-centers/${id}/services`,
+      `/service-center/${id}/media`,
+    getServiceCenterServices: `/service/list`,
+    getServiceCenterCategories:`/service-center/categories`,
     getChatContacts: "/service-center/chat-contacts",
+    getServiceCenterStatistics: (id: string) => `/service-center/${id}/stats`,
+
   },
 };
