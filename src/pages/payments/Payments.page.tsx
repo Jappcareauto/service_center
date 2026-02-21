@@ -4,14 +4,17 @@ import WithdrawPaymentMethod from "@/components/add-payment-steps/WithdrawPaymen
 import Button from "@/components/button/Button.component";
 import Drawer from "@/components/drawer/Drawer.component";
 import FilterBar from "@/components/filter-bar/FilterBar.component";
+import Modal from "@/components/modals/Modal.component";
 import Successful from "@/components/successful/Successful.component";
 import Table from "@/components/table/Table.component";
 import { getPaymentsColumns, PaymentsStatuses } from "@/constants";
 import { PaymentStatus } from "@/enums";
 import DashboardLayout from "@/layouts/DashboardLayout";
 import { useGetPaymentsQuery } from "@/redux/api";
+import { formatAmount } from "@/utils";
+import { Image } from "antd";
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const Payments = () => {
   const [open, setOpen] = useState(false);
@@ -19,10 +22,12 @@ const Payments = () => {
   const [revenue, setRevenue] = useState("");
   const [tableData, setTableData] = useState([]);
   const [status, setStatus] = useState<PaymentStatus>(PaymentStatus.ALL);
+  const [previewUrl, setPreviewUrl] = useState("");
+
   const { data: payments, isLoading: paymentsLoading } = useGetPaymentsQuery({
     status,
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   useEffect(() => {
     const totalAmount = payments?.data?.reduce(
       (sum, payment) => sum + (payment?.totalAmount || 0),
@@ -37,6 +42,7 @@ const Payments = () => {
     const filteredTableData = payments?.data.map((item) => {
       return {
         invoiceId: item.invoiceId,
+        receiptFileUrl: item.receiptFileUrl,
         amount: item.amount,
         status: item.paymentDate ? PaymentStatus.PAID : PaymentStatus.ALL,
         paymentDate: item.paymentDate,
@@ -49,14 +55,19 @@ const Payments = () => {
     setTableData(filteredTableData as any);
   }, [payments, status]);
 
-    const handleViewDetails = (id: string) => {
+  const handleViewDetails = (id: string) => {
     navigate(`/invoice/${id}`);
-    return;
+  };
+  const handleViewReceipt = (url: string) => {
+    console.log("url", url);
+    setPreviewUrl(url);
   };
 
+  const columns = getPaymentsColumns(handleViewDetails, handleViewReceipt);
 
-  const columns = getPaymentsColumns(handleViewDetails);
-
+  const clearModal = () => {
+    setPreviewUrl("");
+  };
   return (
     <DashboardLayout showBack={false}>
       <div className="flex items-center gap-x-3 mb-5">
@@ -80,7 +91,9 @@ const Payments = () => {
             </svg>
 
             <div>
-              <h1 className="text-3xl">{revenue ? revenue : 0}</h1>
+              <h1 className="text-3xl">
+                {revenue ? formatAmount?.(revenue) : 0} XAF
+              </h1>
               <h4 className="text-grey">Available for Withdrawal</h4>
             </div>
           </div>
@@ -140,6 +153,11 @@ const Payments = () => {
       >
         <Successful />
       </Drawer>
+      <Modal open={previewUrl?.length > 0} onCancel={clearModal} footer={null}>
+        <div className="w-full h-full flex justify-center items-center">
+          <Image src={previewUrl} height={500} alt="Preview" preview={false} />
+        </div>
+      </Modal>
     </DashboardLayout>
   );
 };

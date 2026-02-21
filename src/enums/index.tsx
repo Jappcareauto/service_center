@@ -59,3 +59,9 @@ export enum ToastType {
   WARNING = "warning",
   ERROR = "error",
 }
+
+export enum ServiceCategoryEnum {
+  GENERAL_MAINTENANCE = "GENERAL_MAINTENANCE",
+  BODY_SHOP = "BODY_SHOP",
+  DEEP_CLEANING = "DEEP_CLEANING",
+}

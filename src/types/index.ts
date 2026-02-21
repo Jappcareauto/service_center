@@ -355,13 +355,8 @@ export interface Payment extends GenericType {
   userTo: string;
   amount: string;
   paymentMethodName: string;
-  id: string;
-  createdBy: string;
-  updatedBy: string;
-  createdAt: string;
-  updatedAt: string;
+  receiptFileUrl: string;
   note: string;
-  receiptFileUrl: null;
   totalAmount: number;
   totalPaid: number;
   remainingBalance: number;
@@ -506,15 +501,26 @@ export interface ServiceResponse extends GenericResponse {
 }
 
 export interface ServiceCenterService extends GenericType {
-  serviceCenter: ServiceCenter;
-  service: Service;
-  price: number;
-  durationMinutes: number;
-  available: boolean;
+  serviceCenter?: ServiceCenter;
+  service?: Service;
+  price?: number;
+  durationMinutes?: number;
+  available?: boolean;
+  id: string;
+  title: string;
+  description: string;
+}
+export interface ServiceCenterCategory {
+  code: string;
+  displayName: string;
+  description: string;
 }
 
 export interface ServiceCenterServicesResponse extends GenericResponse {
   data: ServiceCenterService[];
+}
+export interface ServiceCenterCategoriesResponse extends GenericResponse {
+  data: ServiceCenterCategory[];
 }
 
 export interface ChatRoom extends Audit {

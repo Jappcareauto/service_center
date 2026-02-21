@@ -33,6 +33,7 @@ import {
   ResetPasswordRequest,
   SendMessageWithFilesRequest,
   ServiceCenter,
+  ServiceCenterCategoriesResponse,
   ServiceCenterResponse,
   ServiceCenterServicesResponse,
   ServiceCentersResponse,
@@ -699,11 +700,37 @@ export const apiSlice = createApi({
     }),
     getServiceCenterServices: builder.query<
       ServiceCenterServicesResponse,
+      undefined
+    >({
+      query: () => {
+        return {
+          url: URLS.service_Center.getServiceCenterServices,
+          method: "GET",
+        };
+      },
+      providesTags: ["service_center"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    getServiceCenterCategories: builder.query<
+      ServiceCenterCategoriesResponse,
+      undefined
+    >({
+      query: () => {
+        return {
+          url: URLS.service_Center.getServiceCenterCategories,
+          method: "GET",
+        };
+      },
+      providesTags: ["service_center"],
+      onQueryStarted: onQueryStartedErrorToast,
+    }),
+    getServiceCenterStatistics: builder.query<
+      ServiceCenterServicesResponse,
       string
     >({
       query: (id) => {
         return {
-          url: URLS.service_Center.getServiceCenterServices(id),
+          url: URLS.service_Center.getServiceCenterStatistics(id),
           method: "GET",
         };
       },
@@ -765,5 +792,6 @@ export const {
   useGetAppointmentByChatroomQuery,
   useUploadChatFilesMutation,
   useGetServiceCenterServicesQuery,
+  useGetServiceCenterCategoriesQuery,
   useGetChatContactsQuery,
 } = apiSlice;

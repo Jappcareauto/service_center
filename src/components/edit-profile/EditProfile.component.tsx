@@ -116,11 +116,10 @@ const EditProfile: FC<IProps> = ({
       <div className="w-full flex justify-center items-center">
         <div className="relative">
           <Avatar
-            parentClassName="w-[120px] h-[120px] p-2"
-            imageClassName='object-contain'
+            parentClassName="w-[120px] h-[120px] p-1"
+            imageClassName='object-cover'
             className="border-none p-1"
-            profileImageUrl={images.logo}
-            // profileImageUrl={props.imageUrl ? props.imageUrl : images.logo}
+            profileImageUrl={props.imageUrl ? props.imageUrl : images.logo}
             id="profile"
             allowUpload
             onSelect={(file) => {

@@ -68,7 +68,7 @@ const Avatar: React.FC<OwnProps> = ({
         className={twMerge(
           "rounded-full flex justify-center items-center overflow-hidden border-[2px] border-primary p-[1.5px]",
           disabledBorder ? "border-none p-0" : "",
-          "w-11 h-11", // Move fixed dimensions here so the circle is consistent
+          "w-11 h-11",
           parentClassName
         )}
       >

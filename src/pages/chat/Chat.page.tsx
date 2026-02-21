@@ -46,7 +46,7 @@ import Lottie from "lottie-react";
 import waveAnimation from "../../assets/lotties/voice_wave.json"; // Adjust path
 
 const Chat = () => {
-  const { user_info, user, accessToken } = useAppSelector(
+  const { user_info, accessToken } = useAppSelector(
     (state: RootState) => state.auth
   );
   const { chatroomId, receiver } = useAppSelector(
